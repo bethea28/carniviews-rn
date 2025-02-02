@@ -15,8 +15,40 @@ import { useGetPokemonByNameQuery } from "@/store/pokemonTestApi/pokemonTestApi"
 import { WebView } from "react-native-webview";
 import Constants from "expo-constants";
 import { StyleSheet } from "react-native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 // WebView Component
+
+const BottomTab = createBottomTabNavigator();
+const StackNav = createNativeStackNavigator();
+
+const HomeScreen = () => <Text>home</Text>;
+const ProfileScreen = () => <Text>home</Text>;
+
+function MyBottomTabs() {
+  return (
+    <BottomTab.Navigator>
+      <BottomTab.Screen name="Home" component={HomeScreen} />
+      <BottomTab.Screen name="Profile" component={ProfileScreen} />
+    </BottomTab.Navigator>
+  );
+}
+
+function RootStack() {
+  return (
+    <StackNav.Navigator>
+      <StackNav.Screen
+        name="Home"
+        component={MyBottomTabs}
+        options={{ headerShown: false }}
+      />
+      <StackNav.Screen name="Profile" component={ProfileScreen} />
+    </StackNav.Navigator>
+  );
+}
+
 function WebViewComp({
   handleWebViewNavigationStateChange,
   handleViewMessage,
@@ -39,7 +71,7 @@ const styles = StyleSheet.create({
 });
 
 // Main App Component
-const TestApp = () => {
+function TestApp() {
   const dispatch = useDispatch();
   const { data: weatherData } = useGetWeatherQuery();
   const { data: pokeMan } = useGetPokemonByNameQuery("book");
@@ -90,24 +122,10 @@ const TestApp = () => {
   return (
     <View style={{ flex: 1 }}>
       {user ? (
-        <>
-          <Pressable
-            onPress={djangoCall}
-            style={({ pressed }) => [
-              { backgroundColor: pressed ? "red" : "green" },
-              { alignItems: "center", justifyContent: "center", height: 50 },
-            ]}
-          >
-            <Text>DJANGO API TEST</Text>
-          </Pressable>
-          {books.map((book, index) => (
-            <View key={index}>
-              <Text>{book.title}</Text>
-              <Text>{book.author}</Text>
-            </View>
-          ))}
-        </>
+        // <NavigationContainer>
+        <RootStack />
       ) : (
+        // </NavigationContainer>
         <WebViewComp
           handleViewMessage={handleViewMessage}
           handleWebViewNavigationStateChange={
@@ -117,7 +135,7 @@ const TestApp = () => {
       )}
     </View>
   );
-};
+}
 
 // App Entry Point
 export default function App() {
