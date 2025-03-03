@@ -18,20 +18,28 @@ import { StyleSheet } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-
+import { increment, setUserData } from "@/store/globalState/globalState";
+import { ProfileScreen } from "./screens/ProfileScreen/ProfileScreen";
+import { StoryScreen } from "./screens/StoryScreen/StoryScreen";
+import { HomeScreen } from "./screens/HomeScreen/HomeScreen";
 // WebView Component
 
 const BottomTab = createBottomTabNavigator();
 const StackNav = createNativeStackNavigator();
 
-const HomeScreen = () => <Text>home</Text>;
-const ProfileScreen = () => <Text>home</Text>;
-
 function MyBottomTabs() {
   return (
     <BottomTab.Navigator>
-      <BottomTab.Screen name="Home" component={HomeScreen} />
-      <BottomTab.Screen name="Profile" component={ProfileScreen} />
+      <BottomTab.Screen
+        options={{ headerShown: false }}
+        name="Profile"
+        component={ProfileScreen}
+      />
+      <BottomTab.Screen
+        options={{ headerShown: false }}
+        name="Home"
+        component={HomeScreen}
+      />
     </BottomTab.Navigator>
   );
 }
@@ -40,11 +48,11 @@ function RootStack() {
   return (
     <StackNav.Navigator>
       <StackNav.Screen
-        name="Home"
+        name="ProfileScreen"
         component={MyBottomTabs}
         options={{ headerShown: false }}
       />
-      <StackNav.Screen name="Profile" component={ProfileScreen} />
+      <StackNav.Screen name="CreateStory" component={StoryScreen} />
     </StackNav.Navigator>
   );
 }
@@ -71,7 +79,7 @@ const styles = StyleSheet.create({
 });
 
 // Main App Component
-function TestApp() {
+function TwoCentsApp() {
   const dispatch = useDispatch();
   const { data: weatherData } = useGetWeatherQuery();
   const { data: pokeMan } = useGetPokemonByNameQuery("book");
@@ -81,6 +89,8 @@ function TestApp() {
   React.useEffect(() => {
     // Example: Dispatch an action on component mount
     // dispatch(authorizeUser("the new user is bryan dude"));
+    dispatch(increment({ value: 20 }));
+    console.log("user name", user);
   }, [dispatch]);
 
   const djangoCall = async () => {
@@ -94,7 +104,7 @@ function TestApp() {
     }
   };
 
-  const handleWebViewNavigationStateChange = (newNavState) => {
+  const handleWebViewNavigationStateChange = (newNavState: any) => {
     if (!newNavState) return;
     const { url } = newNavState;
     if (!url) return;
@@ -108,9 +118,10 @@ function TestApp() {
   const handleViewMessage = (event) => {
     try {
       const userData = JSON.parse(event.nativeEvent.data);
-      console.log("User Data received:", userData);
-      setUser(userData);
 
+      console.log("User Dat received:", userData);
+      setUser(userData);
+      dispatch(setUserData({ userData }));
       // Use the received user data (e.g., update state, navigate)
       // Example: Dispatch an action with the user data
       dispatch(authorizeUser(userData.username));
@@ -121,7 +132,7 @@ function TestApp() {
 
   return (
     <View style={{ flex: 1 }}>
-      {user ? (
+      {!user ? (
         // <NavigationContainer>
         <RootStack />
       ) : (
@@ -142,7 +153,7 @@ export default function App() {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <TestApp />
+        <TwoCentsApp />
       </PersistGate>
     </Provider>
   );
