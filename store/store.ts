@@ -3,6 +3,7 @@ import { combineReducers, configureStore, Middleware } from '@reduxjs/toolkit';
 import { persistReducer, persistStore, FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE } from 'redux-persist';
 import { RESET_STORE_ACTION } from './actions';
 import { pokemonApi } from './pokemonTestApi/pokemonTestApi';
+import {counterSlice} from './globalState/globalState';
 // import { legacyApi, rtkQueryErrorLogger } from './legacyApi';
 // import { settingsReducer } from './settings';
 // import { systemReducer } from './system';
@@ -11,7 +12,6 @@ import { testReducer } from './testReducer';
 // import { modalsReducer } from './modals';
 import { api } from './api/api';
 // import { robustaReducer } from './robusta';
-console.log('ENTIERE API MAN', pokemonApi.reducerPath)
 const reducer = combineReducers({
   user: userReducer,
   testReducer,
@@ -20,6 +20,7 @@ const reducer = combineReducers({
   //   system: systemReducer,
   //   robusta: robustaReducer,
   //   [legacyApi.reducerPath]: legacyApi.reducer,
+  [counterSlice.reducerPath]: counterSlice.reducer,
   [api.reducerPath]: api.reducer,
   [pokemonApi.reducerPath]: pokemonApi.reducer
   // [api.reducerPath]: api.reducer,
@@ -63,7 +64,7 @@ export const store = configureStore({
     // legacyApi.middleware,
     api.middleware,
     pokemonApi.middleware,
-  
+    // counterSlice.middleware,
     // rtkQueryErrorLogger,
     ...additionalMiddleware,
   ],
