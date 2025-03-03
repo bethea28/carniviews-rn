@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   Image,
   FlatList,
+  TouchableOpacity,
 } from "react-native";
 import {
   createStaticNavigation,
@@ -17,14 +18,14 @@ export const ProfileScreen = () => {
   const renderItem = () => {
     return (
       <View style={{ marginLeft: 10 }}>
-        <>
+        <TouchableOpacity>
           <Image
             style={{ width: 150, height: 150 }}
             source={{
               uri: "https://www.rollingstone.com/wp-content/uploads/2022/02/0001x.jpg?w=1581&h=1054&crop=1&s",
             }}
           />
-        </>
+        </TouchableOpacity>
       </View>
     );
   };
