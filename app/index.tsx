@@ -79,9 +79,9 @@ const styles = StyleSheet.create({
 });
 
 // Main App Component
-function TwoCentsApp() {
+function MainApp() {
   const dispatch = useDispatch();
-  const { data: weatherData } = useGetWeatherQuery();
+  // const { data: weatherData } = useGetWeatherQuery();
   const { data: pokeMan } = useGetPokemonByNameQuery("book");
   const [books, setBooks] = React.useState([]);
   const [showHome, setShowHome] = React.useState(false);
@@ -153,7 +153,7 @@ export default function App() {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <TwoCentsApp />
+        <MainApp />
       </PersistGate>
     </Provider>
   );
