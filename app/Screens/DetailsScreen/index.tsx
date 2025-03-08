@@ -1,25 +1,16 @@
+import React from "react";
 import { Text, Button } from "react-native-paper";
 import {
   View,
-  FlatList,
   Pressable,
   ImageBackground,
   Image,
-  TouchableOpacity,
   ScrollView,
 } from "react-native";
 import { CompanyCard } from "@/app/Components/CardComponent";
 import { companyObjects } from "@/mockData";
 import { useNavigation } from "@react-navigation/native";
-import { launchCamera, launchImageLibrary } from "react-native-image-picker";
-// import { CameraRoll } from "@react-native-camera-roll/camera-roll";
-
-const options = {
-  mediaType: "photo",
-  includeBase64: false,
-  maxHeight: 2000,
-  maxWidth: 2000,
-};
+import * as ImagePicker from "expo-image-picker";
 
 const ImageDetails = ({ params }) => (
   <ImageBackground
@@ -75,33 +66,32 @@ const DescriptionDetails = ({ params }) => (
 );
 
 const Actions = ({ camera, action, header }) => {
+  const [image, setImage] = React.useState<string | null>(null);
+
   const navigate = useNavigation();
   console.log("action", action);
 
-  const handleImageLibraryLaunch = async () => {
-    // return;
-    console.log("camer in here");
-    const result = await launchImageLibrary();
-    console.log("camer now", result);
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images", "videos"],
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
 
-    // await launchImageLibrary(options, (response) => {
-    //   console.log("response", response);
-    //   if (response.didCancel) {
-    //     console.log("User cancelled image picker");
-    //   } else if (response.error) {
-    //     console.log("ImagePicker Error: ", response.error);
-    //   } else {
-    //     console.log("Response = ", response);
-    //     // Handle the selected image
-    //   }
-    // });
+    console.log(result);
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
   };
+
+  console.log("show me the image now", image);
   return (
     <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
       <Pressable
-        onPress={
-          camera ? handleImageLibraryLaunch : () => navigate.navigate(action)
-        }
+        onPress={camera ? pickImage : () => navigate.navigate(action)}
         style={({ pressed }) => [
           {
             borderRadius: 100,
