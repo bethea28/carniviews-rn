@@ -9,13 +9,22 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app uses the camera to scan barcodes on event tickets.",
+        "NSPhotoLibraryUsageDescription": "This app needs access to the photo library to select photos." // Added: Permission for photo library access on iOS
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "CAMERA",
+        "READ_MEDIA_IMAGES", // Added: Permission to read images from the media library on Android
+        "READ_MEDIA_VIDEO" // Added: Permission to read videos from the media library on Android
+      ]
     },
     "web": {
       "bundler": "metro",

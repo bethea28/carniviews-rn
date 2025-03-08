@@ -19,9 +19,12 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { increment, setUserData } from "@/store/globalState/globalState";
-import { ProfileScreen } from "./screens/ProfileScreen/ProfileScreen";
-import { StoryScreen } from "./screens/StoryScreen/StoryScreen";
-import { HomeScreen } from "./screens/HomeScreen/HomeScreen";
+import { ProfileScreen } from "./Screens/ProfileScreen";
+import { HomeScreen } from "./Screens/HomeScreen";
+import { AddCompanyScreen } from "./Screens/AddCompanyScreen";
+import { DetailsScreen } from "./Screens/DetailsScreen";
+import { ReviewScreen } from "./Screens/ReviewScreen";
+import { AddReviewScreen } from "./Screens/AddReviewScreen";
 // WebView Component
 
 const BottomTab = createBottomTabNavigator();
@@ -32,13 +35,13 @@ function MyBottomTabs() {
     <BottomTab.Navigator>
       <BottomTab.Screen
         options={{ headerShown: false }}
-        name="Profile"
-        component={ProfileScreen}
+        name="Home"
+        component={HomeScreen}
       />
       <BottomTab.Screen
         options={{ headerShown: false }}
-        name="Home"
-        component={HomeScreen}
+        name="Profile"
+        component={ProfileScreen}
       />
     </BottomTab.Navigator>
   );
@@ -52,7 +55,10 @@ function RootStack() {
         component={MyBottomTabs}
         options={{ headerShown: false }}
       />
-      <StackNav.Screen name="CreateStory" component={StoryScreen} />
+      <StackNav.Screen name="AddCompany" component={AddCompanyScreen} />
+      <StackNav.Screen name="Details" component={DetailsScreen} />
+      <StackNav.Screen name="Reviews" component={ReviewScreen} />
+      <StackNav.Screen name="AddReviews" component={AddReviewScreen} />
     </StackNav.Navigator>
   );
 }
@@ -64,7 +70,7 @@ function WebViewComp({
   return (
     <WebView
       style={styles.container}
-      source={{ uri: "http://127.0.0.1:8000/" }} // Replace with your Django server URL
+      // source={{ uri: "http://127.0.0.1:8000/" }} // Replace with your Django server URL
       onNavigationStateChange={handleWebViewNavigationStateChange}
       onMessage={handleViewMessage}
     />

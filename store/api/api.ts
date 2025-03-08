@@ -54,7 +54,8 @@ export const api = createApi({
         getWeather: build.query<any, void>({
             // TODO: move this endpoint to the main mocked server and update it here
             queryFn: async () => {
-                const req = await fetch('http://127.0.0.1:8000/bryan/book');
+                const req = await fetch('https://api.escuelajs.co/api/v1/products');
+                // const req = await fetch('http://127.0.0.1:8000/bryan/book');
                 // const req = await fetch('https://86e340d4-3250-4c74-89f3-6a1b5a874fa5.mock.pstmn.io/weather/me/');
                 const resp = await req.json();
                 return { data: resp };
