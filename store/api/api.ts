@@ -35,7 +35,7 @@ export const objectToUrlEncodedString = (obj: Record<string, string | number>) =
 
 
 export const api = createApi({
-    baseQuery: fetchBaseQuery({ baseUrl: 'http://127.0.0.1:8000/api/bryan/book' }),
+    baseQuery: fetchBaseQuery({ baseUrl: 'http://127.0.0.1:8000/' }),
     // baseQuery,
     reducerPath: 'api',
     tagTypes: [
@@ -90,11 +90,11 @@ export const api = createApi({
            
             query: () => console.log('WE HER FIRST',data)|| ({
                 // url: 'public/assets/inc/update.inc.php',
-                url: 'bryan/book',
-                // method: 'GET',
+                url: 'bryan/bookPost',
+                method: 'POST',
                 // url: 'public/assets/inc/update.inc.php',
-                // params: {
-                // },
+                params: {
+                },
             }),
             // providesTags: ['shiftsToGrab'],
             // temp fix: convert object to array
@@ -225,24 +225,41 @@ export const api = createApi({
         //                 comment: comment,
         //             }),
         //         };
-        //     },
+        //     },;
         // }),
-        // cancelTimeOff: build.mutation<any, { id: string }>({
-        //     query: ({ id }) => {
-        //         return {
-        //             url: 'public/assets/inc/update.inc.php',
-        //             method: 'POST',
-        //             headers: {
-        //                 'Content-Type': 'application/x-www-form-urlencoded',
-        //             },
-        //             body: objectToUrlEncodedString({
-        //                 action: 'api-cancelptorequest',
-        //                 ids: id,
-        //             }),
-        //         };
-        //     },
-        //     invalidatesTags: ['empRequests'],
-        // }),
+        addBook: build.mutation<any, any>({
+            query: (data) => {
+                console.log('dpmt add any books',data)
+                return {
+                    url: 'bryan/bookPost/',
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: objectToUrlEncodedString({
+                        title: data.title,
+                        author: data.author,
+                        year: data?.year
+                    }),
+                };
+            },
+        }),
+        addReview: build.mutation<any, any>({
+            query: (data) => {
+                console.log('data is king add revieww',data)
+                return {
+                    url: 'reviews/',
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: objectToUrlEncodedString({
+                        userName: data.userName,
+                        review: data.review,
+                    }),
+                };
+            },
+        }),
         // submitMessge: build.mutation<any, any>({
         //     query: ({ notes, punchId, shiftId }) => {
         //         return {
@@ -312,6 +329,8 @@ export const {
     useGetBooksQuery,
     useGetWeatherQuery,
     useGetDjangoQuery,
+    // useAddBookMutation,
+    useAddReviewMutation,
     useGetMyShiftsQuery,
     useGetCalendarDataQuery,
     useApiSessionQuery,

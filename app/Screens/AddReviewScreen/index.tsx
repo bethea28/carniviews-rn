@@ -1,6 +1,6 @@
 import { Text, View, TextInput, Button, Alert } from "react-native";
 import { useForm, Controller } from "react-hook-form";
-
+import { useAddReviewMutation } from "@/store/api/api";
 export function AddReviewScreen() {
   const {
     control,
@@ -9,23 +9,25 @@ export function AddReviewScreen() {
   } = useForm({
     defaultValues: {
       review: "",
-      lastName: "",
+      userName: "",
     },
   });
+
+  const [addReview] = useAddReviewMutation();
   const onSubmit = async (data) => {
     try {
-      const data = { title: "ok we can go now  ", author: "gza", year: 2020 };
+      console.log("handling now gppd", data);
+      addReview(data);
+      // const req = await fetch("http://127.0.0.1:8000/bryan/bookPost/", {
+      //   method: "POST",
+      //   // headers: {
+      //   //   "Content-Type": "application/json", // Important!
+      //   // },
+      //   body: JSON.stringify(data), // Convert data to JSON string
+      // });
 
-      const req = await fetch("http://127.0.0.1:8000/bryan/bookPost/", {
-        method: "POST",
-        // headers: {
-        //   "Content-Type": "application/json", // Important!
-        // },
-        body: JSON.stringify(data), // Convert data to JSON string
-      });
-
-      const resp = await req.json();
-      console.log("resp", resp);
+      // const resp = await req.json();
+      // console.log("resp", resp);
     } catch (error) {
       console.log("error", error);
     }
@@ -68,7 +70,7 @@ export function AddReviewScreen() {
             style={{ backgroundColor: "red", height: 50, marginTop: 50 }}
           />
         )}
-        name="lastName"
+        name="userName"
       />
 
       <Button color="blue" title="Submit" onPress={handleSubmit(onSubmit)} />
