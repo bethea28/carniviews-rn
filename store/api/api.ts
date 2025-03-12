@@ -254,7 +254,7 @@ export const api = createApi({
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
                     body: objectToUrlEncodedString({
-                        userName: data.userName,
+                        rating: data.rating,
                         review: data.review,
                     }),
                 };
