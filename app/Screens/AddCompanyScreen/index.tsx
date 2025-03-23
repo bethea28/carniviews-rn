@@ -1,61 +1,94 @@
-import { Text, View, TextInput, Button, Alert } from "react-native";
-import { useForm, Controller } from "react-hook-form";
+import React from "react";
+import {
+  StyleSheet,
+  Platform,
+  KeyboardAvoidingView,
+  Modal,
+} from "react-native";
+import { useForm } from "react-hook-form";
+import { useImagePicker } from "@/app/customHooks";
+import { useAddCompanyMutation } from "@/store/api/api";
+import { AddCompanyForm } from "./AddCompanyForm";
+import { BusinessHoursModal } from "./BusinessHoursModal";
 
+const ModalItem = ({ modalVis, hideModal }) => {
+  return (
+    <Modal transparent={true} visible={modalVis} animationType="slide">
+      <BusinessHoursModal hoursData closeView={hideModal} />
+    </Modal>
+  );
+};
 export function AddCompanyScreen() {
   const {
     control,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({
     defaultValues: {
-      companyName: "",
-      lastName: "",
+      name: "",
+      address: "",
+      city: "",
+      zip: "",
+      state: "",
+      hours: "",
+      type: "",
+      photos: [],
     },
   });
+  const { pickImages, allImages } = useImagePicker();
+  const [addCompany] = useAddCompanyMutation();
+  const [modalVis, setModalVis] = React.useState(false);
+  const [hoursData, setHoursData] = React.useState({});
+
   const onSubmit = async (data) => {
-    console.log("data,data", data);
-    const req = await fetch("http://127.0.0.1:8000/bryan/bookPost/", data);
+    const finalData = { companyInfo: data, allImages, hoursData };
+    addCompany(finalData);
+    reset();
   };
 
+  const handleModalClose = (hourlyData) => {
+    setHoursData(hourlyData);
+    setModalVis(false);
+  };
+
+  const addPhotos = () => {
+    console.log("add phoes");
+    pickImages();
+  };
   return (
-    <View style={{ padding: 20 }}>
-      <Controller
-        control={control}
-        rules={{
-          required: true,
-        }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            placeholder="Company Name"
-            placeholderTextColor="black"
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-            style={{ backgroundColor: "green", height: 50, marginTop: 50 }}
-          />
-        )}
-        name="companyName"
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1 }}
+    >
+      <AddCompanyForm
+        setModalVis={() => setModalVis(true)}
+        onSubmit={onSubmit}
+        addPhotos={addPhotos}
       />
-      {errors.companyName && <Text>This is required.</Text>}
-
-      <Controller
-        control={control}
-        rules={{
-          maxLength: 100,
-        }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            placeholder="Last name"
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-            style={{ backgroundColor: "red", height: 50, marginTop: 50 }}
-          />
-        )}
-        name="lastName"
-      />
-
-      <Button color="blue" title="Submit" onPress={handleSubmit(onSubmit)} />
-    </View>
+      <BusinessHoursModal modalVis={modalVis} hideModal={handleModalClose} />
+    </KeyboardAvoidingView>
   );
 }
+
+const styles = StyleSheet.create({
+  scrollViewContent: {
+    flexGrow: 1,
+    padding: 20,
+    justifyContent: "space-between",
+  },
+  input: {
+    height: 50,
+    backgroundColor: "green",
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    marginTop: 10,
+  },
+  errorText: {
+    color: "red",
+    marginTop: 5,
+  },
+  buttonContainer: {
+    marginTop: 20,
+  },
+});

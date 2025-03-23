@@ -75,19 +75,20 @@ const Actions = ({ camera, action, header }) => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images", "videos"],
-      allowsEditing: true,
+      // allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
+      allowsMultipleSelection: true,
     });
 
-    console.log(result);
+    console.log("THESE ARE MY IMAGES", result.assets?.length);
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      setImage(result.assets);
     }
   };
 
-  console.log("show me the image now", image);
+  console.log("show me the image now", image?.length);
   return (
     <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
       <Pressable
@@ -168,7 +169,6 @@ const Recommend = ({ params }) => (
 
 export function DetailsScreen({ route: { params } }) {
   const navigation = useNavigation();
-  console.log("get moeny", params.businessName);
   return (
     <ScrollView style={{ padding: 20 }}>
       <ImageDetails params={params} />

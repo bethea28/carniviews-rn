@@ -6,7 +6,6 @@ import { useNavigation } from "@react-navigation/native";
 
 export function ReviewScreen({ route: { params } }) {
   const navigation = useNavigation();
-  console.log("get moeny");
   return (
     <View style={{ padding: 20 }}>
       <Text>review screen</Text>

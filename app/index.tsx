@@ -25,6 +25,7 @@ import { AddCompanyScreen } from "./Screens/AddCompanyScreen";
 import { DetailsScreen } from "./Screens/DetailsScreen";
 import { ReviewScreen } from "./Screens/ReviewScreen";
 import { AddReviewScreen } from "./Screens/AddReviewScreen";
+import { BusinessHours } from "./Screens/BusinessHours";
 // WebView Component
 
 const BottomTab = createBottomTabNavigator();
@@ -58,6 +59,7 @@ function RootStack() {
       <StackNav.Screen name="AddCompany" component={AddCompanyScreen} />
       <StackNav.Screen name="Details" component={DetailsScreen} />
       <StackNav.Screen name="Reviews" component={ReviewScreen} />
+      <StackNav.Screen name="BusinessHours" component={BusinessHours} />
       <StackNav.Screen name="AddReviews" component={AddReviewScreen} />
     </StackNav.Navigator>
   );

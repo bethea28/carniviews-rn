@@ -1,59 +1,95 @@
-import { Text, Button } from "react-native-paper";
-import { View, FlatList, Pressable } from "react-native";
+import {
+  View,
+  FlatList,
+  Pressable,
+  Text,
+  RefreshControl,
+  StyleSheet,
+} from "react-native";
+import React, { useState } from "react";
 import { CompanyCard } from "@/app/Components/CardComponent";
-import { companyObjects, mockBusinessList } from "@/mockData";
 import { useNavigation } from "@react-navigation/native";
+import { useGetCompaniesQuery } from "@/store/api/api";
 
 export function HomeScreen() {
+  const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
+  const {
+    data: allCompanies,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useGetCompaniesQuery();
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await refetch();
+    } catch (err) {
+      console.error("Error refreshing data:", err);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   const renderItem = ({ item }) => {
-    // console.log("get moeny", item);
     return (
-      <>
-        <CompanyCard
-          wholeData={item}
-          title={item.businessName}
-          mainImage={item.mainImage}
-        />
-      </>
+      <CompanyCard
+        wholeData={item}
+        title={item.companyInfo.name}
+        mainImage={item.mainImage}
+      />
     );
   };
+
+  if (isLoading) {
+    return <Text>Loading...</Text>;
+  }
+
+  if (isError) {
+    return <Text>Error...</Text>;
+  }
+
   return (
-    <View style={{ padding: 10 }}>
-      <View
-        style={{
-          alignItems: "flex-end",
-          flexDirection: "row",
-          justifyContent: "space-around",
-        }}
-      >
-        <Pressable
-          style={({ pressed }) => [
-            {
-              backgroundColor: pressed ? "green" : "magenta",
-              width: 150,
-              padding: 20,
-              borderRadius: 10,
-            },
-          ]}
-        >
-          <Text style={{ textAlign: "center", fontSize: 15 }}>Add Company</Text>
+    <View style={styles.container}>
+      <View style={styles.buttonContainer}>
+        <Pressable style={styles.button}>
+          <Text style={styles.buttonText}>Add Company</Text>
         </Pressable>
         <Pressable
           onPress={() => navigation.navigate("AddCompany")}
-          style={({ pressed }) => [
-            {
-              backgroundColor: pressed ? "green" : "magenta",
-              width: 150,
-              padding: 20,
-              borderRadius: 10,
-            },
-          ]}
+          style={styles.button}
         >
-          <Text style={{ textAlign: "center", fontSize: 15 }}>Add Company</Text>
+          <Text style={styles.buttonText}>Add Company</Text>
         </Pressable>
       </View>
-      <FlatList data={mockBusinessList} renderItem={renderItem} />
+      <View style={styles.listContainer}>
+        <FlatList
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+          }
+          data={allCompanies}
+          renderItem={renderItem}
+        />
+      </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { padding: 10 },
+  buttonContainer: {
+    alignItems: "flex-end",
+    flexDirection: "row",
+    justifyContent: "space-around",
+  },
+  button: {
+    backgroundColor: "magenta",
+    width: 150,
+    padding: 20,
+    borderRadius: 10,
+  },
+  buttonText: { textAlign: "center", fontSize: 15 },
+  listContainer: { marginBottom: 270 },
+});
