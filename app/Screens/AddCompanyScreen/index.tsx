@@ -10,6 +10,7 @@ import { useImagePicker } from "@/app/customHooks";
 import { useAddCompanyMutation } from "@/store/api/api";
 import { AddCompanyForm } from "./AddCompanyForm";
 import { BusinessHoursModal } from "./BusinessHoursModal";
+import { useNavigation } from "@react-navigation/native";
 
 const ModalItem = ({ modalVis, hideModal }) => {
   return (
@@ -40,11 +41,12 @@ export function AddCompanyScreen() {
   const [addCompany] = useAddCompanyMutation();
   const [modalVis, setModalVis] = React.useState(false);
   const [hoursData, setHoursData] = React.useState({});
-
+  const navigation = useNavigation();
   const onSubmit = async (data) => {
     const finalData = { companyInfo: data, allImages, hoursData };
     addCompany(finalData);
     reset();
+    navigation.navigate("Home");
   };
 
   const handleModalClose = (hourlyData) => {

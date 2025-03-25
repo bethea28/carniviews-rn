@@ -7,6 +7,7 @@ const LeftContent = (props) => <Avatar.Icon {...props} icon="folder" />;
 
 export const CompanyCard = ({ title, mainImage, wholeData }) => {
   const navigation = useNavigation();
+  console.log("whole data", wholeData);
   return (
     <Card style={{ marginTop: 20 }}>
       <Card.Content

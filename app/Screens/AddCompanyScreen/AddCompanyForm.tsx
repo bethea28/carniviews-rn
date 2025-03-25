@@ -12,7 +12,6 @@ import {
 } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
-// import { useImagePicker } from "@/app/customHooks";
 
 export function AddCompanyForm({ onSubmit, setModalVis, addPhotos }) {
   const {
@@ -29,6 +28,7 @@ export function AddCompanyForm({ onSubmit, setModalVis, addPhotos }) {
       state: "",
       hours: "",
       type: "",
+      description: "",
       photos: [],
     },
   });
@@ -164,6 +164,20 @@ export function AddCompanyForm({ onSubmit, setModalVis, addPhotos }) {
             />
           )}
           name="type"
+        />
+        <Controller
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              placeholder="description"
+              placeholderTextColor="black"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              style={styles.input}
+            />
+          )}
+          name="description"
         />
 
         <Pressable

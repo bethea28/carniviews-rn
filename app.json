@@ -8,11 +8,19 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
         "NSCameraUsageDescription": "This app uses the camera to scan barcodes on event tickets.",
         "NSPhotoLibraryUsageDescription": "This app needs access to the photo library to select photos." // Added: Permission for photo library access on iOS
+      },
+      "googleServicesFile": "./ios/GoogleService-Info.plist", // Add this line
+      "bundleIdentifier": "com.bethea28.rn-starter",
+      "config": {
+        "googleSignIn": {
+          "reservedClientId": "743443225844-tg0083sojer7e57dlj91q1eg3s4qqnhn.apps.googleusercontent.com"
+        }
       }
     },
     "android": {
@@ -33,6 +41,12 @@
     },
     "plugins": [
       "expo-router",
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.743443225844-tg0083sojer7e57dlj91q1eg3s4qqnhn"
+        }
+      ],
       [
         "expo-splash-screen",
         {
