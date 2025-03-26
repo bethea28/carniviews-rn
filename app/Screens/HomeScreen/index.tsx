@@ -72,7 +72,6 @@ export function HomeScreen() {
           data={allCompanies}
           renderItem={renderItem}
         />
-        <SocialLoginScreen />
       </View>
     </View>
   );

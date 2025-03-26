@@ -1,4 +1,4 @@
-import { Pressable, Text, View } from "react-native";
+import { Pressable, Text, View, Alert } from "react-native";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { Provider } from "react-redux";
@@ -26,6 +26,12 @@ import { DetailsScreen } from "./Screens/DetailsScreen";
 import { ReviewScreen } from "./Screens/ReviewScreen";
 import { AddReviewScreen } from "./Screens/AddReviewScreen";
 import { BusinessHours } from "./Screens/BusinessHours";
+import { SocialLoginScreen } from "./Screens/SocialLoginScreen";
+import {
+  GoogleSignin,
+  statusCodes,
+} from "@react-native-google-signin/google-signin";
+
 // WebView Component
 
 const BottomTab = createBottomTabNavigator();
@@ -94,6 +100,8 @@ function MainApp() {
   const [books, setBooks] = React.useState([]);
   const [showHome, setShowHome] = React.useState(false);
   const [user, setUser] = React.useState("");
+  const [userInfo, setUserInfo] = React.useState(null);
+
   React.useEffect(() => {
     // Example: Dispatch an action on component mount
     // dispatch(authorizeUser("the new user is bryan dude"));
@@ -138,19 +146,53 @@ function MainApp() {
     }
   };
 
+  const handleSignIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const response = await GoogleSignin.signIn();
+      setUserInfo(response);
+      console.log("User Info:", response);
+    } catch (error) {
+      console.error("Google Sign-In Error:", error);
+      handleSignInError(error);
+    }
+  };
+
+  const handleSignInError = (error) => {
+    let message = "An unknown error occurred. Please try again.";
+    if (error.code) {
+      switch (error.code) {
+        case statusCodes.SIGN_IN_CANCELLED:
+          message = "Sign-in was cancelled by the user.";
+          break;
+        case statusCodes.IN_PROGRESS:
+          message = "Sign-in is already in progress.";
+          break;
+        case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+          message = "Google Play Services is not available or outdated.";
+          break;
+        default:
+          message = "An error occurred: " + error.message;
+      }
+    }
+    Alert.alert("Sign-In Error", message);
+  };
+
+  console.log("THIS IS MY USER", userInfo);
   return (
     <View style={{ flex: 1 }}>
-      {!user ? (
+      {userInfo?.type === "success" ? (
         // <NavigationContainer>
         <RootStack />
       ) : (
         // </NavigationContainer>
-        <WebViewComp
-          handleViewMessage={handleViewMessage}
-          handleWebViewNavigationStateChange={
-            handleWebViewNavigationStateChange
-          }
-        />
+        // <WebViewComp
+        //   handleViewMessage={handleViewMessage}
+        //   handleWebViewNavigationStateChange={
+        //     handleWebViewNavigationStateChange
+        //   }
+        // />
+        <SocialLoginScreen handleSignIn={handleSignIn} />
       )}
     </View>
   );

@@ -5,8 +5,8 @@ import {
   statusCodes,
 } from "@react-native-google-signin/google-signin";
 
-export function SocialLoginScreen() {
-  const [userInfo, setUserInfo] = useState(null);
+export function SocialLoginScreen({ handleSignIn }) {
+  // const [userInfo, setUserInfo] = useState(null);
 
   useEffect(() => {
     GoogleSignin.configure({
@@ -16,17 +16,17 @@ export function SocialLoginScreen() {
     });
   }, []);
 
-  const signIn = async () => {
-    try {
-      await GoogleSignin.hasPlayServices();
-      const response = await GoogleSignin.signIn();
-      setUserInfo(response);
-      console.log("User Info:", response);
-    } catch (error) {
-      console.error("Google Sign-In Error:", error);
-      handleSignInError(error);
-    }
-  };
+  // const signIn = async () => {
+  //   try {
+  //     await GoogleSignin.hasPlayServices();
+  //     const response = await GoogleSignin.signIn();
+  //     setUserInfo(response);
+  //     console.log("User Info:", response);
+  //   } catch (error) {
+  //     console.error("Google Sign-In Error:", error);
+  //     handleSignInError(error);
+  //   }
+  // };
 
   const handleSignInError = (error) => {
     let message = "An unknown error occurred. Please try again.";
@@ -50,7 +50,7 @@ export function SocialLoginScreen() {
 
   return (
     <View style={{ padding: 20 }}>
-      <Button title="Login with Google" onPress={signIn} />
+      <Button title="Login with Google" onPress={handleSignIn} />
     </View>
   );
 }
