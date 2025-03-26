@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Button, Alert, View } from "react-native";
+import { setUserState } from "@/store/globalState/globalState";
+import { useDispatch } from "react-redux";
 import {
   GoogleSignin,
   statusCodes,
 } from "@react-native-google-signin/google-signin";
 
-export function SocialLoginScreen({ handleSignIn }) {
-  // const [userInfo, setUserInfo] = useState(null);
-
+export function SocialLoginScreen() {
+  const dispatch = useDispatch();
   useEffect(() => {
     GoogleSignin.configure({
       webClientId:
@@ -16,17 +17,15 @@ export function SocialLoginScreen({ handleSignIn }) {
     });
   }, []);
 
-  // const signIn = async () => {
-  //   try {
-  //     await GoogleSignin.hasPlayServices();
-  //     const response = await GoogleSignin.signIn();
-  //     setUserInfo(response);
-  //     console.log("User Info:", response);
-  //   } catch (error) {
-  //     console.error("Google Sign-In Error:", error);
-  //     handleSignInError(error);
-  //   }
-  // };
+  const handleSignIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const response = await GoogleSignin.signIn();
+      dispatch(setUserState(response));
+    } catch (error) {
+      handleSignInError(error);
+    }
+  };
 
   const handleSignInError = (error) => {
     let message = "An unknown error occurred. Please try again.";
