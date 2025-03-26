@@ -224,6 +224,21 @@ export const api = createApi({
     //         };
     //     },;
     // }),
+    googleAuth: build.mutation<any, any>({
+      query: (data) => {
+        console.log("GOOGLE NOW BABY", data);
+        return {
+          url: "authentication/googleAuth/",
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json", // Use JSON
+          },
+          body: JSON.stringify({
+            userData: data,
+          }),
+        };
+      },
+    }),
     addBook: build.mutation<any, any>({
       query: (data) => {
         console.log("dpmt add any books", data);
@@ -345,6 +360,7 @@ export const {
   useGetCompaniesQuery,
   useAddReviewMutation,
   useAddCompanyMutation,
+  useGoogleAuthMutation,
   // useAddBookMutation,
   useGetMyShiftsQuery,
   useGetCalendarDataQuery,

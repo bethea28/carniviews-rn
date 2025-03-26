@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Alert, View } from "react-native";
 import { setUserState } from "@/store/globalState/globalState";
 import { useDispatch } from "react-redux";
+import { useGoogleAuthMutation } from "@/store/api/api";
 import {
   GoogleSignin,
   statusCodes,
@@ -9,6 +10,8 @@ import {
 
 export function SocialLoginScreen() {
   const dispatch = useDispatch();
+  const [googleSignIn] = useGoogleAuthMutation();
+
   useEffect(() => {
     GoogleSignin.configure({
       webClientId:
@@ -21,6 +24,10 @@ export function SocialLoginScreen() {
     try {
       await GoogleSignin.hasPlayServices();
       const response = await GoogleSignin.signIn();
+      // const req = response.json();
+      const jwtResponse = await googleSignIn(response);
+      console.log("NEW RESPONSE OBJH", jwtResponse);
+
       dispatch(setUserState(response));
     } catch (error) {
       handleSignInError(error);

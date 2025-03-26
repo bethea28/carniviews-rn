@@ -11,7 +11,6 @@ export const counterSlice = createSlice({
   initialState,
   reducers: {
     setUserState: (state, action) => {
-      console.log("user info now good", action);
       state.userState = action.payload;
       // Redux Toolkit allows us to write "mutating" logic in reducers. It
       // doesn't actually mutate the state because it uses the Immer library,
