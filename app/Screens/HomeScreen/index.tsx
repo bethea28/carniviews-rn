@@ -10,7 +10,7 @@ import React, { useState } from "react";
 import { CompanyCard } from "@/app/Components/CardComponent";
 import { useNavigation } from "@react-navigation/native";
 import { useGetCompaniesQuery } from "@/store/api/api";
-
+import { SocialLoginScreen } from "../SocialLoginScreen";
 export function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
@@ -72,6 +72,7 @@ export function HomeScreen() {
           data={allCompanies}
           renderItem={renderItem}
         />
+        <SocialLoginScreen />
       </View>
     </View>
   );

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "389796448834",
+    "project_id": "carniviews",
+    "storage_bucket": "carniviews.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:389796448834:android:6b01b6090e56e14220bbdb",
+        "android_client_info": {
+          "package_name": "com.bethea28.rnstarter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "389796448834-ejibs65orcjr8khah9oavk8f49t07avi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bethea28.rnstarter",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "389796448834-lokv2d5vt75qbshil74f1t6c8hrajm48.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDb7uPi0x8ZIglrw-1-m30dX8JFHeHzZak"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "389796448834-lokv2d5vt75qbshil74f1t6c8hrajm48.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
