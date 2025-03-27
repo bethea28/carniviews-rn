@@ -11,6 +11,7 @@ import { CompanyCard } from "@/app/Components/CardComponent";
 import { useNavigation } from "@react-navigation/native";
 import { useGetCompaniesQuery } from "@/store/api/api";
 import { SocialLoginScreen } from "../SocialLoginScreen";
+import { useAsyncStorage } from "@/app/customHooks";
 export function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
@@ -21,7 +22,7 @@ export function HomeScreen() {
     error,
     refetch,
   } = useGetCompaniesQuery();
-
+  const [getData] = useAsyncStorage();
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
@@ -50,12 +51,15 @@ export function HomeScreen() {
   if (isError) {
     return <Text>Error...</Text>;
   }
-
+  const test = async () => {
+    const final = await getData("tokens");
+    console.log("my tokens", final);
+  };
   return (
     <View style={styles.container}>
       <View style={styles.buttonContainer}>
-        <Pressable style={styles.button}>
-          <Text style={styles.buttonText}>Add Company</Text>
+        <Pressable onPress={test} style={styles.button}>
+          <Text style={styles.buttonText}>Add Token</Text>
         </Pressable>
         <Pressable
           onPress={() => navigation.navigate("AddCompany")}

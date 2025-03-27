@@ -7,6 +7,9 @@ import {
   GoogleSignin,
   statusCodes,
 } from "@react-native-google-signin/google-signin";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import jwt_decode from "jwt-decode";
+import { useAsyncStorage } from "@/app/customHooks";
 
 export function SocialLoginScreen() {
   const dispatch = useDispatch();
@@ -19,15 +22,18 @@ export function SocialLoginScreen() {
       offlineAccess: true,
     });
   }, []);
-
+  const [storeData, getData] = useAsyncStorage();
   const handleSignIn = async () => {
     try {
       await GoogleSignin.hasPlayServices();
       const response = await GoogleSignin.signIn();
       // const req = response.json();
       const jwtResponse = await googleSignIn(response);
-      console.log("NEW RESPONSE OBJH", jwtResponse);
-
+      // const decode = jwt_decode(jwtResponse.data.tokens.access);
+      console.log("NEW RESPONSE OBJH", jwtResponse?.data);
+      // console.log("NEW test", decode);
+      const formattedJwt = jwtResponse.data;
+      storeData("tokens", formattedJwt);
       dispatch(setUserState(response));
     } catch (error) {
       handleSignInError(error);
@@ -53,7 +59,8 @@ export function SocialLoginScreen() {
     }
     Alert.alert("Sign-In Error", message);
   };
-
+  // const tokens = getData();
+  console.log("here are tokens now");
   return (
     <View style={{ padding: 20 }}>
       <Button title="Login with Google" onPress={handleSignIn} />

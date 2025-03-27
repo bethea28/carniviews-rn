@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import * as ImagePicker from "expo-image-picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const useImagePicker = () => {
   const [allImages, setAllImages] = useState([]);
@@ -60,4 +61,29 @@ export const timeConvert = (isoString) => {
   });
   console.log(formattedTime); // Output: "6:15 PM"
   return formattedTime;
+};
+export const useAsyncStorage = () => {
+  const storeData = async (key, value) => {
+    console.log("storeData called with key:", key, "value:", value); // Debugging log
+    try {
+      const finalVal = JSON.stringify(value);
+      await AsyncStorage.setItem(key, finalVal);
+    } catch (e) {
+      console.log("store erorr", e);
+    }
+  };
+  const getData = async (key) => {
+    console.log("getData called with key:", key); // Debugging log
+    try {
+      const value = await AsyncStorage.getItem(key);
+      const parsed = JSON.parse(value);
+      console.log("parsed value: ", parsed);
+      return parsed;
+    } catch (e) {
+      console.log("get erorr", e);
+      console.log("e", e);
+      return null;
+    }
+  };
+  return [storeData, getData];
 };
