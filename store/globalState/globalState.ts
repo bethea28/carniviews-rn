@@ -44,8 +44,16 @@ export const counterSlice = createSlice({
     setGlobalBusinessHours: (state, action) => {
       console.log("bryan hours payload", action);
       const payLoad = action.payload;
-      state.businessHours[payLoad.index][payLoad.event] = payLoad.time;
-      // state.value += action.payload;
+      const finalHours = { ...state.businessHours };
+      finalHours[payLoad.index][payLoad.event] = payLoad.finalTime;
+      state.businessHours = finalHours;
+      // state.businessHours = {
+      //   ...state.businessHours, // Create a shallow copy of businessHours
+      //   [payLoad.index]: {
+      //     ...state.businessHours[payLoad.index], // Create a shallow copy of the day's hours
+      //     [payLoad.event]: payLoad.finalTime, // Update the specific event (open/close)
+      //   },
+      // };
     },
   },
 });

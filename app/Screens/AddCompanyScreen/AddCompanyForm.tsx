@@ -39,7 +39,7 @@ export function AddCompanyForm({
       photos: [],
     },
   });
-
+  const [hoursComp, setShowHoursComp] = React.useState(false);
   const navigation = useNavigation();
   const bizHours = useSelector((state) => state.counter.businessHours); // Assuming your slice is named 'userSlice'
   console.log("USER BIZ HOURS", bizHours);
@@ -147,7 +147,7 @@ export function AddCompanyForm({
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-              onPress={setModalVis}
+              onPress={() => setShowHoursComp((prevState) => !prevState)}
               placeholder="Hours"
               placeholderTextColor="black"
               onBlur={onBlur}
@@ -158,12 +158,15 @@ export function AddCompanyForm({
           )}
           name="hours"
         />
-        <BusinessHours
-          closeView={() => {}}
-          defaultBusinessHours={hoursData}
-          hoursData={hoursData}
+
+        {hoursComp && (
+          <BusinessHours
+          // closeView={() => {}}
+          // defaultBusinessHours={hoursData}
+          // hoursData={hoursData}
           // stale={true}
-        />
+          />
+        )}
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
