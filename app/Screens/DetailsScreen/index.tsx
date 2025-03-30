@@ -26,7 +26,7 @@ const ImageDetails = ({ params }) => (
     }}
   >
     <Text style={{ fontSize: 20, marginBottom: 20 }}>
-      {params.businessName}
+      {params?.businessName}
     </Text>
     <Pressable
       style={({ pressed }) => [
@@ -56,7 +56,7 @@ const BasicDetails = ({ params }) => (
         uri: "https://www.rollingstone.com/wp-content/uploads/2022/02/0001x.jpg?w=1581&h=1054&crop=1&s",
       }}
     />
-    <Text>{params.companyInfo.description}</Text>
+    <Text>{params?.companyInfo.description}</Text>
   </View>
 );
 const DescriptionDetails = ({ params }) => (
@@ -184,8 +184,8 @@ const Recommend = ({ params }) => (
 
 export function DetailsScreen({ route: { params } }) {
   const navigation = useNavigation();
-  console.log("COMPANY DETAILS INFO", params);
-  console.log("hours", params.hoursData);
+  // console.log("COMPANY DETAILS INFO", params);
+  // console.log("hours", params.hoursData);
   return (
     <ScrollView style={{ padding: 20 }}>
       <ImageDetails params={params} />

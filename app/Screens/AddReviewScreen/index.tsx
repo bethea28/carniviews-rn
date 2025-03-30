@@ -13,6 +13,8 @@ import { useForm, Controller } from "react-hook-form";
 import { useAddReviewMutation } from "@/store/api/api";
 import StarRating from "react-native-star-rating-widget";
 import { useSelector } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
+import { StackActions } from "@react-navigation/native";
 
 const StarRate = ({ changeRating, rating, styles }) => {
   return <StarRating style={styles} rating={rating} onChange={changeRating} />;
@@ -21,6 +23,8 @@ const StarRate = ({ changeRating, rating, styles }) => {
 export function AddReviewScreen({ route }) {
   const [addReview] = useAddReviewMutation();
   const [rating, setRating] = React.useState(0);
+  const navigation = useNavigation();
+
   const {
     control,
     handleSubmit,
@@ -41,6 +45,8 @@ export function AddReviewScreen({ route }) {
         companyId: route.params.companyData.id,
       };
       addReview(final);
+
+      navigation.dispatch(StackActions.pop());
     } catch (error) {
       console.log("error", error);
     } finally {

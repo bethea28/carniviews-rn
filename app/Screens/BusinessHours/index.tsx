@@ -33,58 +33,61 @@ export function BusinessHours({ staleHours, stale }) {
   // const keys =
   return (
     <ScrollView style={{ padding: 20 }}>
-      {Object.keys(businessData).map((dayKey, key) => (
-        <View
-          key={key}
-          style={{
-            flexDirection: "row",
-            backgroundColor: "red",
-            marginTop: 10,
-            padding: 20,
-          }}
-        >
-          <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 12, textAlign: "center" }}>
-              {businessData[dayKey]?.day}
-            </Text>
-
-            <Pressable
-              disabled={stale}
-              onPress={() => showDatePicker("open", key)}
-              style={({ pressed }) => ({
-                backgroundColor: pressed ? "blue" : "yellow",
-                flexDirection: "row",
-                justifyContent: "space-between",
-              })}
-            >
-              <Text style={{ fontSize: 12 }}>Open</Text>
-              <Text style={{ fontSize: 12 }}>{businessData[dayKey]?.open}</Text>
-            </Pressable>
-
-            <Pressable
-              disabled={stale}
-              onPress={() => showDatePicker("close", key)}
-              style={({ pressed }) => ({
-                backgroundColor: pressed ? "yellow" : "pink",
-                flexDirection: "row",
-                justifyContent: "space-between",
-              })}
-            >
-              <Text style={{ fontSize: 12 }}>Close</Text>
-              <Text style={{ fontSize: 12 }}>
-                {businessData[dayKey]?.close}
+      {businessData &&
+        Object.keys(businessData).map((dayKey, key) => (
+          <View
+            key={key}
+            style={{
+              flexDirection: "row",
+              backgroundColor: "red",
+              marginTop: 10,
+              padding: 20,
+            }}
+          >
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 12, textAlign: "center" }}>
+                {businessData[dayKey]?.day}
               </Text>
-            </Pressable>
-          </View>
 
-          <DateTimePickerModal
-            isVisible={datePickViz}
-            mode="time"
-            onConfirm={handleConfirm}
-            onCancel={hideDatePicker}
-          />
-        </View>
-      ))}
+              <Pressable
+                disabled={stale}
+                onPress={() => showDatePicker("open", key)}
+                style={({ pressed }) => ({
+                  backgroundColor: pressed ? "blue" : "yellow",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                })}
+              >
+                <Text style={{ fontSize: 12 }}>Open</Text>
+                <Text style={{ fontSize: 12 }}>
+                  {businessData[dayKey]?.open}
+                </Text>
+              </Pressable>
+
+              <Pressable
+                disabled={stale}
+                onPress={() => showDatePicker("close", key)}
+                style={({ pressed }) => ({
+                  backgroundColor: pressed ? "yellow" : "pink",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                })}
+              >
+                <Text style={{ fontSize: 12 }}>Close</Text>
+                <Text style={{ fontSize: 12 }}>
+                  {businessData[dayKey]?.close}
+                </Text>
+              </Pressable>
+            </View>
+
+            <DateTimePickerModal
+              isVisible={datePickViz}
+              mode="time"
+              onConfirm={handleConfirm}
+              onCancel={hideDatePicker}
+            />
+          </View>
+        ))}
     </ScrollView>
   );
 }
