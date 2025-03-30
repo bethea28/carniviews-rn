@@ -11,11 +11,12 @@ import { useAddCompanyMutation } from "@/store/api/api";
 import { AddCompanyForm } from "./AddCompanyForm";
 import { BusinessHoursModal } from "./BusinessHoursModal";
 import { useNavigation } from "@react-navigation/native";
+import { useSelector, useDispatch } from "react-redux";
 
 const ModalItem = ({ modalVis, hideModal }) => {
   return (
     <Modal transparent={true} visible={modalVis} animationType="slide">
-      <BusinessHoursModal hoursData closeView={hideModal} />
+      <BusinessHoursModal closeView={hideModal} />
     </Modal>
   );
 };
@@ -41,9 +42,21 @@ export function AddCompanyScreen() {
   const [addCompany] = useAddCompanyMutation();
   const [modalVis, setModalVis] = React.useState(false);
   const [hoursData, setHoursData] = React.useState({});
+  const userData = useSelector((state) => state.counter.userState); // Assuming your slice is named 'userSlice'
+  const dispatch = useDispatch();
+  // dispatch(setBusinessHours(hours));
+
   const navigation = useNavigation();
   const onSubmit = async (data) => {
-    const finalData = { companyInfo: data, allImages, hoursData };
+    console.log("all my hours data", hoursData);
+    const finalData = {
+      companyInfo: data,
+      allImages,
+      hoursData,
+      userId: userData?.data?.user?.user_id,
+    };
+
+    console.log("ALL DATA NOW SUBMIT", data);
     addCompany(finalData);
     reset();
     navigation.navigate("Home");
@@ -58,6 +71,7 @@ export function AddCompanyScreen() {
     console.log("add phoes");
     pickImages();
   };
+  console.log("USER DATA NOW", userData.data.user.user_id);
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -66,6 +80,7 @@ export function AddCompanyScreen() {
       <AddCompanyForm
         setModalVis={() => setModalVis(true)}
         onSubmit={onSubmit}
+        hoursData={hoursData}
         addPhotos={addPhotos}
       />
       <BusinessHoursModal modalVis={modalVis} hideModal={handleModalClose} />

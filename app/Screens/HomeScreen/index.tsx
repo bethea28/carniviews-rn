@@ -55,10 +55,15 @@ export function HomeScreen() {
     const final = await getData("tokens");
     console.log("my tokens", final);
   };
+
+  console.log("all companies", allCompanies);
   return (
     <View style={styles.container}>
       <View style={styles.buttonContainer}>
-        <Pressable onPress={test} style={styles.button}>
+        <Pressable
+          onPress={() => navigation.navigate("AddCompany")}
+          style={styles.button}
+        >
           <Text style={styles.buttonText}>Add Token</Text>
         </Pressable>
         <Pressable

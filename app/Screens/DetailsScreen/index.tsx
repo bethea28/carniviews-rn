@@ -11,6 +11,7 @@ import { CompanyCard } from "@/app/Components/CardComponent";
 import { companyObjects } from "@/mockData";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
+import { BusinessHours } from "../BusinessHours";
 
 const ImageDetails = ({ params }) => (
   <ImageBackground
@@ -40,28 +41,28 @@ const ImageDetails = ({ params }) => (
     </Pressable>
   </ImageBackground>
 );
-const BasicDetails = () => (
+const BasicDetails = ({ params }) => (
   <View
     style={{
       backgroundColor: "red",
-      flexDirection: "row",
-      justifyContent: "space-around",
+      // flexDirection: "row",
+      // justifyContent: "space-around",
       marginTop: 20,
     }}
   >
-    <Text>Description</Text>
     <Image
-      style={{ width: 75, height: 75, borderRadius: 100 }}
+      style={{ borderRadius: 100 }}
       source={{
         uri: "https://www.rollingstone.com/wp-content/uploads/2022/02/0001x.jpg?w=1581&h=1054&crop=1&s",
       }}
     />
+    <Text>{params.companyInfo.description}</Text>
   </View>
 );
 const DescriptionDetails = ({ params }) => (
   <View style={{ marginTop: 10 }}>
     <Text>Info Details</Text>
-    <Text>{params.description}</Text>
+    {/* <Text>{params.companyInfo.description}</Text> */}
   </View>
 );
 
@@ -169,11 +170,13 @@ const Recommend = ({ params }) => (
 
 export function DetailsScreen({ route: { params } }) {
   const navigation = useNavigation();
+  console.log("all company params,", params);
   return (
     <ScrollView style={{ padding: 20 }}>
       <ImageDetails params={params} />
       <DescriptionDetails params={params} />
       <BasicDetails params={params} />
+      <BusinessHours stale={true} />
       <Recommend params={params} />
     </ScrollView>
   );

@@ -28,13 +28,13 @@ export function SocialLoginScreen() {
       await GoogleSignin.hasPlayServices();
       const response = await GoogleSignin.signIn();
       // const req = response.json();
-      const jwtResponse = await googleSignIn(response);
+      const fullUserResponse = await googleSignIn(response);
       // const decode = jwt_decode(jwtResponse.data.tokens.access);
-      console.log("NEW RESPONSE OBJH", jwtResponse?.data);
+      console.log("NEW RESPONSE OBJH", fullUserResponse);
       // console.log("NEW test", decode);
-      const formattedJwt = jwtResponse.data;
+      const formattedJwt = fullUserResponse.data;
       storeData("tokens", formattedJwt);
-      dispatch(setUserState(response));
+      dispatch(setUserState(fullUserResponse));
     } catch (error) {
       handleSignInError(error);
     }

@@ -274,8 +274,10 @@ export const api = createApi({
     }),
     addCompany: build.mutation<any, any>({
       query: (data) => {
+        console.log("ADD COMPANY API", data);
+        const userId = data?.userId;
         return {
-          url: "company/addCompany/",
+          url: `company/${userId}/addCompany/`,
           method: "POST",
           headers: {
             "Content-Type": "application/json", // Use JSON

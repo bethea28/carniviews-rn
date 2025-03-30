@@ -55,7 +55,7 @@ function RootStack() {
   return (
     <StackNav.Navigator>
       <StackNav.Screen
-        name="ProfileScreen"
+        name="Home"
         component={MyBottomTabs}
         options={{ headerShown: false }}
       />
@@ -98,7 +98,6 @@ function MainApp() {
   const [showHome, setShowHome] = React.useState(false);
   const [user, setUser] = React.useState("");
   const userData = useSelector((state) => state.counter.userState); // Assuming your slice is named 'userSlice'
-  const [googleSignIn] = useGoogleAuthMutation();
   React.useEffect(() => {
     // Example: Dispatch an action on component mount
     // dispatch(authorizeUser("the new user is bryan dude"));
@@ -134,7 +133,6 @@ function MainApp() {
 
       console.log("User Dat received:", userData);
       // setUser(userData);
-      googleSignIn(userData);
       dispatch(setUserData({ userData }));
       // Use the received user data (e.g., update state, navigate)
       // Example: Dispatch an action with the user data
@@ -143,10 +141,10 @@ function MainApp() {
       console.error("Error parsing user data:", error);
     }
   };
-
+  console.log("ALL USER FINAL DATA", userData);
   return (
     <View style={{ flex: 1 }}>
-      {userData?.type === "success" ? (
+      {userData?.data?.message?.includes("successful") ? (
         // <NavigationContainer>
         <RootStack />
       ) : (

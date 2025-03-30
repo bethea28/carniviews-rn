@@ -12,8 +12,15 @@ import {
 } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
+import { BusinessHours } from "../BusinessHours";
 
-export function AddCompanyForm({ onSubmit, setModalVis, addPhotos }) {
+import { useSelector } from "react-redux";
+export function AddCompanyForm({
+  onSubmit,
+  setModalVis,
+  addPhotos,
+  hoursData,
+}) {
   const {
     control,
     handleSubmit,
@@ -34,7 +41,8 @@ export function AddCompanyForm({ onSubmit, setModalVis, addPhotos }) {
   });
 
   const navigation = useNavigation();
-
+  const bizHours = useSelector((state) => state.counter.businessHours); // Assuming your slice is named 'userSlice'
+  console.log("USER BIZ HOURS", bizHours);
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -150,7 +158,12 @@ export function AddCompanyForm({ onSubmit, setModalVis, addPhotos }) {
           )}
           name="hours"
         />
-
+        <BusinessHours
+          closeView={() => {}}
+          defaultBusinessHours={hoursData}
+          hoursData={hoursData}
+          // stale={true}
+        />
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
