@@ -42,7 +42,6 @@ export function AddCompanyForm({
   const [hoursComp, setShowHoursComp] = React.useState(false);
   const navigation = useNavigation();
   const bizHours = useSelector((state) => state.counter.businessHours); // Assuming your slice is named 'userSlice'
-  console.log("USER BIZ HOURS", bizHours);
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -159,14 +158,7 @@ export function AddCompanyForm({
           name="hours"
         />
 
-        {hoursComp && (
-          <BusinessHours
-          // closeView={() => {}}
-          // defaultBusinessHours={hoursData}
-          // hoursData={hoursData}
-          // stale={true}
-          />
-        )}
+        {hoursComp && <BusinessHours />}
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (

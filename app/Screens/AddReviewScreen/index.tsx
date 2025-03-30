@@ -12,12 +12,13 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import { useAddReviewMutation } from "@/store/api/api";
 import StarRating from "react-native-star-rating-widget";
+import { useSelector } from "react-redux";
 
 const StarRate = ({ changeRating, rating, styles }) => {
   return <StarRating style={styles} rating={rating} onChange={changeRating} />;
 };
 
-export function AddReviewScreen() {
+export function AddReviewScreen({ route }) {
   const [addReview] = useAddReviewMutation();
   const [rating, setRating] = React.useState(0);
   const {
@@ -30,10 +31,15 @@ export function AddReviewScreen() {
       review: "",
     },
   });
-
+  const userData = useSelector((state) => state.counter.userState);
   const onSubmit = async (data) => {
     try {
-      const final = { review: data.review, rating };
+      const final = {
+        review: data.review,
+        rating,
+        userId: userData.data.user.user_id,
+        companyId: route.params.companyData.id,
+      };
       addReview(final);
     } catch (error) {
       console.log("error", error);
@@ -41,7 +47,8 @@ export function AddReviewScreen() {
       reset();
     }
   };
-
+  console.log("user data reve", userData.data.user.user_id);
+  console.log("COMPANY DATA", route.params.companyData.id);
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}

@@ -41,8 +41,8 @@ export function AddCompanyScreen() {
   const { pickImages, allImages } = useImagePicker();
   const [addCompany] = useAddCompanyMutation();
   const [modalVis, setModalVis] = React.useState(false);
-  const [hoursData, setHoursData] = React.useState({});
   const userData = useSelector((state) => state.counter.userState); // Assuming your slice is named 'userSlice'
+  const hoursData = useSelector((state) => state.counter.businessHours); // Assuming your slice is named 'userSlice'
   const dispatch = useDispatch();
   // dispatch(setBusinessHours(hours));
 
@@ -62,16 +62,10 @@ export function AddCompanyScreen() {
     navigation.navigate("Home");
   };
 
-  const handleModalClose = (hourlyData) => {
-    setHoursData(hourlyData);
-    setModalVis(false);
-  };
-
   const addPhotos = () => {
     console.log("add phoes");
     pickImages();
   };
-  console.log("USER DATA NOW", userData.data.user.user_id);
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -83,7 +77,7 @@ export function AddCompanyScreen() {
         hoursData={hoursData}
         addPhotos={addPhotos}
       />
-      <BusinessHoursModal modalVis={modalVis} hideModal={handleModalClose} />
+      {/* <BusinessHoursModal modalVis={modalVis} hideModal={handleModalClose} /> */}
     </KeyboardAvoidingView>
   );
 }

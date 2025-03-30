@@ -260,12 +260,12 @@ export const api = createApi({
       query: (data) => {
         console.log("data is king add revieww", data);
         return {
-          url: "reviews/",
+          url: `reviews/${data.userId}/${data.companyId}/addReview/`,
           method: "POST",
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
           },
-          body: objectToUrlEncodedString({
+          body: JSON.stringify({
             rating: data.rating,
             review: data.review,
           }),
@@ -274,7 +274,6 @@ export const api = createApi({
     }),
     addCompany: build.mutation<any, any>({
       query: (data) => {
-        console.log("ADD COMPANY API", data);
         const userId = data?.userId;
         return {
           url: `company/${userId}/addCompany/`,

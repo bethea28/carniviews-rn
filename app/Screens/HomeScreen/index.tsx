@@ -12,6 +12,8 @@ import { useNavigation } from "@react-navigation/native";
 import { useGetCompaniesQuery } from "@/store/api/api";
 import { SocialLoginScreen } from "../SocialLoginScreen";
 import { useAsyncStorage } from "@/app/customHooks";
+import { useSelector } from "react-redux";
+
 export function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
@@ -23,6 +25,7 @@ export function HomeScreen() {
     refetch,
   } = useGetCompaniesQuery();
   const [getData] = useAsyncStorage();
+  const userData = useSelector((state) => state.counter.userData);
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
@@ -56,7 +59,6 @@ export function HomeScreen() {
     console.log("my tokens", final);
   };
 
-  console.log("all companies", allCompanies);
   return (
     <View style={styles.container}>
       <View style={styles.buttonContainer}>

@@ -6,7 +6,7 @@ import { timeConvert } from "@/app/customHooks";
 import { setGlobalBusinessHours } from "@/store/globalState/globalState";
 import { useDispatch, useSelector } from "react-redux";
 
-export function BusinessHours({ closeView, stale }) {
+export function BusinessHours({ staleHours, stale }) {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [index, setIndex] = useState(0);
@@ -29,10 +29,11 @@ export function BusinessHours({ closeView, stale }) {
     dispatch(setGlobalBusinessHours({ index, event, finalTime }));
     hideDatePicker();
   };
-
+  const businessData = stale === true ? staleHours : bizHour;
+  // const keys =
   return (
     <ScrollView style={{ padding: 20 }}>
-      {Object.keys(bizHour).map((dayKey, key) => (
+      {Object.keys(businessData).map((dayKey, key) => (
         <View
           key={key}
           style={{
@@ -44,7 +45,7 @@ export function BusinessHours({ closeView, stale }) {
         >
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 12, textAlign: "center" }}>
-              {bizHour[dayKey]?.day}
+              {businessData[dayKey]?.day}
             </Text>
 
             <Pressable
@@ -57,7 +58,7 @@ export function BusinessHours({ closeView, stale }) {
               })}
             >
               <Text style={{ fontSize: 12 }}>Open</Text>
-              <Text style={{ fontSize: 12 }}>{bizHour[dayKey]?.open}</Text>
+              <Text style={{ fontSize: 12 }}>{businessData[dayKey]?.open}</Text>
             </Pressable>
 
             <Pressable
@@ -70,7 +71,9 @@ export function BusinessHours({ closeView, stale }) {
               })}
             >
               <Text style={{ fontSize: 12 }}>Close</Text>
-              <Text style={{ fontSize: 12 }}>{bizHour[dayKey]?.close}</Text>
+              <Text style={{ fontSize: 12 }}>
+                {businessData[dayKey]?.close}
+              </Text>
             </Pressable>
           </View>
 

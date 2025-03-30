@@ -66,7 +66,7 @@ const DescriptionDetails = ({ params }) => (
   </View>
 );
 
-const Actions = ({ camera, action, header }) => {
+const Actions = ({ camera, action, header, params }) => {
   const [image, setImage] = React.useState<string | null>(null);
 
   const navigate = useNavigation();
@@ -89,11 +89,15 @@ const Actions = ({ camera, action, header }) => {
     }
   };
 
-  console.log("show me the image now", image?.length);
+  // console.log("show me the image now", params);
   return (
     <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
       <Pressable
-        onPress={camera ? pickImage : () => navigate.navigate(action)}
+        onPress={
+          camera
+            ? pickImage
+            : () => navigate.navigate(action, { companyData: params })
+        }
         style={({ pressed }) => [
           {
             borderRadius: 100,
@@ -162,21 +166,32 @@ const Recommend = ({ params }) => (
         marginTop: 20,
       }}
     >
-      <Actions camera={false} header="Add Review" action="AddReviews" />
-      <Actions camera={true} header="Add Photo" action="AddReviews" />
+      <Actions
+        params={params}
+        camera={false}
+        header="Add Review"
+        action="AddReviews"
+      />
+      <Actions
+        params={params}
+        camera={true}
+        header="Add Photo"
+        action="AddPhotos"
+      />
     </View>
   </View>
 );
 
 export function DetailsScreen({ route: { params } }) {
   const navigation = useNavigation();
-  console.log("all company params,", params);
+  console.log("COMPANY DETAILS INFO", params);
+  console.log("hours", params.hoursData);
   return (
     <ScrollView style={{ padding: 20 }}>
       <ImageDetails params={params} />
       <DescriptionDetails params={params} />
       <BasicDetails params={params} />
-      <BusinessHours stale={true} />
+      <BusinessHours staleHours={params?.hoursData} stale={true} />
       <Recommend params={params} />
     </ScrollView>
   );
