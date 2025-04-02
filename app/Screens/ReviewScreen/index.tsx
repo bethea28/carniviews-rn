@@ -27,7 +27,7 @@ export function ReviewScreen({ route: { params } }) {
     getReviews();
   }, []);
   return (
-    <View style={{ flex: 1, padding: 20 }}>
+    <View style={{ flex: 1 }}>
       <TabComponent />
       <Pressable
         onPress={() => navigation.navigate("AddReviews")}
@@ -37,8 +37,8 @@ export function ReviewScreen({ route: { params } }) {
       >
         <Text> Add Review</Text>
       </Pressable>
-      {/* <Text>review screen</Text>
-      {/* {allCompanyReviews?.reviews.map((review) => {
+      <Text>review screen</Text>
+      {allCompanyReviews?.reviews.map((review) => {
         return (
           <View style={{ marginTop: 10, backgroundColor: "yellow" }}>
             <Text>Review: {review.review}</Text>
@@ -46,7 +46,7 @@ export function ReviewScreen({ route: { params } }) {
             <Text>Display Name: {review.displayName}</Text>
           </View>
         );
-      })} */}
+      })}
     </View>
   );
 }
