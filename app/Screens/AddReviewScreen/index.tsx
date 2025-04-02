@@ -53,8 +53,8 @@ export function AddReviewScreen({ route }) {
       reset();
     }
   };
-  console.log("user data reve", userData.data.user.user_id);
-  console.log("COMPANY DATA", route.params.companyData.id);
+  // console.log("user data reve", userData.data.user.user_id);
+  // console.log("COMPANY DATA", route.params.companyData.id);
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}

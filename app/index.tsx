@@ -61,7 +61,11 @@ function RootStack() {
       />
       <StackNav.Screen name="AddCompany" component={AddCompanyScreen} />
       <StackNav.Screen name="Details" component={DetailsScreen} />
-      <StackNav.Screen name="Reviews" component={ReviewScreen} />
+      <StackNav.Screen
+        // options={{ headerShown: false }}
+        name="Reviews"
+        component={ReviewScreen}
+      />
       <StackNav.Screen name="BusinessHours" component={BusinessHours} />
       <StackNav.Screen name="AddReviews" component={AddReviewScreen} />
     </StackNav.Navigator>

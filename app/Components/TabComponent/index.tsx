@@ -1,59 +1,40 @@
-import React from "react";
-import { View, StyleSheet, ListRenderItem } from "react-native";
-import { Tabs } from "react-native-collapsible-tab-view";
+import * as React from "react";
+import { View, useWindowDimensions } from "react-native";
+import { TabView, SceneMap } from "react-native-tab-view";
 
-const HEADER_HEIGHT = 250;
+const FirstRoute = () => (
+  <View style={{ flex: 1, backgroundColor: "#ff4081" }} />
+);
 
-const DATA = [0, 1, 2, 3, 4];
-const identity = (v: unknown): string => v + "";
+const SecondRoute = () => (
+  <View style={{ flex: 1, backgroundColor: "#673ab7" }} />
+);
+const ThirdRoute = () => (
+  <View style={{ flex: 1, backgroundColor: "yellow" }} />
+);
 
-const Header = () => {
-  return <View style={styles.header} />;
-};
+const renderScene = SceneMap({
+  first: FirstRoute,
+  second: SecondRoute,
+  third: ThirdRoute,
+});
 
-export const TabComponent: React.FC = () => {
-  const renderItem: ListRenderItem<number> = React.useCallback(({ index }) => {
-    return (
-      <View style={[styles.box, index % 2 === 0 ? styles.boxB : styles.boxA]} />
-    );
-  }, []);
+const routes = [
+  { key: "first", title: "First" },
+  { key: "second", title: "Second" },
+  { key: "third", title: "Third" },
+];
 
+export const TabComponent = () => {
+  const layout = useWindowDimensions();
+  const [index, setIndex] = React.useState(0);
+  console.log("test this now");
   return (
-    <Tabs.Container
-      renderHeader={Header}
-      headerHeight={HEADER_HEIGHT} // optional
-    >
-      <Tabs.Tab name="A">
-        <Tabs.FlatList
-          data={DATA}
-          renderItem={renderItem}
-          keyExtractor={identity}
-        />
-      </Tabs.Tab>
-      <Tabs.Tab name="B">
-        <Tabs.ScrollView>
-          <View style={[styles.box, styles.boxA]} />
-          <View style={[styles.box, styles.boxB]} />
-        </Tabs.ScrollView>
-      </Tabs.Tab>
-    </Tabs.Container>
+    <TabView
+      navigationState={{ index, routes }}
+      renderScene={renderScene}
+      onIndexChange={setIndex}
+      initialLayout={{ width: layout.width }}
+    />
   );
 };
-
-const styles = StyleSheet.create({
-  box: {
-    height: 250,
-    width: "100%",
-  },
-  boxA: {
-    backgroundColor: "white",
-  },
-  boxB: {
-    backgroundColor: "#D8D8D8",
-  },
-  header: {
-    height: HEADER_HEIGHT,
-    width: "100%",
-    backgroundColor: "#2196f3",
-  },
-});
