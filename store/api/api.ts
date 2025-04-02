@@ -290,6 +290,12 @@ export const api = createApi({
         };
       },
     }),
+    getReviews: build.query({
+      query: (data) => ({
+        url: `reviews/${data.companyId}/getReviews/`,
+        params: {},
+      }),
+    }),
     getCompanies: build.query({
       query: () => ({
         url: "company/getCompanies/",
@@ -362,6 +368,7 @@ export const {
   useAddReviewMutation,
   useAddCompanyMutation,
   useGoogleAuthMutation,
+  useGetReviewsQuery,
   // useAddBookMutation,
   useGetMyShiftsQuery,
   useGetCalendarDataQuery,

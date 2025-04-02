@@ -34,7 +34,7 @@ export const CompanyCard = ({ title, mainImage, wholeData }) => {
           }}
         >
           <Pressable
-            onPress={() => navigation.navigate("Reviews")}
+            onPress={() => navigation.navigate("Reviews", wholeData)}
             style={({ pressed }) => [
               {
                 backgroundColor: pressed ? "orange" : "green",
