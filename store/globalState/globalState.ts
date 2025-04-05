@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { act } from "react";
 
 const initialState = {
+  companyInfo: {},
   value: 0,
   userState: {},
   businessHours: {
@@ -41,6 +42,17 @@ export const counterSlice = createSlice({
     incrementByAmount: (state, action) => {
       state.value += action.payload;
     },
+    setCompanyInfo: (state, action) => {
+      console.log("set companyinfo BRYAN", action.payload);
+      const updatedCompanyInfo = {
+        ...state.companyInfo,
+        companyId: action.payload.id,
+        hoursData: action.payload.hoursData,
+        companyDescription: action.payload.companyInfo.description,
+      };
+      state.companyInfo = updatedCompanyInfo;
+      // state.value += action.payload;
+    },
     setGlobalBusinessHours: (state, action) => {
       console.log("bryan hours payload", action);
       const payLoad = action.payload;
@@ -65,6 +77,7 @@ export const {
   incrementByAmount,
   setUserState,
   setGlobalBusinessHours,
+  setCompanyInfo,
 } = counterSlice.actions;
 
 export default counterSlice;

@@ -6,13 +6,14 @@ import { timeConvert } from "@/app/customHooks";
 import { setGlobalBusinessHours } from "@/store/globalState/globalState";
 import { useDispatch, useSelector } from "react-redux";
 
-export function BusinessHours({ staleHours, stale }) {
+export function BusinessHours({ addCompany, staleHours, stale }) {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [index, setIndex] = useState(0);
   const [event, setEvent] = useState("open");
   const [datePickViz, setDatePickViz] = useState(false);
   const bizHour = useSelector((state) => state.counter.businessHours);
+  const companyInfo = useSelector((state) => state.counter.companyInfo);
 
   const showDatePicker = (event, index) => {
     setIndex(index);
@@ -29,8 +30,10 @@ export function BusinessHours({ staleHours, stale }) {
     dispatch(setGlobalBusinessHours({ index, event, finalTime }));
     hideDatePicker();
   };
-  const businessData = stale === true ? staleHours : bizHour;
-  // const keys =
+  const businessData = addCompany === true ? bizHour : companyInfo.hoursData;
+  // const isHoursEmpty = Object.keys(companyInfo.hoursData).length === 0;
+
+  console.log("BusinessHours NOW", companyInfo.hoursData);
   return (
     <ScrollView style={{ padding: 20 }}>
       {businessData &&
@@ -50,7 +53,7 @@ export function BusinessHours({ staleHours, stale }) {
               </Text>
 
               <Pressable
-                disabled={stale}
+                disabled={!addCompany}
                 onPress={() => showDatePicker("open", key)}
                 style={({ pressed }) => ({
                   backgroundColor: pressed ? "blue" : "yellow",
@@ -65,7 +68,7 @@ export function BusinessHours({ staleHours, stale }) {
               </Pressable>
 
               <Pressable
-                disabled={stale}
+                disabled={!addCompany}
                 onPress={() => showDatePicker("close", key)}
                 style={({ pressed }) => ({
                   backgroundColor: pressed ? "yellow" : "pink",

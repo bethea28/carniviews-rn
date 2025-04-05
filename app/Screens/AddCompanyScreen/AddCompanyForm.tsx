@@ -158,7 +158,7 @@ export function AddCompanyForm({
           name="hours"
         />
 
-        {hoursComp && <BusinessHours />}
+        {hoursComp && <BusinessHours addCompany={true} />}
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (

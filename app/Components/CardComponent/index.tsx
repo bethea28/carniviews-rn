@@ -2,11 +2,19 @@ import * as React from "react";
 import { Avatar, Button, Card, Text } from "react-native-paper";
 import { Pressable, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { setCompanyInfo } from "@/store/globalState/globalState";
+import { useDispatch, useSelector } from "react-redux";
 
 const LeftContent = (props) => <Avatar.Icon {...props} icon="folder" />;
 
 export const CompanyCard = ({ title, mainImage, wholeData }) => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const handleNavigate = (navIndex) => {
+    console.log("nav index now", navIndex);
+    dispatch(setCompanyInfo(wholeData));
+    navigation.navigate("Info", { wholeData, navIndex });
+  };
   return (
     <Card style={{ marginTop: 20 }}>
       <Card.Content
@@ -34,19 +42,7 @@ export const CompanyCard = ({ title, mainImage, wholeData }) => {
           }}
         >
           <Pressable
-            onPress={() => navigation.navigate("Reviews", wholeData)}
-            style={({ pressed }) => [
-              {
-                backgroundColor: pressed ? "orange" : "green",
-                padding: 10,
-                borderRadius: 20,
-              },
-            ]}
-          >
-            <Text style={{ fontSize: 30 }}>Reviews</Text>
-          </Pressable>
-          <Pressable
-            onPress={() => navigation.navigate("Details", wholeData)}
+            onPress={() => handleNavigate(0)}
             style={({ pressed }) => [
               {
                 backgroundColor: pressed ? "orange" : "green",
@@ -56,6 +52,18 @@ export const CompanyCard = ({ title, mainImage, wholeData }) => {
             ]}
           >
             <Text style={{ fontSize: 30 }}>Details</Text>
+          </Pressable>
+          <Pressable
+            onPress={() => handleNavigate(1)}
+            style={({ pressed }) => [
+              {
+                backgroundColor: pressed ? "orange" : "green",
+                padding: 10,
+                borderRadius: 20,
+              },
+            ]}
+          >
+            <Text style={{ fontSize: 30 }}>Reviews</Text>
           </Pressable>
         </View>
       </Card.Actions>

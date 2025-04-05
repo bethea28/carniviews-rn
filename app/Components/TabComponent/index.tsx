@@ -1,7 +1,10 @@
 import * as React from "react";
 import { View, useWindowDimensions } from "react-native";
 import { TabView, SceneMap } from "react-native-tab-view";
-
+import { ReviewScreen } from "@/app/Screens/ReviewScreen";
+import { DetailsScreen } from "@/app/Screens/DetailsScreen";
+import { BusinessHours } from "@/app/Screens/BusinessHours";
+// import {}
 const FirstRoute = () => (
   <View style={{ flex: 1, backgroundColor: "#ff4081" }} />
 );
@@ -14,21 +17,24 @@ const ThirdRoute = () => (
 );
 
 const renderScene = SceneMap({
-  first: FirstRoute,
-  second: SecondRoute,
-  third: ThirdRoute,
+  first: DetailsScreen,
+  second: ReviewScreen,
+  third: BusinessHours,
 });
 
 const routes = [
-  { key: "first", title: "First" },
-  { key: "second", title: "Second" },
-  { key: "third", title: "Third" },
+  { key: "first", title: "Details" },
+  { key: "second", title: "Reviews" },
+  { key: "third", title: "Hours" },
 ];
 
-export const TabComponent = () => {
+export const TabComponent = ({ navIndex }) => {
   const layout = useWindowDimensions();
   const [index, setIndex] = React.useState(0);
-  console.log("test this now");
+  console.log("test this now", navIndex);
+  React.useEffect(() => {
+    if (navIndex) setIndex(navIndex);
+  }, [navIndex]);
   return (
     <TabView
       navigationState={{ index, routes }}

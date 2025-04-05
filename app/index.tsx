@@ -23,7 +23,7 @@ import { ProfileScreen } from "./Screens/ProfileScreen";
 import { HomeScreen } from "./Screens/HomeScreen";
 import { AddCompanyScreen } from "./Screens/AddCompanyScreen";
 import { DetailsScreen } from "./Screens/DetailsScreen";
-import { ReviewScreen } from "./Screens/ReviewScreen";
+import { InfoScreen } from "./Screens/InfoScreen";
 import { AddReviewScreen } from "./Screens/AddReviewScreen";
 import { BusinessHours } from "./Screens/BusinessHours";
 import { SocialLoginScreen } from "./Screens/SocialLoginScreen";
@@ -38,12 +38,12 @@ function MyBottomTabs() {
   return (
     <BottomTab.Navigator>
       <BottomTab.Screen
-        options={{ headerShown: false }}
+        // options={{ headerShown: false }}
         name="Home"
         component={HomeScreen}
       />
       <BottomTab.Screen
-        options={{ headerShown: false }}
+        // options={{ headerShown: false }}
         name="Profile"
         component={ProfileScreen}
       />
@@ -57,17 +57,25 @@ function RootStack() {
       <StackNav.Screen
         name="Home"
         component={MyBottomTabs}
-        options={{ headerShown: false }}
+        options={{ headerShown: false }} // Keep it here if you want to hide in Home
       />
       <StackNav.Screen name="AddCompany" component={AddCompanyScreen} />
       <StackNav.Screen name="Details" component={DetailsScreen} />
       <StackNav.Screen
-        // options={{ headerShown: false }}
-        name="Reviews"
-        component={ReviewScreen}
+        name="Info"
+        component={InfoScreen}
+        // Remove options={{ headerShown: false }} from here
       />
-      <StackNav.Screen name="BusinessHours" component={BusinessHours} />
-      <StackNav.Screen name="AddReviews" component={AddReviewScreen} />
+      <StackNav.Screen
+        name="BusinessHours"
+        component={BusinessHours}
+        // Remove options={{ headerShown: false }} from here
+      />
+      <StackNav.Screen
+        options={{ headerShown: false }}
+        name="AddReviews"
+        component={AddReviewScreen}
+      />
     </StackNav.Navigator>
   );
 }

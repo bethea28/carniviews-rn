@@ -12,6 +12,7 @@ import { companyObjects } from "@/mockData";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import { BusinessHours } from "../BusinessHours";
+import { useSelector } from "react-redux";
 
 const ImageDetails = ({ params }) => (
   <ImageBackground
@@ -59,10 +60,10 @@ const BasicDetails = ({ params }) => (
     <Text>{params?.companyInfo.description}</Text>
   </View>
 );
-const DescriptionDetails = ({ params }) => (
+const DescriptionDetails = ({ companyInfo }) => (
   <View style={{ marginTop: 10 }}>
     <Text>Info Details</Text>
-    {/* <Text>{params.companyInfo.description}</Text> */}
+    <Text>{companyInfo.companyDescription}</Text>
   </View>
 );
 
@@ -186,12 +187,14 @@ export function DetailsScreen({ route: { params } }) {
   const navigation = useNavigation();
   // console.log("COMPANY DETAILS INFO", params);
   // console.log("hours", params.hoursData);
+  const companyInfo = useSelector((state) => state.counter.companyInfo);
+  console.log("this is company info", companyInfo);
   return (
     <ScrollView style={{ padding: 20 }}>
       <ImageDetails params={params} />
-      <DescriptionDetails params={params} />
-      <BasicDetails params={params} />
-      <BusinessHours staleHours={params?.hoursData} stale={true} />
+      <DescriptionDetails companyInfo={companyInfo} />
+      <BasicDetails />
+      {/* <BusinessHours staleHours={params?.hoursData} stale={true} /> */}
       <Recommend params={params} />
     </ScrollView>
   );
