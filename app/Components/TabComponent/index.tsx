@@ -30,11 +30,8 @@ const routes = [
 
 export const TabComponent = ({ navIndex }) => {
   const layout = useWindowDimensions();
-  const [index, setIndex] = React.useState(0);
-  console.log("test this now", navIndex);
-  React.useEffect(() => {
-    if (navIndex) setIndex(navIndex);
-  }, [navIndex]);
+  const [index, setIndex] = React.useState(navIndex);
+
   return (
     <TabView
       navigationState={{ index, routes }}
