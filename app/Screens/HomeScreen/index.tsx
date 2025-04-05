@@ -5,6 +5,7 @@ import {
   Text,
   RefreshControl,
   StyleSheet,
+  ActivityIndicator,
 } from "react-native";
 import React, { useState } from "react";
 import { CompanyCard } from "@/app/Components/CardComponent";
@@ -13,6 +14,13 @@ import { useGetCompaniesQuery } from "@/store/api/api";
 import { SocialLoginScreen } from "../SocialLoginScreen";
 import { useAsyncStorage } from "@/app/customHooks";
 import { useSelector } from "react-redux";
+
+// Define the color palette based on the image
+const primaryColor = "#a349a4"; // Purple
+const secondaryColor = "#f28e1c"; // Orange
+const backgroundColor = "#f7b767"; // Light Orange
+const textColorPrimary = "#ffffff"; // White
+const textColorSecondary = "#333333"; // Dark Gray (for contrast on light orange)
 
 export function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
@@ -48,11 +56,11 @@ export function HomeScreen() {
   };
 
   if (isLoading) {
-    return <Text>Loading...</Text>;
+    return <Text style={styles.loadingText}>Loading...</Text>;
   }
 
   if (isError) {
-    return <Text>Error...</Text>;
+    return <Text style={styles.errorText}>Error...</Text>;
   }
   const test = async () => {
     const final = await getData("tokens");
@@ -64,24 +72,25 @@ export function HomeScreen() {
       <View style={styles.buttonContainer}>
         <Pressable
           onPress={() => navigation.navigate("AddCompany")}
-          style={styles.button}
+          style={[styles.button, { backgroundColor: primaryColor }]}
         >
-          <Text style={styles.buttonText}>Add Token</Text>
-        </Pressable>
-        <Pressable
-          onPress={() => navigation.navigate("AddCompany")}
-          style={styles.button}
-        >
-          <Text style={styles.buttonText}>Add Company</Text>
+          <Text style={[styles.buttonText, { color: textColorPrimary }]}>
+            Add Company
+          </Text>
         </Pressable>
       </View>
       <View style={styles.listContainer}>
         <FlatList
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              tintColor={primaryColor}
+            />
           }
           data={allCompanies}
           renderItem={renderItem}
+          contentContainerStyle={{ paddingBottom: 20 }}
         />
       </View>
     </View>
@@ -89,18 +98,48 @@ export function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 10 },
+  container: {
+    flex: 1,
+    padding: 15,
+    backgroundColor: backgroundColor,
+  },
   buttonContainer: {
-    alignItems: "flex-end",
     flexDirection: "row",
     justifyContent: "space-around",
+    // marginBottom: 5,
   },
   button: {
-    backgroundColor: "magenta",
-    width: 150,
-    padding: 20,
-    borderRadius: 10,
+    width: "45%",
+    paddingVertical: 12,
+    borderRadius: 8,
+    elevation: 3, // Add shadow for better visual appeal
   },
-  buttonText: { textAlign: "center", fontSize: 15 },
-  listContainer: { marginBottom: 270 },
+  buttonText: {
+    textAlign: "center",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  listContainer: {
+    flex: 1,
+  },
+  loadingText: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    fontSize: 18,
+    color: textColorSecondary,
+    backgroundColor: backgroundColor,
+    textAlign: "center",
+    paddingTop: 20,
+  },
+  errorText: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    fontSize: 18,
+    color: "red",
+    backgroundColor: backgroundColor,
+    textAlign: "center",
+    paddingTop: 20,
+  },
 });

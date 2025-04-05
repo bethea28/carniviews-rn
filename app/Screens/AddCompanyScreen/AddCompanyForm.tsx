@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Text,
   View,
   TextInput,
-  Button,
   ScrollView,
   StyleSheet,
   Platform,
@@ -13,8 +12,20 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
 import { BusinessHours } from "../BusinessHours";
-
 import { useSelector } from "react-redux";
+
+// Define the color palette based on the image (same as other components)
+const primaryColor = "#a349a4"; // Purple
+const secondaryColor = "#FF8C00"; // Your new, more vibrant orange (replace with actual code)
+const backgroundColor = "#FFB347"; // Example lighter orange (adjust as needed)
+const textColorPrimary = "#ffffff"; // White
+const textColorSecondary = "#333333"; // Dark Gray
+const inputBackgroundColor = textColorPrimary; // Assuming input fields are white
+const buttonBackgroundColor = primaryColor;
+const buttonTextColor = textColorPrimary;
+const errorTextColor = "red";
+const placeholderTextColor = "gray";
+
 export function AddCompanyForm({
   onSubmit,
   setModalVis,
@@ -39,13 +50,14 @@ export function AddCompanyForm({
       photos: [],
     },
   });
-  const [hoursComp, setShowHoursComp] = React.useState(false);
+  const [hoursComp, setShowHoursComp] = useState(false);
   const navigation = useNavigation();
-  const bizHours = useSelector((state) => state.counter.businessHours); // Assuming your slice is named 'userSlice'
+  const bizHours = useSelector((state) => state.counter.businessHours);
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={{ flex: 1 }}
+      style={styles.keyboardAvoidingView}
     >
       <ScrollView
         contentContainerStyle={styles.scrollViewContent}
@@ -57,7 +69,7 @@ export function AddCompanyForm({
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
               placeholder="Name"
-              placeholderTextColor="black"
+              placeholderTextColor={placeholderTextColor}
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
@@ -66,7 +78,7 @@ export function AddCompanyForm({
           )}
           name="name"
         />
-        {/* {errors.name && <Text style={styles.errorText}>This is required.</Text>} */}
+        {errors.name && <Text style={styles.errorText}>This is required.</Text>}
 
         <Controller
           control={control}
@@ -74,7 +86,7 @@ export function AddCompanyForm({
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
               placeholder="Address"
-              placeholderTextColor="black"
+              placeholderTextColor={placeholderTextColor}
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
@@ -83,17 +95,17 @@ export function AddCompanyForm({
           )}
           name="address"
         />
-        {/* {errors.address && (
+        {errors.address && (
           <Text style={styles.errorText}>This is required.</Text>
-        )} */}
+        )}
 
         <Controller
           control={control}
           rules={{ required: false }}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-              placeholder="city"
-              placeholderTextColor="black"
+              placeholder="City"
+              placeholderTextColor={placeholderTextColor}
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
@@ -102,69 +114,64 @@ export function AddCompanyForm({
           )}
           name="city"
         />
-        {/* {errors.city && <Text style={styles.errorText}>This is required.</Text>} */}
+        {errors.city && <Text style={styles.errorText}>This is required.</Text>}
 
-        <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
+        <View style={styles.rowInputs}>
           <Controller
             control={control}
             rules={{ required: false }}
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
-                placeholder="state"
-                placeholderTextColor="black"
+                placeholder="State"
+                placeholderTextColor={placeholderTextColor}
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
-                style={{ width: 100, backgroundColor: "green" }}
+                style={styles.smallInput}
               />
             )}
             name="state"
           />
-          {/* {errors.state && (
+          {errors.state && (
             <Text style={styles.errorText}>This is required.</Text>
-          )} */}
+          )}
           <Controller
             control={control}
             rules={{ required: false }}
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
-                placeholder="zip"
-                placeholderTextColor="black"
+                placeholder="Zip"
+                placeholderTextColor={placeholderTextColor}
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
-                style={{ width: 100, backgroundColor: "green" }}
+                style={styles.smallInput}
               />
             )}
             name="zip"
           />
-          {/* {errors.zip && (
+          {errors.zip && (
             <Text style={styles.errorText}>This is required.</Text>
-          )} */}
-        </View>
-        <Controller
-          control={control}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              onPress={() => setShowHoursComp((prevState) => !prevState)}
-              placeholder="Hours"
-              placeholderTextColor="black"
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              style={styles.input}
-            />
           )}
-          name="hours"
-        />
+        </View>
+        <Pressable
+          onPress={() => setShowHoursComp((prevState) => !prevState)}
+          style={styles.input}
+        >
+          <Text style={styles.placeholderText}>Hours</Text>
+          {bizHours && Object.keys(bizHours).length > 0 && (
+            <Text style={styles.selectedHoursText}>Hours Added</Text>
+          )}
+        </Pressable>
 
         {hoursComp && <BusinessHours addCompany={true} />}
+
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
               placeholder="Type"
-              placeholderTextColor="black"
+              placeholderTextColor={placeholderTextColor}
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
@@ -177,37 +184,29 @@ export function AddCompanyForm({
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-              placeholder="description"
-              placeholderTextColor="black"
+              placeholder="Description"
+              placeholderTextColor={placeholderTextColor}
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
-              style={styles.input}
+              style={[styles.input, styles.multilineInput]}
+              multiline
+              numberOfLines={3}
             />
           )}
           name="description"
         />
 
-        <Pressable
-          onPress={addPhotos}
-          style={({ pressed }) => [
-            {
-              borderRadius: 10,
-              flexDirection: "row",
-              alignItems: "center",
-              backgroundColor: "green",
-              width: "50%",
-            },
-          ]}
-        >
-          <Text style={{ padding: 15 }}>Add Photos</Text>
-        </Pressable>
         <View style={styles.buttonContainer}>
-          <Button
-            color="blue"
-            title="Submit"
+          <Pressable onPress={addPhotos} style={styles.addPhotosButton}>
+            <Text style={styles.addPhotosText}>Add Photos</Text>
+          </Pressable>
+          <Pressable
+            style={styles.submitButton}
             onPress={handleSubmit(onSubmit)}
-          />
+          >
+            <Text style={styles.submitButtonText}>Submit</Text>
+          </Pressable>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -215,6 +214,10 @@ export function AddCompanyForm({
 }
 
 const styles = StyleSheet.create({
+  keyboardAvoidingView: {
+    flex: 1,
+    backgroundColor: backgroundColor,
+  },
   scrollViewContent: {
     flexGrow: 1,
     padding: 20,
@@ -222,16 +225,74 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 50,
-    backgroundColor: "green",
+    backgroundColor: inputBackgroundColor,
     borderRadius: 8,
-    paddingHorizontal: 10,
+    paddingHorizontal: 15,
+    marginTop: 10,
+    color: textColorSecondary,
+  },
+  multilineInput: {
+    minHeight: 80,
+    textAlignVertical: "top",
+  },
+  smallInput: {
+    flex: 1,
+    height: 50,
+    backgroundColor: inputBackgroundColor,
+    borderRadius: 8,
+    paddingHorizontal: 15,
+    marginTop: 10,
+    marginHorizontal: 5,
+    color: textColorSecondary,
+  },
+  rowInputs: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginTop: 10,
   },
   errorText: {
-    color: "red",
+    color: errorTextColor,
     marginTop: 5,
   },
   buttonContainer: {
+    marginTop: 25,
+    alignItems: "center",
+    flexDirection: "row",
+  },
+  submitButton: {
+    backgroundColor: buttonBackgroundColor,
+    borderRadius: 8,
+    paddingVertical: 25,
+    paddingHorizontal: 30,
+  },
+  submitButtonText: {
+    color: buttonTextColor,
+    fontSize: 18,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  addPhotosButton: {
+    borderRadius: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: secondaryColor,
+    width: "50%",
+    paddingVertical: 15,
+    justifyContent: "center",
     marginTop: 20,
+  },
+  addPhotosText: {
+    color: buttonTextColor,
+    padding: 10,
+    textAlign: "center",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  placeholderText: {
+    color: placeholderTextColor,
+  },
+  selectedHoursText: {
+    color: primaryColor,
+    fontSize: 14,
   },
 });

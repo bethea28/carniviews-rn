@@ -14,25 +14,10 @@ export function InfoScreen({ route: { params } }) {
   const { data: allCompanyReviews } = useGetReviewsQuery({
     companyId: params.id,
   });
-  console.log("USER DATA", userData);
-  console.log("PARAMS NOW ", allCompanyReviews);
-  React.useEffect(() => {
-    const getReviews = async () => {
-      try {
-        // const req = await getCompanyReviews({ companyId });
-      } catch (err) {
-        console.log("err", err);
-      }
-    };
-    getReviews();
-  }, []);
-  console.log("PARAMS NOW WE GOT", params);
+
   return (
     <View style={{ flex: 1 }}>
-      <TabComponent
-        // companyId={params.wholeData.companyInfo.id}
-        navIndex={params.navIndex}
-      />
+      <TabComponent navIndex={params.navIndex} />
     </View>
   );
 }

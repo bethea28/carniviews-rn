@@ -1,18 +1,23 @@
 import React from "react";
-import { Text, Button } from "react-native-paper";
+import { Text } from "react-native-paper";
 import {
   View,
   Pressable,
   ImageBackground,
   Image,
   ScrollView,
+  StyleSheet,
 } from "react-native";
-import { CompanyCard } from "@/app/Components/CardComponent";
-import { companyObjects } from "@/mockData";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
-import { BusinessHours } from "../BusinessHours";
 import { useSelector } from "react-redux";
+
+// Define the color palette based on the image (same as other components)
+const primaryColor = "#a349a4"; // Purple
+const secondaryColor = "#FF8C00"; // Your new, more vibrant orange (replace with actual code)
+const backgroundColor = "#FFB347"; // Example lighter orange (adjust as needed)
+const textColorPrimary = "#ffffff"; // White
+const textColorSecondary = "#333333"; // Dark Gray
 
 const ImageDetails = ({ params }) => (
   <ImageBackground
@@ -20,79 +25,57 @@ const ImageDetails = ({ params }) => (
     source={{
       uri: "https://www.rollingstone.com/wp-content/uploads/2022/02/0001x.jpg?w=1581&h=1054&crop=1&s",
     }}
-    style={{
-      height: 150,
-      backgroundColor: "red",
-      justifyContent: "flex-end",
-    }}
+    style={styles.imageDetailsBackground}
   >
-    <Text style={{ fontSize: 20, marginBottom: 20 }}>
-      {params?.businessName}
-    </Text>
-    <Pressable
-      style={({ pressed }) => [
-        {
-          backgroundColor: pressed ? "green" : "orange",
-          height: 30,
-          borderRadius: 20,
-        },
-      ]}
-    >
-      <Text>See all Photos </Text>
+    <Text style={styles.imageDetailsTitle}>{params?.businessName}</Text>
+    <Pressable style={styles.seePhotosButton}>
+      <Text style={styles.seePhotosText}>See all Photos </Text>
     </Pressable>
   </ImageBackground>
 );
+
 const BasicDetails = ({ params }) => (
-  <View
-    style={{
-      backgroundColor: "red",
-      // flexDirection: "row",
-      // justifyContent: "space-around",
-      marginTop: 20,
-    }}
-  >
+  <View style={styles.basicDetailsContainer}>
     <Image
-      style={{ borderRadius: 100 }}
+      style={styles.basicDetailsImage}
       source={{
         uri: "https://www.rollingstone.com/wp-content/uploads/2022/02/0001x.jpg?w=1581&h=1054&crop=1&s",
       }}
     />
-    <Text>{params?.companyInfo.description}</Text>
+    <Text style={styles.basicDetailsDescription}>
+      {params?.companyInfo.description}
+    </Text>
   </View>
 );
+
 const DescriptionDetails = ({ companyInfo }) => (
-  <View style={{ marginTop: 10 }}>
-    <Text>Info Details</Text>
-    <Text>{companyInfo.companyDescription}</Text>
+  <View style={styles.descriptionDetailsContainer}>
+    <Text style={styles.descriptionDetailsHeader}>Info Details</Text>
+    <Text style={styles.descriptionDetailsText}>
+      {companyInfo.companyDescription}
+    </Text>
   </View>
 );
 
 const Actions = ({ camera, action, header, params }) => {
-  const [image, setImage] = React.useState<string | null>(null);
-
+  const [image, setImage] = React.useState(null);
   const navigate = useNavigation();
-  console.log("action", action);
 
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images", "videos"],
-      // allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
       allowsMultipleSelection: true,
     });
 
-    console.log("THESE ARE MY IMAGES", result.assets?.length);
-
-    if (!result.canceled) {
+    if (!result.canceled && result.assets) {
       setImage(result.assets);
     }
   };
 
-  // console.log("show me the image now", params);
   return (
-    <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
+    <View style={styles.actionsContainer}>
       <Pressable
         onPress={
           camera
@@ -100,73 +83,39 @@ const Actions = ({ camera, action, header, params }) => {
             : () => navigate.navigate(action, { companyData: params })
         }
         style={({ pressed }) => [
-          {
-            borderRadius: 100,
-            flexDirection: "row",
-            alignItems: "center",
-            backgroundColor: pressed ? "green" : "translucent",
-            marginLeft: 10,
-          },
+          styles.actionButton,
+          { backgroundColor: pressed ? "green" : "transparent" },
         ]}
       >
         <Image
-          style={{
-            width: 50,
-            height: 50,
-            borderRadius: 100,
-          }}
+          style={styles.actionImage}
           source={{
             uri: "https://www.rollingstone.com/wp-content/uploads/2022/02/0001x.jpg?w=1581&h=1054&crop=1&s",
           }}
         />
-        <Text style={{ padding: 15 }}>{header}</Text>
+        <Text style={styles.actionText}>{header}</Text>
       </Pressable>
     </View>
   );
 };
+
 const Recommend = ({ params }) => (
-  <View style={{ marginTop: 10, alignItems: "center" }}>
-    <Text>Do you recommend this business?</Text>
-    <View style={{ flexDirection: "row" }}>
-      <Pressable
-        style={({ pressed }) => [
-          {
-            borderWidth: 2,
-            backgroundColor: pressed ? "green" : "white",
-          },
-        ]}
-      >
-        <Text style={{ fontSize: 20, padding: 20 }}>Yes</Text>
+  <View style={styles.recommendContainer}>
+    <Text style={styles.recommendQuestion}>
+      Do you recommend this business?
+    </Text>
+    <View style={styles.recommendButtons}>
+      <Pressable style={styles.recommendButton}>
+        <Text style={styles.recommendButtonText}>Yes</Text>
       </Pressable>
-      <Pressable
-        style={({ pressed }) => [
-          {
-            borderWidth: 2,
-            backgroundColor: pressed ? "green" : "white",
-            marginLeft: 10,
-          },
-        ]}
-      >
-        <Text style={{ fontSize: 20, padding: 20 }}>No</Text>
+      <Pressable style={[styles.recommendButton, styles.recommendButtonMargin]}>
+        <Text style={styles.recommendButtonText}>No</Text>
       </Pressable>
-      <Pressable
-        style={({ pressed }) => [
-          {
-            borderWidth: 2,
-            backgroundColor: pressed ? "green" : "white",
-            marginLeft: 10,
-          },
-        ]}
-      >
-        <Text style={{ fontSize: 20, padding: 20 }}>Maybe</Text>
+      <Pressable style={[styles.recommendButton, styles.recommendButtonMargin]}>
+        <Text style={styles.recommendButtonText}>Maybe</Text>
       </Pressable>
     </View>
-    <View
-      style={{
-        flexDirection: "row",
-        marginTop: 20,
-      }}
-    >
+    <View style={styles.recommendActions}>
       <Actions
         params={params}
         camera={false}
@@ -184,18 +133,137 @@ const Recommend = ({ params }) => (
 );
 
 export function DetailsScreen({ route: { params } }) {
-  const navigation = useNavigation();
-  // console.log("COMPANY DETAILS INFO", params);
-  // console.log("hours", params.hoursData);
   const companyInfo = useSelector((state) => state.counter.companyInfo);
-  console.log("this is company info", companyInfo);
+
   return (
-    <ScrollView style={{ padding: 20 }}>
+    <ScrollView
+      contentContainerStyle={{ paddingBottom: 50 }}
+      style={styles.scrollView}
+    >
       <ImageDetails params={params} />
       <DescriptionDetails companyInfo={companyInfo} />
-      <BasicDetails />
+      {/* <BasicDetails params={params} /> */}
       {/* <BusinessHours staleHours={params?.hoursData} stale={true} /> */}
       <Recommend params={params} />
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: backgroundColor,
+  },
+  imageDetailsBackground: {
+    height: 150,
+    backgroundColor: "red", // Fallback color
+    justifyContent: "flex-end",
+    paddingHorizontal: 20,
+    paddingBottom: 15,
+  },
+  imageDetailsTitle: {
+    fontSize: 20,
+    marginBottom: 10,
+    color: textColorPrimary,
+  },
+  seePhotosButton: {
+    backgroundColor: secondaryColor,
+    height: 30,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    width: 150,
+  },
+  seePhotosText: {
+    color: textColorPrimary,
+  },
+  basicDetailsContainer: {
+    backgroundColor: textColorPrimary,
+    marginTop: 20,
+    padding: 15,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  basicDetailsImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 10,
+  },
+  basicDetailsDescription: {
+    textAlign: "center",
+    color: textColorSecondary,
+  },
+  descriptionDetailsContainer: {
+    marginTop: 10,
+    padding: 15,
+    backgroundColor: textColorPrimary,
+    borderRadius: 8,
+  },
+  descriptionDetailsHeader: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: textColorSecondary,
+    marginBottom: 5,
+  },
+  descriptionDetailsText: {
+    color: textColorSecondary,
+  },
+  actionsContainer: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: 10,
+  },
+  actionButton: {
+    borderRadius: 100,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  actionImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+  },
+  actionText: {
+    padding: 15,
+    color: textColorSecondary,
+  },
+  recommendContainer: {
+    marginTop: 20,
+    alignItems: "center",
+    padding: 15,
+    backgroundColor: textColorPrimary,
+    borderRadius: 8,
+  },
+  recommendQuestion: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: textColorSecondary,
+    marginBottom: 10,
+  },
+  recommendButtons: {
+    flexDirection: "row",
+    marginBottom: 15,
+  },
+  recommendButton: {
+    borderWidth: 2,
+    borderColor: primaryColor,
+    backgroundColor: textColorPrimary,
+    borderRadius: 8,
+  },
+  recommendButtonText: {
+    fontSize: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    color: textColorSecondary,
+  },
+  recommendButtonMargin: {
+    marginLeft: 10,
+  },
+  recommendActions: {
+    flexDirection: "row",
+    marginTop: 20,
+  },
+});
