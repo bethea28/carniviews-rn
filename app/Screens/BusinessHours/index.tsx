@@ -1,17 +1,32 @@
 import React, { useState } from "react";
-import { Text, Pressable, View, StyleSheet, ScrollView } from "react-native";
+import {
+  Text,
+  Pressable,
+  View,
+  StyleSheet,
+  ScrollView,
+  Platform,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { timeConvert } from "@/app/customHooks";
 import { setGlobalBusinessHours } from "@/store/globalState/globalState";
 import { useDispatch, useSelector } from "react-redux";
 
-// Define the color palette based on the image (same as other components)
-const primaryColor = "#a349a4"; // Purple
-const secondaryColor = "#FF8C00"; // Orange
-const backgroundColor = "#FFB347"; // Light Orange
+// Define a Material Design inspired color palette
+const primaryColor = "#a349a4"; // Purple 500 (approx.)
+const primaryLightColor = "#d67bff"; // Purple 200 (approx.)
+const primaryDarkColor = "#751976"; // Purple 700 (approx.)
+const secondaryColor = "#FF8C00"; // Orange A200 (approx.)
+const secondaryLightColor = "#ffc04f"; // Orange A100 (approx.)
+const secondaryDarkColor = "#b95f00"; // Orange A400 (approx.)
+const backgroundColor = "#f7b767"; // Light Orange 200 (approx.)
 const textColorPrimary = "#ffffff"; // White
 const textColorSecondary = "#333333"; // Dark Gray
+const surfaceColor = "#FFFFFF"; // White
+const shadowColor = "#000";
+const dividerColor = "#E0E0E0"; // Grey 300
+const errorColor = "#B00020"; // Red 600
 
 export function BusinessHours({ addCompany, staleHours, stale }) {
   const navigation = useNavigation();
@@ -50,12 +65,9 @@ export function BusinessHours({ addCompany, staleHours, stale }) {
   const daysOfWeek = businessData ? Object.keys(businessData) : [];
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: secondaryColor }]}>
       <Text style={styles.businessHoursTitle}>Business Hours</Text>
-      <ScrollView
-        contentContainerStyle={{ paddingBottom: 30 }}
-        style={styles.container}
-      >
+      <ScrollView contentContainerStyle={styles.scrollViewContent}>
         {daysOfWeek.map((dayKey, index) => (
           <View key={dayKey} style={styles.dayContainer}>
             <Text style={styles.dayText}>{businessData[dayKey]?.day}</Text>
@@ -64,7 +76,12 @@ export function BusinessHours({ addCompany, staleHours, stale }) {
               <Pressable
                 disabled={!addCompany}
                 onPress={() => showDatePicker("open", index)}
-                style={[styles.timeButton, styles.openButton]}
+                style={({ pressed }) => [
+                  styles.timeButton,
+                  styles.openButton,
+                  Platform.OS === "ios" && pressed && styles.buttonPressedIOS,
+                ]}
+                android_ripple={{ color: secondaryDarkColor }}
               >
                 <Text style={styles.buttonText}>Open</Text>
                 <Text style={styles.buttonTime}>
@@ -77,7 +94,12 @@ export function BusinessHours({ addCompany, staleHours, stale }) {
               <Pressable
                 disabled={!addCompany}
                 onPress={() => showDatePicker("close", index)}
-                style={[styles.timeButton, styles.closeButton]}
+                style={({ pressed }) => [
+                  styles.timeButton,
+                  styles.closeButton,
+                  Platform.OS === "ios" && pressed && styles.buttonPressedIOS,
+                ]}
+                android_ripple={{ color: primaryDarkColor }}
               >
                 <Text style={styles.buttonText}>Close</Text>
                 <Text style={styles.buttonTime}>
@@ -91,6 +113,7 @@ export function BusinessHours({ addCompany, staleHours, stale }) {
               mode="time"
               onConfirm={handleConfirm}
               onCancel={hideDatePicker}
+              themeVariant="light" // Or "dark" based on your app's theme
             />
           </View>
         ))}
@@ -102,44 +125,48 @@ export function BusinessHours({ addCompany, staleHours, stale }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 15,
-    backgroundColor: backgroundColor,
+    padding: 16,
+  },
+  scrollViewContent: {
+    paddingBottom: 16,
   },
   businessHoursTitle: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: "bold",
     color: textColorSecondary,
-    // marginBottom: 20,
+    marginBottom: 16,
     textAlign: "center",
   },
   dayContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: textColorPrimary,
-    marginTop: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 8,
+    backgroundColor: surfaceColor,
+    marginTop: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 4,
     justifyContent: "space-between",
+    elevation: 1, // Subtle shadow for the day container (card-like)
   },
   dayText: {
     fontSize: 16,
     color: textColorSecondary,
-    flex: 0.6,
+    flex: 1,
   },
   buttonsContainer: {
     flexDirection: "row",
-    marginLeft: 10,
-    flex: 1.8,
+    marginLeft: 16,
+    flex: 1.5,
     alignItems: "center",
     justifyContent: "space-around",
   },
   timeButton: {
-    borderRadius: 8,
-    paddingVertical: 10,
+    borderRadius: 4,
+    paddingVertical: 8,
     alignItems: "center",
     justifyContent: "center",
-    flex: 0.45,
+    flex: 1,
+    elevation: 1, // Subtle shadow for the time buttons
   },
   openButton: {
     backgroundColor: secondaryColor,
@@ -147,7 +174,7 @@ const styles = StyleSheet.create({
   closeButton: {
     backgroundColor: primaryColor,
   },
-  buttonPressed: {
+  buttonPressedIOS: {
     opacity: 0.8,
   },
   buttonText: {
@@ -155,6 +182,7 @@ const styles = StyleSheet.create({
     color: textColorPrimary,
     fontWeight: "bold",
     textAlign: "center",
+    marginBottom: 2,
   },
   buttonTime: {
     fontSize: 14,
@@ -162,6 +190,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   buttonSpacer: {
-    width: 10,
+    width: 8,
   },
 });

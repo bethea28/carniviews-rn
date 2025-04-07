@@ -1,39 +1,70 @@
 import * as React from "react";
-import { Avatar, Button, Card, Text } from "react-native-paper";
-import { Pressable, View, StyleSheet } from "react-native";
+import { Avatar } from "react-native-paper";
+import { Pressable, View, StyleSheet, Text, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { setCompanyInfo } from "@/store/globalState/globalState";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import StarRatingDisplay from "react-native-star-rating-widget";
+import { useGetReviewsQuery } from "@/store/api/api";
 
-// Define the color palette based on the image (same as HomeScreen)
-const primaryColor = "#a349a4"; // Purple
-const secondaryColor = "#f28e1c"; // Orange
-const backgroundColor = "#f7b767"; // Light Orange
+// Define a Material Design inspired color palette (using the provided colors)
+const primaryColor = "#a349a4"; // Purple 500 (approx.)
+const primaryLightColor = "#d67bff"; // Purple 200 (approx.)
+const primaryDarkColor = "#751976"; // Purple 700 (approx.)
+const secondaryColor = "#f28e1c"; // Orange A200 (approx.)
+const secondaryLightColor = "#ffc04f"; // Orange A100 (approx.)
+const secondaryDarkColor = "#b95f00"; // Orange A400 (approx.)
+const backgroundColor = "#f7b767"; // Light Orange 200 (approx.)
 const textColorPrimary = "#ffffff"; // White
-const textColorSecondary = "#333333"; // Dark Gray (for contrast on light orange)
-const buttonColor = "green"; // Initial button color
+const textColorSecondary = "#333333"; // Dark Gray
+const surfaceColor = "#FFFFFF"; // White (for cards)
+const shadowColor = "#000";
+const disabledColor = "#E0E0E0"; // Grey 300
 
 const LeftContent = (props) => <Avatar.Icon {...props} icon="folder" />;
 
 export const CompanyCard = ({ title, mainImage, wholeData }) => {
+  const {
+    data: allCompanyReviews,
+    isLoading,
+    isError,
+  } = useGetReviewsQuery({
+    companyId: wholeData.id,
+  });
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const handleNavigate = (navIndex) => {
-    console.log("nav index now", navIndex);
     dispatch(setCompanyInfo(wholeData));
     navigation.navigate("Info", { wholeData, navIndex });
   };
+
+  const StarRate = ({ changeRating, rating, styles }) => {
+    return (
+      <StarRatingDisplay
+        starSize={25}
+        style={{ marginRight: 20 }}
+        rating={rating}
+        starStyle={{ width: 10 }}
+        onChange={() => {}}
+      />
+    );
+  };
+  const allRatings = null;
+  const ratings = React.useMemo(() => {
+    if (!allCompanyReviews?.reviews) return [];
+    const length = allCompanyReviews.reviews.length;
+    const rating = allCompanyReviews?.reviews?.reduce((a, b) => {
+      return a + b.rating;
+    }, 0);
+    return rating / length;
+  }, [isLoading]);
   return (
-    <Card style={styles.card}>
-      <Card.Content style={styles.cardContent}>
-        <Text style={styles.title} variant="bodyMedium">
-          {title}
-        </Text>
-        <Text style={styles.stars} variant="bodyMedium">
-          Stars counter/456
-        </Text>
-      </Card.Content>
-      <Card.Cover
+    <View style={styles.card}>
+      <View style={styles.cardContent}>
+        <Text style={styles.title}>{title}</Text>
+        {/* <StarRate styles={{ width: 100 }} rating={5} /> */}
+      </View>
+      <Image
         style={styles.cover}
         source={{
           uri:
@@ -42,14 +73,21 @@ export const CompanyCard = ({ title, mainImage, wholeData }) => {
         }}
         onError={(err) => console.log("what is image error", err)}
       />
-      <Card.Actions style={styles.actions}>
+      <View style={styles.actions}>
         <View style={styles.actionsContainer}>
+          <View style={{ marginRight: 48 }}>
+            {ratings ? <StarRate rating={ratings} /> : <StarRate rating={0} />}
+            <Text style={{ marginLeft: 10 }}>
+              {allCompanyReviews?.reviews?.length} Reviews
+            </Text>
+          </View>
           <Pressable
             onPress={() => handleNavigate(0)}
             style={({ pressed }) => [
               styles.button,
-              { backgroundColor: pressed ? secondaryColor : primaryColor },
+              { backgroundColor: pressed ? secondaryLightColor : primaryColor },
             ]}
+            android_ripple={{ color: primaryDarkColor }}
           >
             <Text style={styles.buttonText}>Details</Text>
           </Pressable>
@@ -57,62 +95,66 @@ export const CompanyCard = ({ title, mainImage, wholeData }) => {
             onPress={() => handleNavigate(1)}
             style={({ pressed }) => [
               styles.button,
-              { backgroundColor: pressed ? secondaryColor : primaryColor },
+              { backgroundColor: pressed ? secondaryLightColor : primaryColor },
             ]}
+            android_ripple={{ color: primaryDarkColor }}
           >
             <Text style={styles.buttonText}>Reviews</Text>
           </Pressable>
         </View>
-      </Card.Actions>
-    </Card>
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   card: {
-    marginTop: 20,
-    backgroundColor: textColorPrimary, // Assuming cards are white
-    borderRadius: 8,
-    elevation: 2, // Add a subtle shadow
-    // marginHorizontal: 15,
+    // marginTop: 16,
+    backgroundColor: surfaceColor,
+    borderRadius: 4,
+    elevation: 2, // Subtle shadow
+    // marginHorizontal: 16,
+    overflow: "hidden", // Clip content for rounded corners
   },
   cardContent: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 15,
-    paddingHorizontal: 15,
+    padding: 16,
   },
   title: {
     fontSize: 18,
     fontWeight: "bold",
     color: textColorSecondary,
+    marginBottom: 4,
   },
-  stars: {
-    fontSize: 16,
+  subtitle: {
+    fontSize: 14,
     color: textColorSecondary,
   },
   cover: {
-    height: 200, // Adjust as needed
+    height: 200,
+    width: "100%",
   },
   actions: {
-    padding: 15,
+    padding: 8,
+    // flexDirection: "row",
   },
   actionsContainer: {
-    flex: 1,
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "flex-end",
+    paddingHorizontal: 8,
+    alignItems: "center",
   },
   button: {
     backgroundColor: primaryColor,
     paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 25,
-    elevation: 1, // Subtle shadow for buttons
+    paddingHorizontal: 16,
+    borderRadius: 4,
+    marginLeft: 8,
+    elevation: 1, // Subtle button shadow
   },
   buttonText: {
-    fontSize: 16,
     color: textColorPrimary,
     fontWeight: "bold",
+    fontSize: 16,
+    textAlign: "center",
   },
 });

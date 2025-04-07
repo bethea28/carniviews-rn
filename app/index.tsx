@@ -1,4 +1,4 @@
-import { Pressable, Text, View, Alert } from "react-native";
+import { Pressable, Text, View, Alert, Button } from "react-native";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { Provider } from "react-redux";
@@ -29,16 +29,35 @@ import { BusinessHours } from "./Screens/BusinessHours";
 import { SocialLoginScreen } from "./Screens/SocialLoginScreen";
 import { useSelector } from "react-redux";
 import { useGoogleAuthMutation } from "@/store/api/api";
+import { useNavigation } from "@react-navigation/native";
 // WebView Component
 
 const BottomTab = createBottomTabNavigator();
 const StackNav = createNativeStackNavigator();
 
 function MyBottomTabs() {
+  const navigation = useNavigation();
   return (
     <BottomTab.Navigator>
       <BottomTab.Screen
         // options={{ headerShown: false }}
+        options={{
+          headerRight: () => (
+            <Pressable
+              onPress={() => navigation.navigate("AddCompany")}
+              style={[
+                {
+                  padding: 20,
+                  marginRight: 10,
+                  borderRadius: 100,
+                  backgroundColor: "#a349a4",
+                },
+              ]}
+            >
+              <Text style={{ color: "white" }}>Add Company</Text>
+            </Pressable>
+          ),
+        }}
         name="Home"
         component={HomeScreen}
       />

@@ -40,7 +40,6 @@ export const useBusinessHours = () => {
   const [businessState, setBusinessState] = useState({});
   const [datePickerVis, setDatePickerVis] = useState(false);
 
-  console.log("this is our busines hook", businessState);
   return {
     allDays,
     businessState,

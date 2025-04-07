@@ -105,7 +105,12 @@ const Recommend = ({ params }) => (
       Do you recommend this business?
     </Text>
     <View style={styles.recommendButtons}>
-      <Pressable style={styles.recommendButton}>
+      <Pressable
+        style={({ pressed }) => [
+          styles.recommendButton,
+          { backgroundColor: pressed ? "red" : "green" },
+        ]}
+      >
         <Text style={styles.recommendButtonText}>Yes</Text>
       </Pressable>
       <Pressable style={[styles.recommendButton, styles.recommendButtonMargin]}>
