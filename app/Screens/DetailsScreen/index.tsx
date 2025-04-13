@@ -19,20 +19,28 @@ const backgroundColor = "#FFB347"; // Example lighter orange (adjust as needed)
 const textColorPrimary = "#ffffff"; // White
 const textColorSecondary = "#333333"; // Dark Gray
 
-const ImageDetails = ({ params }) => (
-  <ImageBackground
-    resizeMode="cover"
-    source={{
-      uri: "https://www.rollingstone.com/wp-content/uploads/2022/02/0001x.jpg?w=1581&h=1054&crop=1&s",
-    }}
-    style={styles.imageDetailsBackground}
-  >
-    <Text style={styles.imageDetailsTitle}>{params?.businessName}</Text>
-    <Pressable style={styles.seePhotosButton}>
-      <Text style={styles.seePhotosText}>See all Photos </Text>
-    </Pressable>
-  </ImageBackground>
-);
+const ImageDetails = ({ params }) => {
+  const navigation = useNavigation();
+  const user = useSelector((state) => state.counter.userState);
+  console.log("user now", user);
+  return (
+    <ImageBackground
+      resizeMode="cover"
+      source={{
+        uri: "https://www.rollingstone.com/wp-content/uploads/2022/02/0001x.jpg?w=1581&h=1054&crop=1&s",
+      }}
+      style={styles.imageDetailsBackground}
+    >
+      <Text style={styles.imageDetailsTitle}>{params?.businessName}</Text>
+      <Pressable
+        onPress={() => navigation.navigate("Photos")}
+        style={styles.seePhotosButton}
+      >
+        <Text style={styles.seePhotosText}>See all Photos </Text>
+      </Pressable>
+    </ImageBackground>
+  );
+};
 
 const BasicDetails = ({ params }) => (
   <View style={styles.basicDetailsContainer}>

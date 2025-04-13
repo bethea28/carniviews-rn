@@ -36,6 +36,9 @@ import { useNavigation } from "@react-navigation/native";
 const BottomTab = createBottomTabNavigator();
 const StackNav = createNativeStackNavigator();
 
+const PlaceHolder = () => <Text>Placeholder</Text>;
+const Photos = () => <Text>Placeholder</Text>;
+
 function MyBottomTabs() {
   const navigation = useNavigation();
   return (
@@ -61,6 +64,11 @@ function MyBottomTabs() {
         }}
         name="Home"
         component={HomeScreen}
+      />
+      <BottomTab.Screen
+        // options={{ headerShown: false }}
+        name="Events"
+        component={PlaceHolder}
       />
       <BottomTab.Screen
         // options={{ headerShown: false }}
@@ -95,6 +103,11 @@ function RootStack() {
         options={{ headerShown: false }}
         name="AddReviews"
         component={AddReviewScreen}
+      />
+      <StackNav.Screen
+        // options={{ headerShown: false }}
+        name="Photos"
+        component={Photos}
       />
     </StackNav.Navigator>
   );

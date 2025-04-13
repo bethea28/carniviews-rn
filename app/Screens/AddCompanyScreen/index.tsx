@@ -56,8 +56,8 @@ export function AddCompanyScreen() {
       userId: userData?.data?.user?.user_id,
     };
 
-    console.log("ALL DATA NOW SUBMIT", data);
-    addCompany(finalData);
+    const createCompany = await addCompany(finalData);
+    console.log("respoine request", createCompany);
     reset();
     navigation.navigate("Home");
   };
