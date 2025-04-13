@@ -31,6 +31,7 @@ export function AddCompanyForm({
   setModalVis,
   addPhotos,
   hoursData,
+  thumbNail,
 }) {
   const {
     control,
@@ -196,7 +197,7 @@ export function AddCompanyForm({
           )}
           name="description"
         />
-
+        <View style={{ marginTop: 8, alignItems: "center" }}>{thumbNail}</View>
         <View style={styles.buttonContainer}>
           <Pressable onPress={addPhotos} style={styles.addPhotosButton}>
             <Text style={styles.addPhotosText}>Add Photos</Text>

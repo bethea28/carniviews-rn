@@ -4,6 +4,7 @@ import {
   Platform,
   KeyboardAvoidingView,
   Modal,
+  Image,
 } from "react-native";
 import { useForm } from "react-hook-form";
 import { useImagePicker } from "@/app/customHooks";
@@ -66,6 +67,7 @@ export function AddCompanyScreen() {
     console.log("add phoes");
     pickImages();
   };
+  console.log("all image nmow", allImages[0].uri);
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -76,7 +78,14 @@ export function AddCompanyScreen() {
         onSubmit={onSubmit}
         hoursData={hoursData}
         addPhotos={addPhotos}
+        thumbNail={
+          <Image
+            style={{ width: 100, height: 100 }}
+            source={{ uri: allImages[0]?.uri }}
+          />
+        }
       />
+
       {/* <BusinessHoursModal modalVis={modalVis} hideModal={handleModalClose} /> */}
     </KeyboardAvoidingView>
   );
