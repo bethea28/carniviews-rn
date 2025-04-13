@@ -27,6 +27,7 @@ import { InfoScreen } from "./Screens/InfoScreen";
 import { AddReviewScreen } from "./Screens/AddReviewScreen";
 import { BusinessHours } from "./Screens/BusinessHours";
 import { SocialLoginScreen } from "./Screens/SocialLoginScreen";
+import { AnonymousFeedback } from "./Screens/FeedbackScreen";
 import { useSelector } from "react-redux";
 import { useGoogleAuthMutation } from "@/store/api/api";
 import { useNavigation } from "@react-navigation/native";
@@ -63,8 +64,8 @@ function MyBottomTabs() {
       />
       <BottomTab.Screen
         // options={{ headerShown: false }}
-        name="Profile"
-        component={ProfileScreen}
+        name="Feedback"
+        component={AnonymousFeedback}
       />
     </BottomTab.Navigator>
   );

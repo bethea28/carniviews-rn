@@ -272,6 +272,21 @@ export const api = createApi({
         };
       },
     }),
+    addFeedback: build.mutation<any, any>({
+      query: (data) => {
+        console.log("data is king add revieww", data);
+        return {
+          url: `feedback/addFeedback/`,
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: JSON.stringify({
+            feedback: data.feedback,
+          }),
+        };
+      },
+    }),
     addCompany: build.mutation<any, any>({
       query: (data) => {
         const userId = data?.userId;
@@ -369,6 +384,7 @@ export const {
   useAddCompanyMutation,
   useGoogleAuthMutation,
   useGetReviewsQuery,
+  useAddFeedbackMutation,
   // useAddBookMutation,
   useGetMyShiftsQuery,
   useGetCalendarDataQuery,
