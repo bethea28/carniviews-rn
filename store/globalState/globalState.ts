@@ -1,4 +1,4 @@
-import { BusinessHours } from "@/app/Screens/BusinessHours";
+import { BusinessHours } from "@/app/Components/BusinessHours";
 import { createSlice } from "@reduxjs/toolkit";
 import { act } from "react";
 
@@ -6,6 +6,7 @@ const initialState = {
   companyInfo: {},
   value: 0,
   userState: {},
+  eventHours: { start: null, end: null },
   businessHours: {
     0: { day: "Mon", open: "", close: "" },
     1: { day: "Tues", open: "", close: "" },
@@ -53,6 +54,15 @@ export const counterSlice = createSlice({
       state.companyInfo = updatedCompanyInfo;
       // state.value += action.payload;
     },
+    setEventHours: (state, action) => {
+      const payLoad = action.payload;
+      state.eventHours = {
+        ...state.eventHours,
+        [payLoad.event]: payLoad.finalTime,
+      };
+
+      console.log("final hours now", state.eventHours);
+    },
     setGlobalBusinessHours: (state, action) => {
       console.log("bryan hours payload", action);
       const payLoad = action.payload;
@@ -77,6 +87,7 @@ export const {
   incrementByAmount,
   setUserState,
   setGlobalBusinessHours,
+  setEventHours,
   setCompanyInfo,
 } = counterSlice.actions;
 

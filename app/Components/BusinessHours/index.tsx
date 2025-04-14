@@ -10,7 +10,10 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { timeConvert } from "@/app/customHooks";
-import { setGlobalBusinessHours } from "@/store/globalState/globalState";
+import {
+  setGlobalBusinessHours,
+  setEventHours,
+} from "@/store/globalState/globalState";
 import { useDispatch, useSelector } from "react-redux";
 
 // Define a Material Design inspired color palette
@@ -28,7 +31,7 @@ const shadowColor = "#000";
 const dividerColor = "#E0E0E0"; // Grey 300
 const errorColor = "#B00020"; // Red 600
 
-export function BusinessHours({ addCompany, staleHours, stale }) {
+export function BusinessHours({ addCompany, staleHours, stale, eventType }) {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [selectedDayIndex, setSelectedDayIndex] = useState(null);
@@ -36,11 +39,18 @@ export function BusinessHours({ addCompany, staleHours, stale }) {
   const [datePickViz, setDatePickViz] = useState(false);
   const bizHour = useSelector((state) => state.counter.businessHours);
   const companyInfo = useSelector((state) => state.counter.companyInfo);
+  const eventHours = useSelector((state) => state.counter.eventHours);
 
   const showDatePicker = (event, index) => {
-    setSelectedDayIndex(index);
-    setEvent(event);
-    setDatePickViz(true);
+    console.log("oke event");
+    if (eventType === "company") {
+      setSelectedDayIndex(index);
+      setEvent(event);
+      setDatePickViz(true);
+    } else {
+      setEvent(event);
+      setDatePickViz(true);
+    }
   };
 
   const hideDatePicker = () => {
@@ -48,23 +58,28 @@ export function BusinessHours({ addCompany, staleHours, stale }) {
   };
 
   const handleConfirm = (time) => {
-    if (selectedDayIndex !== null) {
-      const finalTime = timeConvert(new Date(time).toISOString());
-      dispatch(
-        setGlobalBusinessHours({
-          index: selectedDayIndex,
-          event,
-          finalTime,
-        })
-      );
+    console.log("comnfrim", time);
+    const finalTime = timeConvert(new Date(time).toISOString());
+    if (eventType === "company") {
+      if (selectedDayIndex !== null) {
+        dispatch(
+          setGlobalBusinessHours({
+            index: selectedDayIndex,
+            event,
+            finalTime,
+          })
+        );
+      }
+    } else {
+      dispatch(setEventHours({ event, finalTime }));
     }
     hideDatePicker();
   };
 
   const businessData = addCompany === true ? bizHour : companyInfo?.hoursData;
   const daysOfWeek = businessData ? Object.keys(businessData) : [];
-
-  return (
+  console.log("what is the evebnt type NICK", eventType);
+  return eventType === "company" ? (
     <View style={[styles.container, { backgroundColor: secondaryColor }]}>
       <Text style={styles.businessHoursTitle}>Business Hours</Text>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
@@ -118,6 +133,42 @@ export function BusinessHours({ addCompany, staleHours, stale }) {
           </View>
         ))}
       </ScrollView>
+    </View>
+  ) : (
+    <View>
+      {["start", "end"].map((event) => {
+        return (
+          <View style={{ flexDirection: "row", marginTop: 10 }}>
+            <View style={styles.buttonsContainer}>
+              <Pressable
+                disabled={!addCompany}
+                onPress={() => showDatePicker(event)}
+                style={({ pressed }) => [
+                  styles.timeButton,
+                  styles.openButton,
+                  Platform.OS === "ios" && pressed && styles.buttonPressedIOS,
+                ]}
+                android_ripple={{ color: secondaryDarkColor }}
+              >
+                <Text style={styles.buttonText}>
+                  {event.toLocaleUpperCase()}
+                </Text>
+                <Text style={styles.buttonTime}>
+                  {event === "start" ? eventHours?.start : eventHours?.end}
+                </Text>
+              </Pressable>
+            </View>
+
+            <DateTimePickerModal
+              isVisible={datePickViz}
+              mode="time"
+              onConfirm={handleConfirm}
+              onCancel={hideDatePicker}
+              themeVariant="light" // Or "dark" based on your app's theme
+            />
+          </View>
+        );
+      })}
     </View>
   );
 }

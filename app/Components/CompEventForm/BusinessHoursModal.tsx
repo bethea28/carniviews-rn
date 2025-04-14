@@ -1,4 +1,4 @@
-import { BusinessHours } from "../../Components/BusinessHours";
+import { BusinessHours } from "../BusinessHours";
 import { Modal } from "react-native";
 export const BusinessHoursModal = ({ modalVis = false, hideModal }) => {
   return (

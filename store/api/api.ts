@@ -287,6 +287,38 @@ export const api = createApi({
         };
       },
     }),
+    addEvent: build.mutation<any, any>({
+      query: (data) => {
+        const userId = data?.userId;
+        console.log("ADD event NOW.hours", data);
+        return {
+          url: `event/${userId}/addEvent/`,
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json", // Use JSON
+          },
+          body: JSON.stringify({
+            // Use JSON.stringify
+            eventInfo: data.eventInfo,
+            allImages: data.allImages,
+            eventHours: data.eventHours,
+          }),
+        };
+      },
+    }),
+    getAllEvents: build.query<any, any>({
+      query: (data) => {
+        const userId = data?.userId;
+        console.log("ADD event NOW.hours", data);
+        return {
+          url: `event/getAllEvents/`,
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json", // Use JSON
+          },
+        };
+      },
+    }),
     addCompany: build.mutation<any, any>({
       query: (data) => {
         const userId = data?.userId;
@@ -386,6 +418,8 @@ export const {
   useGoogleAuthMutation,
   useGetReviewsQuery,
   useAddFeedbackMutation,
+  useAddEventMutation,
+  useGetAllEventsQuery,
   // useAddBookMutation,
   useGetMyShiftsQuery,
   useGetCalendarDataQuery,

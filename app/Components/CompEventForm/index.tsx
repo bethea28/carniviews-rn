@@ -9,20 +9,19 @@ import {
 import { useForm } from "react-hook-form";
 import { useImagePicker } from "@/app/customHooks";
 import { useAddCompanyMutation, useAddEventMutation } from "@/store/api/api";
-import { AddCompanyForm } from "./AddCompanyForm";
-import { BusinessHoursModal } from "./BusinessHoursModal";
+import { MainForm } from "./MainForm";
+// import { BusinessHoursModal } from "./BusinessHoursModal";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector, useDispatch } from "react-redux";
-import { AddCompEventForm } from "@/app/Components/CompEventForm";
 
-const ModalItem = ({ modalVis, hideModal }) => {
-  return (
-    <Modal transparent={true} visible={modalVis} animationType="slide">
-      <BusinessHoursModal closeView={hideModal} />
-    </Modal>
-  );
-};
-export function AddCompanyScreen({ route: params }) {
+// const ModalItem = ({ modalVis, hideModal }) => {
+//   return (
+//     <Modal transparent={true} visible={modalVis} animationType="slide">
+//       <BusinessHoursModal closeView={hideModal} />
+//     </Modal>
+//   );
+// };
+export function AddCompEventForm({ route: params }) {
   const {
     control,
     handleSubmit,
@@ -46,14 +45,14 @@ export function AddCompanyScreen({ route: params }) {
   const [modalVis, setModalVis] = React.useState(false);
   const userData = useSelector((state) => state.counter.userState); // Assuming your slice is named 'userSlice'
   const hoursData = useSelector((state) => state.counter.businessHours); // Assuming your slice is named 'userSlice'
+  const eventHours = useSelector((state) => state.counter.eventHours); // Assuming your slice is named 'userSlice'
   const dispatch = useDispatch();
   // dispatch(setBusinessHours(hours));
-
+  // console.log("paramsB BRYAN COMP", params);
   const navigation = useNavigation();
   const onSubmit = async (data) => {
-    console.log("all my hours data", data);
-    return;
-    if (params.eventType === "company") {
+    console.log("all my hours data", params.params.eventType);
+    if (params.params.eventType === "company") {
       const finalData = {
         companyInfo: data,
         allImages,
@@ -62,16 +61,20 @@ export function AddCompanyScreen({ route: params }) {
       };
 
       const createCompany = await addCompany(finalData);
+      console.log("respoine request", createCompany);
     } else {
       const finalData = {
-        companyInfo: data,
+        eventInfo: data,
         allImages,
-        hoursData,
+        eventHours,
         userId: userData?.data?.user?.user_id,
       };
+
+      console.log("EVENT HOURS NOW EVENT", eventHours);
       const createCompany = await addEvent(finalData);
+      console.log("CREATE COMPANY RESPONS", createCompany);
     }
-    console.log("respoine request", createCompany);
+
     reset();
     navigation.navigate("Home");
   };
@@ -80,18 +83,19 @@ export function AddCompanyScreen({ route: params }) {
     console.log("add phoes");
     pickImages();
   };
-  console.log("all image nmow", allImages[0]?.uri);
+  console.log("all image nmow EVVENT TYPE", params.params.eventType);
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
     >
-      <AddCompEventForm
+      <MainForm
         setModalVis={() => setModalVis(true)}
         onSubmit={onSubmit}
         hoursData={hoursData}
         addPhotos={addPhotos}
-        eventType={params.eventType}
+        eventType={params.params?.eventType}
+        // eventType={params.eventType}
         thumbNail={
           <Image
             style={{ width: 100, height: 100 }}
@@ -99,19 +103,6 @@ export function AddCompanyScreen({ route: params }) {
           />
         }
       />
-      {/* <AddCompanyForm
-        setModalVis={() => setModalVis(true)}
-        onSubmit={onSubmit}
-        hoursData={hoursData}
-        addPhotos={addPhotos}
-        eventType={params.eventType}
-        thumbNail={
-          <Image
-            style={{ width: 100, height: 100 }}
-            source={{ uri: allImages[0]?.uri }}
-          />
-        }
-      /> */}
 
       {/* <BusinessHoursModal modalVis={modalVis} hideModal={handleModalClose} /> */}
     </KeyboardAvoidingView>

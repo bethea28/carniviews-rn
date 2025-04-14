@@ -25,12 +25,15 @@ import { AddCompanyScreen } from "./Screens/AddCompanyScreen";
 import { DetailsScreen } from "./Screens/DetailsScreen";
 import { InfoScreen } from "./Screens/InfoScreen";
 import { AddReviewScreen } from "./Screens/AddReviewScreen";
-import { BusinessHours } from "./Screens/BusinessHours";
+import { BusinessHours } from "./Components/BusinessHours";
+import { AddCompEventForm } from "./Components/CompEventForm";
 import { SocialLoginScreen } from "./Screens/SocialLoginScreen";
+import { EventScreen } from "./Screens/EventScreen";
 import { AnonymousFeedback } from "./Screens/FeedbackScreen";
 import { useSelector } from "react-redux";
 import { useGoogleAuthMutation } from "@/store/api/api";
 import { useNavigation } from "@react-navigation/native";
+import { goBack } from "expo-router/build/global-state/routing";
 // WebView Component
 
 const BottomTab = createBottomTabNavigator();
@@ -48,7 +51,9 @@ function MyBottomTabs() {
         options={{
           headerRight: () => (
             <Pressable
-              onPress={() => navigation.navigate("AddCompany")}
+              onPress={() =>
+                navigation.navigate("AddCompEvent", { eventType: "company" })
+              }
               style={[
                 {
                   padding: 20,
@@ -66,9 +71,9 @@ function MyBottomTabs() {
         component={HomeScreen}
       />
       <BottomTab.Screen
-        // options={{ headerShown: false }}
+        options={{ headerShown: true, goBack: true }}
         name="Events"
-        component={PlaceHolder}
+        component={EventScreen}
       />
       <BottomTab.Screen
         // options={{ headerShown: false }}
@@ -88,6 +93,7 @@ function RootStack() {
         options={{ headerShown: false }} // Keep it here if you want to hide in Home
       />
       <StackNav.Screen name="AddCompany" component={AddCompanyScreen} />
+      <StackNav.Screen name="AddCompEvent" component={AddCompEventForm} />
       <StackNav.Screen name="Details" component={DetailsScreen} />
       <StackNav.Screen
         name="Info"

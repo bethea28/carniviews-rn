@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
-// import { BusinessHours } from "../../Components/BusinessHours";
+import { BusinessHours } from "../BusinessHours";
 import { useSelector } from "react-redux";
 
 // Define the color palette based on the image (same as other components)
@@ -26,13 +26,13 @@ const buttonTextColor = textColorPrimary;
 const errorTextColor = "red";
 const placeholderTextColor = "gray";
 
-export function AddCompanyForm({
+export function MainForm({
   onSubmit,
   setModalVis,
   addPhotos,
   hoursData,
   thumbNail,
-  eventType = "company",
+  eventType,
 }) {
   const {
     control,
@@ -55,7 +55,8 @@ export function AddCompanyForm({
   const [hoursComp, setShowHoursComp] = useState(false);
   const navigation = useNavigation();
   const bizHours = useSelector((state) => state.counter.businessHours);
-
+  const eventHours = useSelector((state) => state.counter.evenHours);
+  console.log("compay for main form", eventType);
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -166,7 +167,8 @@ export function AddCompanyForm({
           )}
         </Pressable>
 
-        {/* {hoursComp && type === "company" && <BusinessHours addCompany={true} />} */}
+        {hoursComp && <BusinessHours eventType={eventType} addCompany={true} />}
+        {/* <BusinessHours addCompany={true} /> */}
 
         <Controller
           control={control}
