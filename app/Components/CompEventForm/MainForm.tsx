@@ -50,6 +50,7 @@ export function MainForm({
       type: "",
       description: "",
       photos: [],
+      price: "",
     },
   });
   const [hoursComp, setShowHoursComp] = useState(false);
@@ -200,6 +201,26 @@ export function MainForm({
           )}
           name="description"
         />
+        <Controller
+          control={control}
+          rules={{ required: false }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              placeholder="Price"
+              placeholderTextColor={placeholderTextColor}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              style={styles.input}
+              keyboardType="numeric" // 💸 ensures number-only keypad
+            />
+          )}
+          name="price"
+        />
+        {errors.price && (
+          <Text style={styles.errorText}>This is required.</Text>
+        )}
+
         <View style={{ marginTop: 8, alignItems: "center" }}>{thumbNail}</View>
         <View style={styles.buttonContainer}>
           <Pressable onPress={addPhotos} style={styles.addPhotosButton}>

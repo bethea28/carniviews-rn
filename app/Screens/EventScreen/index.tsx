@@ -1,11 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   View,
   Image,
-  ScrollView,
   FlatList,
   StyleSheet,
   SafeAreaView,
+  RefreshControl,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useGetAllEventsQuery } from "@/store/api/api";
@@ -32,35 +32,56 @@ const placeholderTextColor = "gray";
 
 export const EventScreen = () => {
   const navigation = useNavigation();
-  const { data: allEvents, isLoading, error } = useGetAllEventsQuery();
+  const { data: allEvents, isLoading, error, refetch } = useGetAllEventsQuery();
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     console.log("EventScreen loaded");
   }, []);
 
-  const renderEventItem = ({ item }) => (
-    <Card style={styles.card}>
-      {item.images?.[0]?.uri && (
-        <Card.Cover source={{ uri: item.images[0].uri }} />
-      )}
-      <Card.Content>
-        <Title style={styles.title}>{item.name}</Title>
-        <Paragraph style={styles.paragraph} numberOfLines={2}>
-          {item.description}
-        </Paragraph>
-        <Text style={styles.text}>
-          🕒 {item.hours?.start} - {item.hours?.end}
-        </Text>
-        <Text style={styles.text}>
-          📍 {item.address}, {item.city}, {item.state} {item.zip_code}
-        </Text>
-      </Card.Content>
-    </Card>
-  );
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await refetch();
+    } catch (err) {
+      console.error("Refresh failed", err);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [refetch]);
 
+  const renderEventItem = ({ item }) =>
+    console.log("images now", item.price) || (
+      <Card style={styles.card}>
+        {item.images[0]?.uri ? (
+          <Card.Cover
+            style={styles.eventImage}
+            source={{
+              uri: item.images[0].uri,
+            }}
+          />
+        ) : (
+          <></>
+        )}
+        <Card.Content>
+          <Title style={styles.title}>{item.name}</Title>
+          <Title style={styles.title}>{item.price}</Title>
+          <Paragraph style={styles.paragraph} numberOfLines={2}>
+            {item.description}
+          </Paragraph>
+          <Text style={styles.text}>
+            🕒 {item.hours?.start} - {item.hours?.end}
+          </Text>
+          <Text style={styles.text}>
+            📍 {item.address}, {item.city}, {item.state} {item.zip_code}
+          </Text>
+        </Card.Content>
+      </Card>
+    );
+  console.log("all my eventgs", allEvents?.events.at(-1));
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <View style={styles.container}>
         <Button
           mode="contained"
           onPress={() =>
@@ -72,7 +93,7 @@ export const EventScreen = () => {
           Add Event
         </Button>
 
-        {isLoading ? (
+        {isLoading && !refreshing ? (
           <ActivityIndicator animating={true} color={primaryColor} />
         ) : error ? (
           <Text style={styles.errorText}>Error fetching events</Text>
@@ -81,10 +102,18 @@ export const EventScreen = () => {
             data={allEvents?.events || []}
             keyExtractor={(item) => item.id.toString()}
             renderItem={renderEventItem}
-            scrollEnabled={false} // Disable since ScrollView handles scrolling
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                colors={[primaryColor]}
+                tintColor={primaryColor}
+              />
+            }
+            contentContainerStyle={{ paddingBottom: 32 }}
           />
         )}
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 };
@@ -94,9 +123,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: backgroundColor,
   },
-  scrollContainer: {
+  eventImage: {
+    width: "100%",
+    height: 200,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+    marginBottom: 10,
+  },
+
+  container: {
+    flex: 1,
     padding: 16,
-    paddingBottom: 32,
   },
   card: {
     marginBottom: 16,
