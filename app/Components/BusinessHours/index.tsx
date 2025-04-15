@@ -136,9 +136,12 @@ export function BusinessHours({ addCompany, staleHours, stale, eventType }) {
     </View>
   ) : (
     <View>
-      {["start", "end"].map((event) => {
+      {["start", "end"].map((event, key) => {
         return (
-          <View style={{ flexDirection: "row", marginTop: 10 }}>
+          <View
+            key={event}
+            style={{ flexDirection: "row", marginTop: 10, marginRight: 20 }}
+          >
             <View style={styles.buttonsContainer}>
               <Pressable
                 disabled={!addCompany}

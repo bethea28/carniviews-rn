@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useCallback } from "react";
 import {
   View,
-  Image,
-  FlatList,
+  SectionList,
   StyleSheet,
   SafeAreaView,
   RefreshControl,
+  Modal,
+  Pressable,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useGetAllEventsQuery } from "@/store/api/api";
@@ -34,6 +35,8 @@ export const EventScreen = () => {
   const navigation = useNavigation();
   const { data: allEvents, isLoading, error, refetch } = useGetAllEventsQuery();
   const [refreshing, setRefreshing] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
   useEffect(() => {
     console.log("EventScreen loaded");
@@ -50,35 +53,51 @@ export const EventScreen = () => {
     }
   }, [refetch]);
 
-  const renderEventItem = ({ item }) =>
-    console.log("images now", item.price) || (
-      <Card style={styles.card}>
-        {item.images[0]?.uri ? (
-          <Card.Cover
-            style={styles.eventImage}
-            source={{
-              uri: item.images[0].uri,
-            }}
-          />
-        ) : (
-          <></>
-        )}
-        <Card.Content>
-          <Title style={styles.title}>{item.name}</Title>
-          <Title style={styles.title}>{item.price}</Title>
-          <Paragraph style={styles.paragraph} numberOfLines={2}>
-            {item.description}
-          </Paragraph>
-          <Text style={styles.text}>
-            🕒 {item.hours?.start} - {item.hours?.end}
-          </Text>
-          <Text style={styles.text}>
-            📍 {item.address}, {item.city}, {item.state} {item.zip_code}
-          </Text>
-        </Card.Content>
-      </Card>
-    );
-  console.log("all my eventgs", allEvents?.events.at(-1));
+  const handleEventDetails = (event) => {
+    setSelectedEvent(event);
+    setModalVisible(true);
+  };
+
+  const renderEventItem = ({ item }) => (
+    <Card onPress={() => handleEventDetails(item)} style={styles.card}>
+      {item.images[0]?.uri ? (
+        <Card.Cover
+          style={styles.eventImage}
+          source={{ uri: item.images[0].uri }}
+        />
+      ) : null}
+      <Card.Content>
+        <Title style={styles.title}>{item.name}</Title>
+        <Title style={styles.title}>{item.price}</Title>
+        <Paragraph style={styles.paragraph} numberOfLines={2}>
+          {item.description}
+        </Paragraph>
+        <Text style={styles.text}>
+          🕒 {item.hours?.start} - {item.hours?.end}
+        </Text>
+        <Text style={styles.text}>
+          📍 {item.address}, {item.city}, {item.state} {item.zip_code}
+        </Text>
+      </Card.Content>
+    </Card>
+  );
+
+  const groupEventsAlphabetically = (events) => {
+    const grouped = events.reduce((acc, event) => {
+      const firstLetter = event.name?.[0]?.toUpperCase() || "#";
+      if (!acc[firstLetter]) acc[firstLetter] = [];
+      acc[firstLetter].push(event);
+      return acc;
+    }, {});
+
+    return Object.keys(grouped)
+      .sort()
+      .map((letter) => ({
+        title: letter,
+        data: grouped[letter].sort((a, b) => a.name.localeCompare(b.name)),
+      }));
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -98,10 +117,13 @@ export const EventScreen = () => {
         ) : error ? (
           <Text style={styles.errorText}>Error fetching events</Text>
         ) : (
-          <FlatList
-            data={allEvents?.events || []}
+          <SectionList
+            sections={groupEventsAlphabetically(allEvents?.events || [])}
             keyExtractor={(item) => item.id.toString()}
             renderItem={renderEventItem}
+            renderSectionHeader={({ section: { title } }) => (
+              <Text style={styles.sectionHeader}>{title}</Text>
+            )}
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}
@@ -114,6 +136,43 @@ export const EventScreen = () => {
           />
         )}
       </View>
+
+      {/* Event Details Modal */}
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            {selectedEvent && (
+              <>
+                <Title style={styles.modalTitle}>{selectedEvent.name}</Title>
+                <Text style={styles.modalText}>
+                  {selectedEvent.description}
+                </Text>
+                <Text style={styles.modalText}>
+                  🕒 {selectedEvent.hours?.start} - {selectedEvent.hours?.end}
+                </Text>
+                <Text style={styles.modalText}>
+                  📍 {selectedEvent.address}, {selectedEvent.city},{" "}
+                  {selectedEvent.state} {selectedEvent.zip_code}
+                </Text>
+                <Text style={styles.modalText}>💰 {selectedEvent.price}</Text>
+              </>
+            )}
+            <Button
+              mode="contained"
+              onPress={() => setModalVisible(false)}
+              style={styles.closeButton}
+              labelStyle={{ color: buttonTextColor }}
+            >
+              Close
+            </Button>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -123,14 +182,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: backgroundColor,
   },
-  eventImage: {
-    width: "100%",
-    height: 200,
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
-    marginBottom: 10,
-  },
-
   container: {
     flex: 1,
     padding: 16,
@@ -138,6 +189,13 @@ const styles = StyleSheet.create({
   card: {
     marginBottom: 16,
     backgroundColor: inputBackgroundColor,
+  },
+  eventImage: {
+    width: "100%",
+    height: 200,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+    marginBottom: 10,
   },
   title: {
     color: textColorSecondary,
@@ -165,5 +223,41 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: "center",
     marginTop: 20,
+  },
+  sectionHeader: {
+    fontSize: 22,
+    fontWeight: "bold",
+    backgroundColor: backgroundColor,
+    color: textColorSecondary,
+    paddingVertical: 8,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 12,
+    width: "100%",
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 10,
+    color: textColorSecondary,
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 8,
+    color: textColorSecondary,
+  },
+  closeButton: {
+    marginTop: 16,
+    backgroundColor: primaryColor,
+    borderRadius: 6,
   },
 });

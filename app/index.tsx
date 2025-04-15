@@ -76,7 +76,7 @@ function MyBottomTabs() {
         component={EventScreen}
       />
       <BottomTab.Screen
-        // options={{ headerShown: false }}
+        // options={{ headerShown: true, goBack: true }}
         name="Feedback"
         component={AnonymousFeedback}
       />
