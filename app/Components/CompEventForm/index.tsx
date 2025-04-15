@@ -88,7 +88,7 @@ export function AddCompEventForm({ route: params }) {
           eventType === "company"
             ? "Company created successfully!"
             : "Event created successfully!",
-        duration: 0,
+        duration: 6000,
         showAnimationDuration: 800,
         showEasing: Easing.ease,
         hideOnPress: true,

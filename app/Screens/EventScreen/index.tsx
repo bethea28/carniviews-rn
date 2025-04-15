@@ -132,6 +132,7 @@ export const EventScreen = () => {
                 tintColor={primaryColor}
               />
             }
+            stickySectionHeadersEnabled={true} // <-- Make headers sticky!
             contentContainerStyle={{ paddingBottom: 32 }}
           />
         )}
