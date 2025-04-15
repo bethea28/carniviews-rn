@@ -34,6 +34,9 @@ import { useSelector } from "react-redux";
 import { useGoogleAuthMutation } from "@/store/api/api";
 import { useNavigation } from "@react-navigation/native";
 import { goBack } from "expo-router/build/global-state/routing";
+import { NotifierWrapper } from "react-native-notifier";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+
 // WebView Component
 
 const BottomTab = createBottomTabNavigator();
@@ -213,11 +216,16 @@ function MainApp() {
 }
 
 // App Entry Point
+
 export default function App() {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <MainApp />
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <NotifierWrapper>
+            <MainApp />
+          </NotifierWrapper>
+        </GestureHandlerRootView>
       </PersistGate>
     </Provider>
   );

@@ -3,24 +3,16 @@ import {
   StyleSheet,
   Platform,
   KeyboardAvoidingView,
-  Modal,
   Image,
 } from "react-native";
 import { useForm } from "react-hook-form";
 import { useImagePicker } from "@/app/customHooks";
 import { useAddCompanyMutation, useAddEventMutation } from "@/store/api/api";
 import { MainForm } from "./MainForm";
-// import { BusinessHoursModal } from "./BusinessHoursModal";
 import { useNavigation } from "@react-navigation/native";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import { Notifier, Easing } from "react-native-notifier";
 
-// const ModalItem = ({ modalVis, hideModal }) => {
-//   return (
-//     <Modal transparent={true} visible={modalVis} animationType="slide">
-//       <BusinessHoursModal closeView={hideModal} />
-//     </Modal>
-//   );
-// };
 export function AddCompEventForm({ route: params }) {
   const {
     control,
@@ -39,51 +31,90 @@ export function AddCompEventForm({ route: params }) {
       photos: [],
     },
   });
+
   const { pickImages, allImages } = useImagePicker();
   const [addCompany] = useAddCompanyMutation();
   const [addEvent] = useAddEventMutation();
   const [modalVis, setModalVis] = React.useState(false);
-  const userData = useSelector((state) => state.counter.userState); // Assuming your slice is named 'userSlice'
-  const hoursData = useSelector((state) => state.counter.businessHours); // Assuming your slice is named 'userSlice'
-  const eventHours = useSelector((state) => state.counter.eventHours); // Assuming your slice is named 'userSlice'
-  const dispatch = useDispatch();
-  // dispatch(setBusinessHours(hours));
-  // console.log("paramsB BRYAN COMP", params);
+
+  const userData = useSelector((state) => state.counter.userState);
+  const hoursData = useSelector((state) => state.counter.businessHours);
+  const eventHours = useSelector((state) => state.counter.eventHours);
   const navigation = useNavigation();
+
+  console.log("event type now", params?.params?.eventType);
   const onSubmit = async (data) => {
-    console.log("all my hours data", params.params.eventType);
-    if (params.params.eventType === "company") {
-      const finalData = {
-        companyInfo: data,
-        allImages,
-        hoursData,
-        userId: userData?.data?.user?.user_id,
-      };
+    const eventType = params?.params?.eventType;
+    // Notifier.showNotification({
+    //   title: "Submitting Info",
+    //   description:
+    //     eventType === "company"
+    //       ? "Creating a new company..."
+    //       : "Creating a new event...",
+    //   duration: 2000,
+    //   showAnimationDuration: 800,
+    //   showEasing: Easing.bounce,
+    //   onHidden: () => console.log("Notification hidden"),
+    //   onPress: () => console.log("Notification pressed"),
+    //   hideOnPress: true,
+    // });
 
-      const createCompany = await addCompany(finalData);
-      console.log("respoine request", createCompany);
-    } else {
-      const finalData = {
-        eventInfo: data,
-        allImages,
-        eventHours,
-        userId: userData?.data?.user?.user_id,
-      };
+    const finalData =
+      eventType === "company"
+        ? {
+            companyInfo: data,
+            allImages,
+            hoursData,
+            userId: userData?.data?.user?.user_id,
+          }
+        : {
+            eventInfo: data,
+            allImages,
+            eventHours,
+            userId: userData?.data?.user?.user_id,
+          };
 
-      console.log("EVENT HOURS NOW EVENT", eventHours);
-      const createCompany = await addEvent(finalData);
-      console.log("CREATE COMPANY RESPONS", createCompany);
+    try {
+      const response =
+        eventType === "company"
+          ? await addCompany(finalData)
+          : await addEvent(finalData);
+
+      console.log("Submission response:", response);
+
+      Notifier.showNotification({
+        title: "Success!",
+        description:
+          eventType === "company"
+            ? "Company created successfully!"
+            : "Event created successfully!",
+        duration: 0,
+        showAnimationDuration: 800,
+        showEasing: Easing.ease,
+        hideOnPress: true,
+      });
+
+      reset();
+      eventType === "company"
+        ? navigation.navigate("Home")
+        : navigation.goBack();
+    } catch (err) {
+      console.error("Error submitting:", err);
+      Notifier.showNotification({
+        title: "Error",
+        description: "Something went wrong. Please try again.",
+        duration: 3000,
+        showAnimationDuration: 800,
+        showEasing: Easing.ease,
+        hideOnPress: true,
+      });
     }
-
-    reset();
-    navigation.navigate("Home");
   };
 
   const addPhotos = () => {
-    console.log("add phoes");
     pickImages();
   };
-  console.log("all image nmow EVVENT TYPE", params.params.eventType);
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -95,16 +126,15 @@ export function AddCompEventForm({ route: params }) {
         hoursData={hoursData}
         addPhotos={addPhotos}
         eventType={params.params?.eventType}
-        // eventType={params.eventType}
         thumbNail={
-          <Image
-            style={{ width: 100, height: 100 }}
-            source={{ uri: allImages[0]?.uri }}
-          />
+          allImages[0]?.uri && (
+            <Image
+              style={{ width: 100, height: 100 }}
+              source={{ uri: allImages[0]?.uri }}
+            />
+          )
         }
       />
-
-      {/* <BusinessHoursModal modalVis={modalVis} hideModal={handleModalClose} /> */}
     </KeyboardAvoidingView>
   );
 }
