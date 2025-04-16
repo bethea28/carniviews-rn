@@ -15,7 +15,6 @@
         "NSPhotoLibraryUsageDescription": "This app needs access to the photo library to select photos."
       },
       "googleServicesFile": "./GoogleService-Info.plist",
-
       "bundleIdentifier": "com.bethea28.rn-starter",
       "config": {
         "googleSignIn": {
@@ -46,7 +45,9 @@
     },
     "plugins": [
       "expo-router",
-      ["@react-native-google-signin/google-signin"],
+      [
+        "@react-native-google-signin/google-signin"
+      ],
       [
         "expo-splash-screen",
         {
@@ -59,6 +60,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "8a06620d-d7f6-4df7-b25d-3d2364fe2361"
+      }
     }
   }
 }
