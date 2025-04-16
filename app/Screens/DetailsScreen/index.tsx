@@ -11,7 +11,9 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import { useDispatch, useSelector } from "react-redux";
-import { useAddCompanyImageMutation } from "@/store/api/api";
+import { useAddCompanyImagesMutation } from "@/store/api/api";
+import { Notifier, Easing, NotifierComponents } from "react-native-notifier";
+
 // Define the color palette based on the image (same as other components)
 const primaryColor = "#a349a4"; // Purple
 const secondaryColor = "#FF8C00"; // Your new, more vibrant orange (replace with actual code)
@@ -69,22 +71,55 @@ const DescriptionDetails = ({ companyInfo }) =>
 const Actions = ({ camera, action, header, companyInfo, user }) => {
   const [image, setImage] = React.useState(null);
   const navigate = useNavigation();
-  const [addCompImage] = useAddCompanyImageMutation();
+  const [addCompImage] = useAddCompanyImagesMutation();
   const pickImage = async () => {
     console.log("adding");
-    // const dispatch = useDispatch();
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images", "videos"],
-      aspect: [4, 3],
-      quality: 1,
-      allowsMultipleSelection: true,
-    });
-    console.log("this image now", user);
-    const final = { result, user, companyInfo };
-    // return;
-    const addImages = await addCompImage(final);
-    if (!result.canceled && result.assets) {
-      setImage(result.assets);
+
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images", "videos"],
+        aspect: [4, 3],
+        quality: 1,
+        allowsMultipleSelection: true,
+      });
+
+      if (result.canceled) {
+        Notifier.showNotification({
+          title: "No Image Selected",
+          description: "You did not select any image.",
+          Component: NotifierComponents.Alert,
+          componentProps: { alertType: "warn" },
+          duration: 3000,
+        });
+        return;
+      }
+
+      const final = { result, user, companyInfo };
+      const addImages = await addCompImage(final);
+
+      if (addImages?.data) {
+        Notifier.showNotification({
+          title: "Upload Successful",
+          description: "Your image(s) were uploaded successfully.",
+          Component: NotifierComponents.Alert,
+          componentProps: { alertType: "success" },
+          duration: 3000,
+        });
+
+        setImage(result.assets);
+      } else {
+        throw new Error("Failed to upload images");
+      }
+    } catch (error) {
+      console.log("Image upload error:", error);
+
+      Notifier.showNotification({
+        title: "Upload Failed",
+        description: "There was a problem uploading your image(s).",
+        Component: NotifierComponents.Alert,
+        componentProps: { alertType: "error" },
+        duration: 3000,
+      });
     }
   };
 

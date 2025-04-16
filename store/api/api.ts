@@ -287,7 +287,7 @@ export const api = createApi({
         };
       },
     }),
-    addCompanyImage: build.mutation<any, any>({
+    addCompanyImages: build.mutation<any, any>({
       query: (data) => {
         const companyId = data.companyInfo?.companyId;
         const userId = data.user.data.user.user_id;
@@ -295,7 +295,7 @@ export const api = createApi({
         console.log("data is king add revieww", data.result);
         // return;
         return {
-          url: `company/${userId}/${companyId}/addCompanyImages/`,
+          url: `company/${userId}/${companyId}/addCompanyImages/add/`,
           method: "POST",
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
@@ -455,7 +455,7 @@ export const {
   useAddFeedbackMutation,
   useAddEventMutation,
   useGetAllEventsQuery,
-  useAddCompanyImageMutation,
+  useAddCompanyImagesMutation,
   // useAddBookMutation,
   useGetMyShiftsQuery,
   useGetCalendarDataQuery,

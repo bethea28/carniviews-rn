@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -7,11 +7,15 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
+  RefreshControl,
 } from "react-native";
 import { useGetCompanyImagesQuery } from "@/store/api/api";
 import { useSelector } from "react-redux";
+import { useAddCompanyImagesMutation } from "@/store/api/api";
+import { Notifier, Easing, NotifierComponents } from "react-native-notifier";
+import * as ImagePicker from "expo-image-picker";
 
-// Define Material Design-inspired color palette
+// Material Design-inspired color palette
 const primaryColor = "#a349a4";
 const primaryLightColor = "#d67bff";
 const primaryDarkColor = "#751976";
@@ -31,7 +35,24 @@ const imageSize = screenWidth / 2 - 24;
 
 export const Photos = () => {
   const companyId = useSelector((state) => state.counter.companyInfo.companyId);
-  const { data: allCompanyImages } = useGetCompanyImagesQuery({ companyId });
+  const companyInfo = useSelector((state) => state.counter.companyInfo);
+  const user = useSelector((state) => state.counter.userState);
+  const [image, setImage] = React.useState(null);
+
+  const {
+    data: allCompanyImages,
+    refetch,
+    isFetching,
+  } = useGetCompanyImagesQuery({ companyId });
+  const [addCompImage] = useAddCompanyImagesMutation();
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  };
 
   const parseImageUri = (image_url) => {
     try {
@@ -50,13 +71,59 @@ export const Photos = () => {
       </View>
     );
   };
+  const pickImage = async () => {
+    console.log("adding");
 
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images", "videos"],
+        aspect: [4, 3],
+        quality: 1,
+        allowsMultipleSelection: true,
+      });
+
+      if (result.canceled) {
+        Notifier.showNotification({
+          title: "No Image Selected",
+          description: "You did not select any image.",
+          Component: NotifierComponents.Alert,
+          componentProps: { alertType: "warn" },
+          duration: 3000,
+        });
+        return;
+      }
+
+      const final = { result, user, companyInfo };
+      const addImages = await addCompImage(final);
+
+      if (addImages?.data) {
+        Notifier.showNotification({
+          title: "Upload Successful",
+          description: "Your image(s) were uploaded successfully.",
+          Component: NotifierComponents.Alert,
+          componentProps: { alertType: "success" },
+          duration: 3000,
+        });
+
+        setImage(result.assets);
+      } else {
+        throw new Error("Failed to upload images");
+      }
+    } catch (error) {
+      console.log("Image upload error:", error);
+
+      Notifier.showNotification({
+        title: "Upload Failed",
+        description: "There was a problem uploading your image(s).",
+        Component: NotifierComponents.Alert,
+        componentProps: { alertType: "error" },
+        duration: 3000,
+      });
+    }
+  };
   const renderHeader = () => (
-    <TouchableOpacity
-      style={styles.addButton}
-      onPress={() => console.log("Add Photo Pressed")}
-    >
-      <Text style={styles.addButtonText}>+ Add Photo</Text>
+    <TouchableOpacity style={styles.addButton} onPress={pickImage}>
+      <Text style={styles.addButtonText}>+ Add Photos</Text>
     </TouchableOpacity>
   );
 
@@ -82,6 +149,14 @@ export const Photos = () => {
       numColumns={2}
       ListHeaderComponent={renderHeader}
       contentContainerStyle={styles.list}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing || isFetching}
+          onRefresh={onRefresh}
+          colors={[primaryColor]}
+          tintColor={primaryDarkColor}
+        />
+      }
     />
   );
 };

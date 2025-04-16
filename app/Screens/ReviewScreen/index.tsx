@@ -1,9 +1,15 @@
 import React from "react";
-import { View, FlatList, StyleSheet, RefreshControl } from "react-native";
+import {
+  View,
+  FlatList,
+  StyleSheet,
+  RefreshControl,
+  TouchableOpacity,
+} from "react-native";
 import { Text } from "react-native-paper";
 import { useSelector } from "react-redux";
 import { useGetReviewsQuery } from "@/store/api/api";
-
+import { useNavigation } from "@react-navigation/native";
 const primaryColor = "#a349a4";
 const secondaryColor = "#FF8C00";
 const backgroundColor = "#FFB347";
@@ -12,7 +18,7 @@ const textColorSecondary = "#333333";
 
 export function ReviewScreen() {
   const companyInfo = useSelector((state) => state.counter.companyInfo);
-
+  const navigation = useNavigation();
   const {
     data: allCompanyReviews,
     isLoading,
@@ -31,6 +37,15 @@ export function ReviewScreen() {
         Display Name: {item.displayName}
       </Text>
     </View>
+  );
+
+  const renderHeader = () => (
+    <TouchableOpacity
+      style={styles.addButton}
+      onPress={() => navigation.navigate("AddReviews", { companyInfo })}
+    >
+      <Text style={styles.addButtonText}>+ Add Review</Text>
+    </TouchableOpacity>
   );
 
   if (isLoading && !isFetching) {
@@ -64,6 +79,7 @@ export function ReviewScreen() {
             colors={[primaryColor]}
           />
         }
+        ListHeaderComponent={renderHeader}
       />
     </View>
   );
@@ -116,5 +132,18 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize: 18,
     color: "red",
+  },
+  addButton: {
+    backgroundColor: primaryColor,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    alignSelf: "flex-start",
+    marginBottom: 12,
+  },
+  addButtonText: {
+    color: textColorPrimary,
+    fontWeight: "bold",
+    fontSize: 16,
   },
 });
