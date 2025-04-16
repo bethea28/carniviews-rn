@@ -10,7 +10,7 @@ const backgroundColor = "#FFB347";
 const textColorPrimary = "#ffffff";
 const textColorSecondary = "#333333";
 
-export function ReviewScreen({ route: { params } }) {
+export function ReviewScreen() {
   const companyInfo = useSelector((state) => state.counter.companyInfo);
 
   const {

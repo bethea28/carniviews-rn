@@ -24,7 +24,8 @@ export function AddReviewScreen({ route }) {
   const [addReview] = useAddReviewMutation();
   const [rating, setRating] = React.useState(0);
   const navigation = useNavigation();
-
+  const userData = useSelector((state) => state.counter.userState);
+  console.log("SHOW ME ROUTES", route);
   const {
     control,
     handleSubmit,
@@ -35,14 +36,13 @@ export function AddReviewScreen({ route }) {
       review: "",
     },
   });
-  const userData = useSelector((state) => state.counter.userState);
   const onSubmit = async (data) => {
     try {
       const final = {
         review: data.review,
         rating,
         userId: userData.data.user.user_id,
-        companyId: route.params.companyData.companyId,
+        companyId: route.params?.companyInfo.companyId,
       };
 
       const sendReview = await addReview(final);

@@ -31,7 +31,13 @@ const shadowColor = "#000";
 const dividerColor = "#E0E0E0"; // Grey 300
 const errorColor = "#B00020"; // Red 600
 
-export function BusinessHours({ addCompany, staleHours, stale, eventType }) {
+export function BusinessHours({
+  addCompany,
+  staleHours,
+  stale,
+  referrer = "",
+  eventType = "event",
+}) {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [selectedDayIndex, setSelectedDayIndex] = useState(null);
@@ -78,8 +84,8 @@ export function BusinessHours({ addCompany, staleHours, stale, eventType }) {
 
   const businessData = addCompany === true ? bizHour : companyInfo?.hoursData;
   const daysOfWeek = businessData ? Object.keys(businessData) : [];
-  console.log("what is the evebnt type NICK", eventType);
-  return eventType === "company" ? (
+  console.log("what is the evebnt type NICK YOUNG", eventType);
+  return eventType === "company" || referrer === "tabs" ? (
     <View style={[styles.container, { backgroundColor: secondaryColor }]}>
       <Text style={styles.businessHoursTitle}>Business Hours</Text>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>

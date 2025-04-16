@@ -42,7 +42,7 @@ const ImageDetails = ({ companyInfo }) => {
   );
 };
 
-const BasicDetails = ({ params }) => (
+const BasicDetails = () => (
   <View style={styles.basicDetailsContainer}>
     <Image
       style={styles.basicDetailsImage}
@@ -51,7 +51,7 @@ const BasicDetails = ({ params }) => (
       }}
     />
     <Text style={styles.basicDetailsDescription}>
-      {params?.companyInfo.description}
+      {/* {params?.companyInfo.description} */}
     </Text>
   </View>
 );
@@ -92,7 +92,7 @@ const Actions = ({ camera, action, header, companyInfo, user }) => {
     <View style={styles.actionsContainer}>
       <Pressable
         onPress={
-          camera ? pickImage : () => navigate.navigate(action, { companyData })
+          camera ? pickImage : () => navigate.navigate(action, { companyInfo })
         }
         style={({ pressed }) => [
           styles.actionButton,
@@ -151,7 +151,7 @@ const Recommend = ({ companyInfo, user }) => (
   </View>
 );
 
-export function DetailsScreen({ route: { params } }) {
+export function DetailsScreen() {
   const companyInfo = useSelector((state) => state.counter.companyInfo);
   const user = useSelector((state) => state.counter.userState);
   console.log("all company info", user);

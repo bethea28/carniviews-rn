@@ -32,7 +32,7 @@ export function MainForm({
   addPhotos,
   hoursData,
   thumbNail,
-  eventType,
+  eventType = "company",
 }) {
   const {
     control,
@@ -57,7 +57,7 @@ export function MainForm({
   const navigation = useNavigation();
   const bizHours = useSelector((state) => state.counter.businessHours);
   const eventHours = useSelector((state) => state.counter.evenHours);
-  console.log("compay for main form", eventType);
+  console.log("MAIN FORM MAIN DAREN", eventType);
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}

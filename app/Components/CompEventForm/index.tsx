@@ -114,7 +114,7 @@ export function AddCompEventForm({ route: params }) {
   const addPhotos = () => {
     pickImages();
   };
-
+  console.log("comapny evengt whagt chris", params.params);
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
