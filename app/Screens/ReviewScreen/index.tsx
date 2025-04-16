@@ -1,20 +1,24 @@
 import React from "react";
-import { View, FlatList, StyleSheet } from "react-native";
+import { View, FlatList, StyleSheet, RefreshControl } from "react-native";
 import { Text } from "react-native-paper";
 import { useSelector } from "react-redux";
 import { useGetReviewsQuery } from "@/store/api/api";
-// Define the color palette based on the image (updated orange)
-const primaryColor = "#a349a4"; // Purple (remains the same unless you want to change it)
-const secondaryColor = "#FF8C00"; // Your new, more vibrant orange
-const backgroundColor = "#FFB347"; // An example of a lighter shade of your new orange
-const textColorPrimary = "#ffffff"; // White
-const textColorSecondary = "#333333"; // Dark Gray
+
+const primaryColor = "#a349a4";
+const secondaryColor = "#FF8C00";
+const backgroundColor = "#FFB347";
+const textColorPrimary = "#ffffff";
+const textColorSecondary = "#333333";
+
 export function ReviewScreen({ route: { params } }) {
   const companyInfo = useSelector((state) => state.counter.companyInfo);
+
   const {
     data: allCompanyReviews,
     isLoading,
     isError,
+    refetch,
+    isFetching,
   } = useGetReviewsQuery({
     companyId: companyInfo?.companyId,
   });
@@ -29,7 +33,7 @@ export function ReviewScreen({ route: { params } }) {
     </View>
   );
 
-  if (isLoading) {
+  if (isLoading && !isFetching) {
     return (
       <View style={[styles.container, styles.loadingContainer]}>
         <Text style={styles.loadingText}>Loading Reviews...</Text>
@@ -52,6 +56,14 @@ export function ReviewScreen({ route: { params } }) {
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
         contentContainerStyle={styles.flatListContent}
+        refreshControl={
+          <RefreshControl
+            refreshing={isFetching}
+            onRefresh={refetch}
+            tintColor={primaryColor}
+            colors={[primaryColor]}
+          />
+        }
       />
     </View>
   );
@@ -64,15 +76,15 @@ const styles = StyleSheet.create({
     backgroundColor: backgroundColor,
   },
   flatListContent: {
-    paddingBottom: 20, // Optional: Add some padding at the end of the list
+    paddingBottom: 20,
   },
   reviewContainer: {
     marginTop: 15,
     padding: 15,
-    backgroundColor: textColorPrimary, // Assuming review cards are white
+    backgroundColor: textColorPrimary,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#ddd", // Light gray border
+    borderColor: "#ddd",
   },
   reviewText: {
     fontSize: 16,
@@ -81,7 +93,7 @@ const styles = StyleSheet.create({
   },
   ratingText: {
     fontSize: 14,
-    color: primaryColor, // Highlight the rating
+    color: primaryColor,
     fontWeight: "bold",
     marginBottom: 3,
   },

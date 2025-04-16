@@ -16,7 +16,7 @@ const routes = [
   { key: "third", title: "Hours" },
 ];
 
-export const TabComponent = ({ navIndex }) => {
+export const TabComponent = ({ params, navIndex }) => {
   const layout = useWindowDimensions();
   const [index, setIndex] = React.useState(navIndex);
 

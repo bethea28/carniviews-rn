@@ -287,6 +287,40 @@ export const api = createApi({
         };
       },
     }),
+    addCompanyImage: build.mutation<any, any>({
+      query: (data) => {
+        const companyId = data.companyInfo?.companyId;
+        const userId = data.user.data.user.user_id;
+
+        console.log("data is king add revieww", data.result);
+        // return;
+        return {
+          url: `company/${userId}/${companyId}/addCompanyImages/`,
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: JSON.stringify({
+            // feedback: data.feedback,
+            imageUrls: data.result.assets,
+          }),
+        };
+      },
+    }),
+    getCompanyImages: build.query<any, any>({
+      query: (data) => {
+        // const companyId = data.companyInfo?.companyId;
+        const companyId = data.companyId;
+
+        return {
+          url: `company/${companyId}/getCompanyImages/get`,
+          method: "GET",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        };
+      },
+    }),
     addEvent: build.mutation<any, any>({
       query: (data) => {
         const userId = data?.userId;
@@ -415,11 +449,13 @@ export const {
   useGetCompaniesQuery,
   useAddReviewMutation,
   useAddCompanyMutation,
+  useGetCompanyImagesQuery,
   useGoogleAuthMutation,
   useGetReviewsQuery,
   useAddFeedbackMutation,
   useAddEventMutation,
   useGetAllEventsQuery,
+  useAddCompanyImageMutation,
   // useAddBookMutation,
   useGetMyShiftsQuery,
   useGetCalendarDataQuery,

@@ -36,14 +36,13 @@ import { useNavigation } from "@react-navigation/native";
 import { goBack } from "expo-router/build/global-state/routing";
 import { NotifierWrapper } from "react-native-notifier";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-
+import { Photos } from "./Screens/PhotosScreen";
 // WebView Component
 
 const BottomTab = createBottomTabNavigator();
 const StackNav = createNativeStackNavigator();
 
 const PlaceHolder = () => <Text>Placeholder</Text>;
-const Photos = () => <Text>Placeholder</Text>;
 
 function MyBottomTabs() {
   const navigation = useNavigation();
@@ -109,7 +108,7 @@ function RootStack() {
         // Remove options={{ headerShown: false }} from here
       />
       <StackNav.Screen
-        options={{ headerShown: false }}
+        options={{ headerShown: true }}
         name="AddReviews"
         component={AddReviewScreen}
       />

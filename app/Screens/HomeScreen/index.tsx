@@ -42,7 +42,6 @@ export function HomeScreen() {
   const [getData] = useAsyncStorage();
   const userData = useSelector((state) => state.counter.userState);
   const userName = userData?.data?.user?.name || "Guest"; // Handle potential undefined user
-
   const handleRefresh = async () => {
     setRefreshing(true);
     try {

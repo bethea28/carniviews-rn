@@ -15,7 +15,7 @@ import StarRating from "react-native-star-rating-widget";
 import { useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { StackActions } from "@react-navigation/native";
-
+import { Notifier, Easing } from "react-native-notifier";
 const StarRate = ({ changeRating, rating, styles }) => {
   return <StarRating style={styles} rating={rating} onChange={changeRating} />;
 };
@@ -42,19 +42,41 @@ export function AddReviewScreen({ route }) {
         review: data.review,
         rating,
         userId: userData.data.user.user_id,
-        companyId: route.params.companyData.id,
+        companyId: route.params.companyData.companyId,
       };
-      addReview(final);
 
-      navigation.dispatch(StackActions.pop());
+      const sendReview = await addReview(final);
+
+      // Check if request was successful
+      if (sendReview?.data) {
+        Notifier.showNotification({
+          title: "Success!",
+          description: "Review added successfully!",
+          duration: 4000,
+          showAnimationDuration: 800,
+          showEasing: Easing.ease,
+          hideOnPress: true,
+        });
+
+        navigation.dispatch(StackActions.pop());
+      } else {
+        throw new Error("Failed to submit review");
+      }
     } catch (error) {
-      console.log("error", error);
+      console.log("Error submitting review:", error);
+      Notifier.showNotification({
+        title: "Error",
+        description: "There was a problem submitting your review.",
+        duration: 4000,
+        showAnimationDuration: 800,
+        showEasing: Easing.ease,
+        hideOnPress: true,
+      });
     } finally {
       reset();
     }
   };
-  // console.log("user data reve", userData.data.user.user_id);
-  // console.log("COMPANY DATA", route.params.companyData.id);
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}

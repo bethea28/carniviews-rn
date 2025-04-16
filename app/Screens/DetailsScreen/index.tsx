@@ -10,8 +10,8 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
-import { useSelector } from "react-redux";
-
+import { useDispatch, useSelector } from "react-redux";
+import { useAddCompanyImageMutation } from "@/store/api/api";
 // Define the color palette based on the image (same as other components)
 const primaryColor = "#a349a4"; // Purple
 const secondaryColor = "#FF8C00"; // Your new, more vibrant orange (replace with actual code)
@@ -19,7 +19,7 @@ const backgroundColor = "#FFB347"; // Example lighter orange (adjust as needed)
 const textColorPrimary = "#ffffff"; // White
 const textColorSecondary = "#333333"; // Dark Gray
 
-const ImageDetails = ({ params }) => {
+const ImageDetails = ({ companyInfo }) => {
   const navigation = useNavigation();
   const user = useSelector((state) => state.counter.userState);
   console.log("user now", user);
@@ -31,7 +31,7 @@ const ImageDetails = ({ params }) => {
       }}
       style={styles.imageDetailsBackground}
     >
-      <Text style={styles.imageDetailsTitle}>{params?.businessName}</Text>
+      {/* <Text style={styles.imageDetailsTitle}>{params?.businessName}</Text> */}
       <Pressable
         onPress={() => navigation.navigate("Photos")}
         style={styles.seePhotosButton}
@@ -56,27 +56,33 @@ const BasicDetails = ({ params }) => (
   </View>
 );
 
-const DescriptionDetails = ({ companyInfo }) => (
-  <View style={styles.descriptionDetailsContainer}>
-    <Text style={styles.descriptionDetailsHeader}>Info Details</Text>
-    <Text style={styles.descriptionDetailsText}>
-      {companyInfo.companyDescription}
-    </Text>
-  </View>
-);
+const DescriptionDetails = ({ companyInfo }) =>
+  console.log("details now", companyInfo) || (
+    <View style={styles.descriptionDetailsContainer}>
+      <Text style={styles.descriptionDetailsHeader}>Info Details</Text>
+      <Text style={styles.descriptionDetailsText}>
+        {companyInfo.companyDescription}
+      </Text>
+    </View>
+  );
 
-const Actions = ({ camera, action, header, params }) => {
+const Actions = ({ camera, action, header, companyInfo, user }) => {
   const [image, setImage] = React.useState(null);
   const navigate = useNavigation();
-
+  const [addCompImage] = useAddCompanyImageMutation();
   const pickImage = async () => {
+    console.log("adding");
+    // const dispatch = useDispatch();
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images", "videos"],
       aspect: [4, 3],
       quality: 1,
       allowsMultipleSelection: true,
     });
-
+    console.log("this image now", user);
+    const final = { result, user, companyInfo };
+    // return;
+    const addImages = await addCompImage(final);
     if (!result.canceled && result.assets) {
       setImage(result.assets);
     }
@@ -86,9 +92,7 @@ const Actions = ({ camera, action, header, params }) => {
     <View style={styles.actionsContainer}>
       <Pressable
         onPress={
-          camera
-            ? pickImage
-            : () => navigate.navigate(action, { companyData: params })
+          camera ? pickImage : () => navigate.navigate(action, { companyData })
         }
         style={({ pressed }) => [
           styles.actionButton,
@@ -107,7 +111,7 @@ const Actions = ({ camera, action, header, params }) => {
   );
 };
 
-const Recommend = ({ params }) => (
+const Recommend = ({ companyInfo, user }) => (
   <View style={styles.recommendContainer}>
     <Text style={styles.recommendQuestion}>
       Do you recommend this business?
@@ -130,13 +134,15 @@ const Recommend = ({ params }) => (
     </View>
     <View style={styles.recommendActions}>
       <Actions
-        params={params}
+        companyInfo={companyInfo}
         camera={false}
         header="Add Review"
         action="AddReviews"
+        user={user}
       />
       <Actions
-        params={params}
+        user={user}
+        companyInfo={companyInfo}
         camera={true}
         header="Add Photo"
         action="AddPhotos"
@@ -147,17 +153,19 @@ const Recommend = ({ params }) => (
 
 export function DetailsScreen({ route: { params } }) {
   const companyInfo = useSelector((state) => state.counter.companyInfo);
+  const user = useSelector((state) => state.counter.userState);
+  console.log("all company info", user);
 
   return (
     <ScrollView
       contentContainerStyle={{ paddingBottom: 50 }}
       style={styles.scrollView}
     >
-      <ImageDetails params={params} />
+      <ImageDetails companyInfo={companyInfo} />
       <DescriptionDetails companyInfo={companyInfo} />
       {/* <BasicDetails params={params} /> */}
       {/* <BusinessHours staleHours={params?.hoursData} stale={true} /> */}
-      <Recommend params={params} />
+      <Recommend companyInfo={companyInfo} user={user} />
     </ScrollView>
   );
 }

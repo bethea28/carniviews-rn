@@ -14,10 +14,10 @@ export function InfoScreen({ route: { params } }) {
   const { data: allCompanyReviews } = useGetReviewsQuery({
     companyId: params.id,
   });
-
+  console.log("this si my whole comp", params);
   return (
     <View style={{ flex: 1 }}>
-      <TabComponent navIndex={params.navIndex} />
+      <TabComponent params={params} navIndex={params.navIndex} />
     </View>
   );
 }

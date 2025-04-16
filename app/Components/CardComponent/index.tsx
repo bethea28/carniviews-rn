@@ -6,6 +6,7 @@ import { setCompanyInfo } from "@/store/globalState/globalState";
 import { useDispatch } from "react-redux";
 import StarRatingDisplay from "react-native-star-rating-widget";
 import { useGetReviewsQuery } from "@/store/api/api";
+import { useSelector } from "react-redux";
 
 // Define a Material Design inspired color palette (using the provided colors)
 const primaryColor = "#a349a4"; // Purple 500 (approx.)
@@ -58,6 +59,7 @@ export const CompanyCard = ({ title, mainImage, wholeData }) => {
     }, 0);
     return rating / length;
   }, [isLoading]);
+  const compData = useSelector((state) => state.counter.companyInfo);
   return (
     <View style={styles.card}>
       <View style={styles.cardContent}>
