@@ -58,13 +58,12 @@
       [
         "@react-native-firebase/app",
         {
-          "apiKey": "AIzaSyDb7uPi0x8ZIglrw-1-m30dX8JFHeHzZak",
+          "apiKey": "AIzaSyBllfPx95Ksh4t0b78V7SRc3sqr9v-DqVw",
           "authDomain": "carniviews.firebaseapp.com",
           "projectId": "carniviews",
-          "storageBucket": "carniviews.firebasestorage.app",
+          "storageBucket": "carniviews.appspot.com",
           "messagingSenderId": "389796448834",
-          "appId": "1:389796448834:android:6b01b6090e56e14220bbdb",
-          "measurementId": "YOUR_MEASUREMENT_ID"
+          "appId": "1:389796448834:android:6b01b6090e56e14220bbdb"
         }
       ]
     ],
