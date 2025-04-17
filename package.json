@@ -21,6 +21,8 @@
     "@react-native-async-storage/async-storage": "^2.1.2",
     "@react-native-camera-roll/camera-roll": "^7.10.0",
     "@react-native-community/datetimepicker": "8.2.0",
+    "@react-native-firebase/app": "^21.14.0",
+    "@react-native-firebase/storage": "^21.14.0",
     "@react-native-google-signin/google-signin": "^13.2.0",
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.0.14",
@@ -30,6 +32,7 @@
     "expo-auth-session": "~6.0.3",
     "expo-blur": "~14.0.2",
     "expo-constants": "~17.0.4",
+    "expo-dev-client": "~5.0.20",
     "expo-font": "~13.0.3",
     "expo-haptics": "~14.0.1",
     "expo-image-picker": "~16.0.6",
@@ -46,6 +49,7 @@
     "react-hook-form": "^7.54.2",
     "react-native": "0.76.6",
     "react-native-date-picker": "^5.0.10",
+    "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "~2.20.2",
     "react-native-image-picker": "^8.2.0",
     "react-native-modal-datetime-picker": "^18.0.0",
@@ -61,8 +65,7 @@
     "react-native-web": "~0.19.13",
     "react-native-webview": "13.12.5",
     "react-redux": "^9.2.0",
-    "redux-persist": "^6.0.0",
-    "expo-dev-client": "~5.0.20"
+    "redux-persist": "^6.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

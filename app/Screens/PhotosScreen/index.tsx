@@ -12,8 +12,10 @@ import {
 import { useGetCompanyImagesQuery } from "@/store/api/api";
 import { useSelector } from "react-redux";
 import { useAddCompanyImagesMutation } from "@/store/api/api";
-import { Notifier, Easing, NotifierComponents } from "react-native-notifier";
+import { Notifier, NotifierComponents } from "react-native-notifier";
 import * as ImagePicker from "expo-image-picker";
+import storage from "@react-native-firebase/storage"; // Firebase storage
+import RNFS from "react-native-fs"; // For file system access
 
 // Material Design-inspired color palette
 const primaryColor = "#a349a4";
@@ -71,15 +73,39 @@ export const Photos = () => {
       </View>
     );
   };
+
+  const uploadToFirebase = async (uri) => {
+    try {
+      const reference = storage().ref(
+        `company_images/${Date.now()}_${uri.split("/").pop()}`
+      );
+      const pathToFile = `file://${uri}`;
+
+      await reference.putFile(pathToFile);
+      console.log("File uploaded to Firebase Storage!");
+
+      // You can update the company images list here if needed
+    } catch (error) {
+      console.error("Firebase upload error:", error);
+      Notifier.showNotification({
+        title: "Upload Failed",
+        description: "There was an error uploading your image.",
+        Component: NotifierComponents.Alert,
+        componentProps: { alertType: "error" },
+        duration: 3000,
+      });
+    }
+  };
+
   const pickImage = async () => {
     console.log("adding");
 
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ["images", "videos"],
+        mediaTypes: ["images"],
         aspect: [4, 3],
         quality: 1,
-        allowsMultipleSelection: true,
+        allowsMultipleSelection: false, // Limit to single image
       });
 
       if (result.canceled) {
@@ -92,6 +118,11 @@ export const Photos = () => {
         });
         return;
       }
+
+      const imageUri = result.assets[0].uri;
+
+      // Upload to Firebase
+      await uploadToFirebase(imageUri);
 
       const final = { result, user, companyInfo };
       const addImages = await addCompImage(final);
@@ -121,6 +152,7 @@ export const Photos = () => {
       });
     }
   };
+
   const renderHeader = () => (
     <TouchableOpacity style={styles.addButton} onPress={pickImage}>
       <Text style={styles.addButtonText}>+ Add Photos</Text>
