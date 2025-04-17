@@ -83,8 +83,9 @@ export const Photos = () => {
 
       await reference.putFile(pathToFile);
       console.log("File uploaded to Firebase Storage!");
-
-      // You can update the company images list here if needed
+      const downloadURL = await reference.getDownloadURL();
+      console.log("DOWN LOAD URL JOSH", downloadURL);
+      return downloadURL; // Return the download URL
     } catch (error) {
       console.error("Firebase upload error:", error);
       Notifier.showNotification({
@@ -94,21 +95,21 @@ export const Photos = () => {
         componentProps: { alertType: "error" },
         duration: 3000,
       });
+      return null; // Indicate upload failure
     }
   };
 
   const pickImage = async () => {
-    console.log("adding");
-
+    console.log("adding multiple images");
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ["images"],
         aspect: [4, 3],
         quality: 1,
-        allowsMultipleSelection: false, // Limit to single image
+        allowsMultipleSelection: true, // Allow multiple selection
       });
 
-      if (result.canceled) {
+      if (result.canceled || !result.assets) {
         Notifier.showNotification({
           title: "No Image Selected",
           description: "You did not select any image.",
@@ -119,30 +120,42 @@ export const Photos = () => {
         return;
       }
 
-      const imageUri = result.assets[0].uri;
+      const selectedImages = result?.assets;
+      console.log("ASSETS Selected", selectedImages);
+      const uploadPromises = selectedImages.map(async (asset) => {
+        return await uploadToFirebase(asset.uri);
+      });
 
-      // Upload to Firebase
-      await uploadToFirebase(imageUri);
-
-      const final = { result, user, companyInfo };
-      const addImages = await addCompImage(final);
-
-      if (addImages?.data) {
+      const downloadURLs = await Promise.all(uploadPromises);
+      const validDownloadURLs = downloadURLs.filter((url) => url !== null); // Filter out failed uploads
+      console.log("VALID UROS", validDownloadURLs);
+      if (validDownloadURLs.length > 0) {
+        const final = { imageUrls: validDownloadURLs, user, companyInfo }; // Send array of URLs
+        const addImages = await addCompImage(final);
+        return;
+        if (addImages?.data) {
+          Notifier.showNotification({
+            title: "Upload Successful",
+            description: "Your image(s) were uploaded successfully.",
+            Component: NotifierComponents.Alert,
+            componentProps: { alertType: "success" },
+            duration: 3000,
+          });
+          setImage(selectedImages); // Update local state with selected images
+        } else {
+          throw new Error("Failed to upload images to backend");
+        }
+      } else {
         Notifier.showNotification({
-          title: "Upload Successful",
-          description: "Your image(s) were uploaded successfully.",
+          title: "Upload Failed",
+          description: "No images were successfully uploaded.",
           Component: NotifierComponents.Alert,
-          componentProps: { alertType: "success" },
+          componentProps: { alertType: "error" },
           duration: 3000,
         });
-
-        setImage(result.assets);
-      } else {
-        throw new Error("Failed to upload images");
       }
     } catch (error) {
       console.log("Image upload error:", error);
-
       Notifier.showNotification({
         title: "Upload Failed",
         description: "There was a problem uploading your image(s).",
@@ -164,7 +177,7 @@ export const Photos = () => {
       <View style={styles.center}>
         <TouchableOpacity
           style={styles.addButton}
-          onPress={() => console.log("Add Photo Pressed")}
+          onPress={pickImage} // Use the updated pickImage function
         >
           <Text style={styles.addButtonText}>+ Add Photo</Text>
         </TouchableOpacity>

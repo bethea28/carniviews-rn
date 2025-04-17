@@ -292,7 +292,7 @@ export const api = createApi({
         const companyId = data.companyInfo?.companyId;
         const userId = data.user.data.user.user_id;
 
-        console.log("data is king add revieww", data.result);
+        console.log("BEFORE DJANGO DUDE", userId, companyId);
         // return;
         return {
           url: `company/${userId}/${companyId}/addCompanyImages/add/`,
@@ -302,7 +302,7 @@ export const api = createApi({
           },
           body: JSON.stringify({
             // feedback: data.feedback,
-            imageUrls: data.result.assets,
+            imageUrls: data.imageUrls,
           }),
         };
       },
