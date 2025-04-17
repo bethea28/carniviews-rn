@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "389796448834-ejibs65orcjr8khah9oavk8f49t07avi.apps.googleusercontent.com",
+          "client_id": "389796448834-p0g9lp8l9vrmul6ickomgtiupignuclq.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.bethea28.rnstarter",
-            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+            "certificate_hash": "48b0bdd9ffef30454a758a0e16bb0299615e1e8e"
           }
         },
         {
@@ -37,6 +37,13 @@
             {
               "client_id": "389796448834-lokv2d5vt75qbshil74f1t6c8hrajm48.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "389796448834-auklmn2qqj7m73lcjoq849ortkju60ec.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.bethea28.rn-starter"
+              }
             }
           ]
         }
