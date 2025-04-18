@@ -104,7 +104,7 @@ export const EventScreen = () => {
         <Button
           mode="contained"
           onPress={() =>
-            navigation.navigate("AddCompEvent", { eventType: "event" })
+            navigation.navigate("CompanyForms", { eventType: "event" })
           }
           style={styles.button}
           labelStyle={styles.buttonLabel}

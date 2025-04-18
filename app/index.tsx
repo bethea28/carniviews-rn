@@ -50,36 +50,36 @@ function MyBottomTabs() {
   return (
     <BottomTab.Navigator>
       <BottomTab.Screen
-        // options={{ headerShown: false }}
-        options={{
-          headerRight: () => (
-            <Pressable
-              onPress={() =>
-                navigation.navigate("AddCompEvent", { eventType: "company" })
-              }
-              style={[
-                {
-                  padding: 20,
-                  marginRight: 10,
-                  borderRadius: 100,
-                  backgroundColor: "#a349a4",
-                },
-              ]}
-            >
-              <Text style={{ color: "white" }}>Add Company</Text>
-            </Pressable>
-          ),
-        }}
+        options={{ headerShown: false }}
+        // options={{
+        //   headerRight: () => (
+        //     <Pressable
+        //       onPress={() =>
+        //         navigation.navigate("AddCompEvent", { eventType: "company" })
+        //       }
+        //       style={[
+        //         {
+        //           padding: 20,
+        //           marginRight: 10,
+        //           borderRadius: 100,
+        //           backgroundColor: "#a349a4",
+        //         },
+        //       ]}
+        //     >
+        //       <Text style={{ color: "white" }}>Add Company</Text>
+        //     </Pressable>
+        //   ),
+        // }}
         name="Home"
         component={HomeScreen}
       />
       <BottomTab.Screen
-        options={{ headerShown: true, goBack: true }}
+        options={{ headerShown: false, goBack: true }}
         name="Events"
         component={EventScreen}
       />
       <BottomTab.Screen
-        options={{ headerShown: true, goBack: true }}
+        options={{ headerShown: false, goBack: true }}
         name="Feedback"
         component={AnonymousFeedback}
       />

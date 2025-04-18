@@ -8,6 +8,7 @@ import {
   Platform,
   KeyboardAvoidingView,
   Pressable,
+  Image,
 } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { BusinessHours } from "../BusinessHours";
@@ -28,7 +29,13 @@ const buttonTextColor = textColorPrimary;
 const errorTextColor = "red";
 const placeholderTextColor = "gray";
 
-export function TrinidadForm({ setModalVis, addPhotos, thumbNail, country }) {
+export function MainEventForm({
+  setModalVis,
+  addPhotos,
+  thumbNail,
+  country,
+  eventType,
+}) {
   const countrySpecific = country?.country;
   const {
     control,
@@ -48,6 +55,7 @@ export function TrinidadForm({ setModalVis, addPhotos, thumbNail, country }) {
       type: "",
       description: "",
       photos: [],
+      price: "",
     },
   });
 
@@ -94,7 +102,7 @@ export function TrinidadForm({ setModalVis, addPhotos, thumbNail, country }) {
       });
     }
   };
-  console.log("all images", country);
+  console.log("all images", allImages);
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -109,7 +117,7 @@ export function TrinidadForm({ setModalVis, addPhotos, thumbNail, country }) {
           name="name"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-              placeholder="Company Name"
+              placeholder="Event Name"
               placeholderTextColor={placeholderTextColor}
               onBlur={onBlur}
               onChangeText={onChange}
@@ -118,6 +126,62 @@ export function TrinidadForm({ setModalVis, addPhotos, thumbNail, country }) {
             />
           )}
         />
+        <View style={styles.rowInputs}>
+          <View style={{ flex: 1, marginRight: 5 }}>
+            <Controller
+              control={control}
+              name="type"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  placeholder="Type"
+                  placeholderTextColor={placeholderTextColor}
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  style={styles.smallInput}
+                />
+              )}
+            />
+          </View>
+          <View style={{ flex: 1, marginLeft: 5 }}>
+            <Controller
+              control={control}
+              rules={{ required: false }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  placeholder="Price"
+                  placeholderTextColor={placeholderTextColor}
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  style={styles.smallInput}
+                  keyboardType="numeric"
+                />
+              )}
+              name="price"
+            />
+          </View>
+        </View>
+        {errors.price && (
+          <Text style={styles.errorText}>This is required.</Text>
+        )}
+        <Controller
+          control={control}
+          name="description"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              placeholder="Description"
+              placeholderTextColor={placeholderTextColor}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              style={[styles.input, styles.multilineInput]}
+              multiline
+              numberOfLines={3}
+            />
+          )}
+        />
+
         <Controller
           control={control}
           name="addressLine1"
@@ -165,7 +229,7 @@ export function TrinidadForm({ setModalVis, addPhotos, thumbNail, country }) {
           name="postal"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-              placeholder={`Zip/Postal Code (${country.exampleAddress.postalCode})`}
+              placeholder={`Zip/Postal Code (e.g.${country.exampleAddress.postalCode})`}
               placeholderTextColor={placeholderTextColor}
               onBlur={onBlur}
               onChangeText={onChange}
@@ -174,13 +238,12 @@ export function TrinidadForm({ setModalVis, addPhotos, thumbNail, country }) {
             />
           )}
         />
-
         <Controller
           control={control}
           name="region"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-              placeholder={`State/Province/Region (${country.exampleAddress.subRegion})`}
+              placeholder={`State/Province/Region (e.g. ${country.exampleAddress.subRegion})`}
               placeholderTextColor={placeholderTextColor}
               onBlur={onBlur}
               onChangeText={onChange}
@@ -189,7 +252,6 @@ export function TrinidadForm({ setModalVis, addPhotos, thumbNail, country }) {
             />
           )}
         />
-
         <Controller
           control={control}
           name="country"
@@ -201,7 +263,7 @@ export function TrinidadForm({ setModalVis, addPhotos, thumbNail, country }) {
               onChangeText={onChange}
               value={country.country}
               style={styles.input}
-              editable={false} // Set to "Trinidad and Tobago" and make it non-editable
+              editable={false}
             />
           )}
         />
@@ -210,44 +272,12 @@ export function TrinidadForm({ setModalVis, addPhotos, thumbNail, country }) {
           onPress={() => setShowHoursComp((prev) => !prev)}
           style={styles.input}
         >
-          <Text style={styles.placeholderText}>Hours</Text>
           {bizHours && Object.keys(bizHours).length > 0 && (
-            <Text style={styles.selectedHoursText}>Hours Added</Text>
+            <Text style={styles.selectedHoursText}>Add Event Hours</Text>
           )}
         </Pressable>
 
-        {hoursComp && <BusinessHours eventType="company" addCompany />}
-
-        <Controller
-          control={control}
-          name="type"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              placeholder="Type"
-              placeholderTextColor={placeholderTextColor}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              style={styles.input}
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="description"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              placeholder="Description"
-              placeholderTextColor={placeholderTextColor}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              style={[styles.input, styles.multilineInput]}
-              multiline
-              numberOfLines={3}
-            />
-          )}
-        />
+        {hoursComp && <BusinessHours eventType={eventType} addCompany />}
 
         <View style={{ marginTop: 8, alignItems: "center" }}>{thumbNail}</View>
 
@@ -302,17 +332,17 @@ const styles = StyleSheet.create({
   rowInputs: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 10,
+    // marginTop: 10,
   },
   errorText: {
     color: errorTextColor,
     marginTop: 5,
   },
   buttonContainer: {
-    marginTop: 25,
+    marginBottom: 20,
     alignItems: "center",
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
   },
   submitButton: {
     backgroundColor: buttonBackgroundColor,
@@ -331,10 +361,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: secondaryColor,
-    width: "50%",
+    // width: "50%",
+    paddingHorizontal: 15,
+
     paddingVertical: 15,
     justifyContent: "center",
-    marginTop: 20,
   },
   addPhotosText: {
     color: buttonTextColor,
@@ -349,5 +380,6 @@ const styles = StyleSheet.create({
   selectedHoursText: {
     color: primaryColor,
     fontSize: 14,
+    margin: "auto",
   },
 });

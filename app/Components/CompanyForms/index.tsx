@@ -1,15 +1,21 @@
 import { View } from "react-native";
 import { AmericanForm } from "./AmericanForm";
-import { TrinidadForm } from "./TriniForm";
+import { MainBizForm } from "./MainBizForm";
 import { useSelector } from "react-redux";
-
-export const CompanyForms = () => {
+import { MainEventForm } from "./MainEventForm";
+export const CompanyForms = ({ route }) => {
   const country = useSelector((state) => state.counter.country);
+  const eventType = route.params.eventType;
   // const lower = country?.toLowerCase();
-  console.log("company forms bryan", country);
+  console.log("company forms bryan", eventType);
+  // return;
   return (
     <View style={{ flex: 1 }}>
-      <TrinidadForm country={country} />
+      {eventType === "company" ? (
+        <MainBizForm eventType={eventType} country={country} />
+      ) : (
+        <MainEventForm eventType={eventType} country={country} />
+      )}
       {/* {country === null && <AmericanForm country={country} />}
       {lower?.includes("states") && <AmericanForm country={country} />}
       {lower?.includes("trinidad") && <TrinidadForm country={country} />} */}

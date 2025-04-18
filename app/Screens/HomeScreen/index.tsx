@@ -36,8 +36,8 @@ export function HomeScreen() {
     refetch,
   } = useGetCompaniesQuery();
   const userData = useSelector((state) => state.counter.userState);
+  const country = useSelector((state) => state.counter.country);
   const userName = userData?.data?.user?.name || "Guest";
-
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
@@ -111,6 +111,7 @@ export function HomeScreen() {
         >
           <Text style={styles.greeting}>Hi {userName}!</Text>
           <Pressable
+            disabled={!country}
             onPress={() =>
               navigation.navigate("CompanyForms", { eventType: "company" })
             }
