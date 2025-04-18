@@ -37,7 +37,7 @@ import { goBack } from "expo-router/build/global-state/routing";
 import { NotifierWrapper } from "react-native-notifier";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Photos } from "./Screens/PhotosScreen";
-
+import { CompanyForms } from "./Components/CompanyForms";
 // WebView Component
 
 const BottomTab = createBottomTabNavigator();
@@ -97,6 +97,7 @@ function RootStack() {
       />
       <StackNav.Screen name="AddCompany" component={AddCompanyScreen} />
       <StackNav.Screen name="AddCompEvent" component={AddCompEventForm} />
+      <StackNav.Screen name="CompanyForms" component={CompanyForms} />
       <StackNav.Screen name="Details" component={DetailsScreen} />
       <StackNav.Screen
         name="Info"

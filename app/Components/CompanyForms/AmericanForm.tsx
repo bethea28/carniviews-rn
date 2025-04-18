@@ -13,6 +13,10 @@ import { useForm, Controller } from "react-hook-form";
 import { BusinessHours } from "../BusinessHours";
 import { useSelector } from "react-redux";
 import { useImagePicker } from "@/app/customHooks";
+import { Notifier, Easing } from "react-native-notifier";
+import { useNavigation } from "@react-navigation/native";
+import { useAddCompanyMutation } from "@/store/api/api";
+
 const primaryColor = "#a349a4";
 const secondaryColor = "#FF8C00";
 const backgroundColor = "#FFB347";
@@ -24,10 +28,11 @@ const buttonTextColor = textColorPrimary;
 const errorTextColor = "red";
 const placeholderTextColor = "gray";
 
-export function AmericanForm({ onSubmit, setModalVis, addPhotos, thumbNail }) {
+export function AmericanForm({ setModalVis, addPhotos, thumbNail, country }) {
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -45,8 +50,48 @@ export function AmericanForm({ onSubmit, setModalVis, addPhotos, thumbNail }) {
 
   const [hoursComp, setShowHoursComp] = useState(false);
   const bizHours = useSelector((state) => state.counter.businessHours);
+  const hoursData = useSelector((state) => state.counter.businessHours);
+  const userData = useSelector((state) => state.counter.userState);
+  const [addCompany] = useAddCompanyMutation();
+  const navigation = useNavigation();
   const { pickImages, allImages } = useImagePicker();
 
+  const onSubmit = async (data) => {
+    const finalData = {
+      companyInfo: data,
+      allImages,
+      hoursData,
+      userId: userData?.data?.user?.user_id,
+    };
+
+    try {
+      const response = await addCompany(finalData);
+
+      console.log("Submission response:", response);
+
+      Notifier.showNotification({
+        title: "Success!",
+        description: "Company created successfully!",
+        duration: 6000,
+        showAnimationDuration: 800,
+        showEasing: Easing.ease,
+        hideOnPress: true,
+      });
+
+      reset();
+      navigation.navigate("Home");
+    } catch (err) {
+      Notifier.showNotification({
+        title: "Error",
+        description: "Something went wrong. Please try again.",
+        duration: 3000,
+        showAnimationDuration: 800,
+        showEasing: Easing.ease,
+        hideOnPress: true,
+      });
+    }
+  };
+  console.log("all images", allImages);
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -58,6 +103,7 @@ export function AmericanForm({ onSubmit, setModalVis, addPhotos, thumbNail }) {
       >
         <Controller
           control={control}
+          name="name"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
               placeholder="Name"
@@ -68,10 +114,10 @@ export function AmericanForm({ onSubmit, setModalVis, addPhotos, thumbNail }) {
               style={styles.input}
             />
           )}
-          name="name"
         />
         <Controller
           control={control}
+          name="address"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
               placeholder="Address"
@@ -82,10 +128,10 @@ export function AmericanForm({ onSubmit, setModalVis, addPhotos, thumbNail }) {
               style={styles.input}
             />
           )}
-          name="address"
         />
         <Controller
           control={control}
+          name="city"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
               placeholder="City"
@@ -96,12 +142,12 @@ export function AmericanForm({ onSubmit, setModalVis, addPhotos, thumbNail }) {
               style={styles.input}
             />
           )}
-          name="city"
         />
 
         <View style={styles.rowInputs}>
           <Controller
             control={control}
+            name="state"
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
                 placeholder="State"
@@ -112,10 +158,10 @@ export function AmericanForm({ onSubmit, setModalVis, addPhotos, thumbNail }) {
                 style={styles.smallInput}
               />
             )}
-            name="state"
           />
           <Controller
             control={control}
+            name="zip"
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
                 placeholder="Zip"
@@ -126,7 +172,6 @@ export function AmericanForm({ onSubmit, setModalVis, addPhotos, thumbNail }) {
                 style={styles.smallInput}
               />
             )}
-            name="zip"
           />
         </View>
 
@@ -140,10 +185,11 @@ export function AmericanForm({ onSubmit, setModalVis, addPhotos, thumbNail }) {
           )}
         </Pressable>
 
-        {hoursComp && <BusinessHours eventType="company" addCompany={true} />}
+        {hoursComp && <BusinessHours eventType="company" addCompany />}
 
         <Controller
           control={control}
+          name="type"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
               placeholder="Type"
@@ -154,10 +200,10 @@ export function AmericanForm({ onSubmit, setModalVis, addPhotos, thumbNail }) {
               style={styles.input}
             />
           )}
-          name="type"
         />
         <Controller
           control={control}
+          name="description"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
               placeholder="Description"
@@ -170,16 +216,12 @@ export function AmericanForm({ onSubmit, setModalVis, addPhotos, thumbNail }) {
               numberOfLines={3}
             />
           )}
-          name="description"
         />
 
         <View style={{ marginTop: 8, alignItems: "center" }}>{thumbNail}</View>
 
         <View style={styles.buttonContainer}>
-          <Pressable
-            onPress={() => pickImages()}
-            style={styles.addPhotosButton}
-          >
+          <Pressable onPress={pickImages} style={styles.addPhotosButton}>
             <Text style={styles.addPhotosText}>Add Photos</Text>
           </Pressable>
           <Pressable
@@ -239,6 +281,7 @@ const styles = StyleSheet.create({
     marginTop: 25,
     alignItems: "center",
     flexDirection: "row",
+    justifyContent: "space-between",
   },
   submitButton: {
     backgroundColor: buttonBackgroundColor,

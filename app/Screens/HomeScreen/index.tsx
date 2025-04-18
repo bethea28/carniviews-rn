@@ -102,7 +102,31 @@ export function HomeScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.greeting}>Hi {userName}!</Text>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Text style={styles.greeting}>Hi {userName}!</Text>
+          <Pressable
+            onPress={() =>
+              navigation.navigate("CompanyForms", { eventType: "company" })
+            }
+            style={[
+              {
+                // width: 150,
+                padding: 20,
+                marginRight: 10,
+                borderRadius: 100,
+                backgroundColor: "#a349a4",
+              },
+            ]}
+          >
+            <Text style={{ color: "white" }}>Add Company</Text>
+          </Pressable>
+        </View>
         <Text style={styles.title}>Welcome To TriniViews!</Text>
         <Text style={styles.title}>
           Let Us Help You Find Your Next Carnival Costume!

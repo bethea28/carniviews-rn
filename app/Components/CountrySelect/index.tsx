@@ -4,23 +4,9 @@ import SelectDropdown from "react-native-select-dropdown";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { setCountry } from "@/store/globalState/globalState";
 import { useDispatch } from "react-redux";
-// const emojisWithIcons = [
-//   { title: "happy", icon: "emoticon-happy-outline" },
-//   { title: "cool", icon: "emoticon-cool-outline" },
-//   { title: "lol", icon: "emoticon-lol-outline" },
-//   { title: "sad", icon: "emoticon-sad-outline" },
-//   { title: "cry", icon: "emoticon-cry-outline" },
-//   { title: "angry", icon: "emoticon-angry-outline" },
-//   { title: "confused", icon: "emoticon-confused-outline" },
-//   { title: "excited", icon: "emoticon-excited-outline" },
-//   { title: "kiss", icon: "emoticon-kiss-outline" },
-//   { title: "devil", icon: "emoticon-devil-outline" },
-//   { title: "dead", icon: "emoticon-dead-outline" },
-//   { title: "wink", icon: "emoticon-wink-outline" },
-//   { title: "sick", icon: "emoticon-sick-outline" },
-//   { title: "frown", icon: "emoticon-frown-outline" },
-// ];
+import { carnivalCountries } from "@/carnivalCountries";
 const countries = [
+  // { country: "Choose Your Country" },
   { country: "United States" },
   { country: " Trinidad and Tobago" },
 ];
@@ -28,22 +14,19 @@ export function CountrySelect() {
   const dispatch = useDispatch();
   return (
     <SelectDropdown
-      data={countries}
+      data={carnivalCountries}
+      search={true}
+      searchPlaceHolder="Search Countries"
       onSelect={(selectedItem, index) => {
         console.log("Selected:", selectedItem, "at index", index);
         dispatch(setCountry(selectedItem));
       }}
       renderButton={(selectedItem, isOpened) => (
         <View style={styles.dropdownButtonStyle}>
-          {selectedItem && (
-            <Icon
-              name={selectedItem.icon}
-              style={styles.dropdownButtonIconStyle}
-            />
-          )}
           <Text style={styles.dropdownButtonTxtStyle}>
-            {(selectedItem && selectedItem.country) || "Choose your country"}
+            {selectedItem?.country || "Choose Your country"}
           </Text>
+
           <Icon
             name={isOpened ? "chevron-up" : "chevron-down"}
             style={styles.dropdownButtonArrowStyle}
