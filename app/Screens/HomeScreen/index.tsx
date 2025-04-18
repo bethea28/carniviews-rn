@@ -13,7 +13,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useGetCompaniesQuery } from "@/store/api/api";
 import { useAsyncStorage } from "@/app/customHooks";
 import { useSelector } from "react-redux";
-
+import { CountrySelect } from "@/app/Components/CountrySelect";
 // Colors
 const primaryColor = "#a349a4";
 const primaryLightColor = "#d67bff";
@@ -107,8 +107,8 @@ export function HomeScreen() {
         <Text style={styles.title}>
           Let Us Help You Find Your Next Carnival Costume!
         </Text>
+        <CountrySelect />
       </View>
-
       <SectionList
         sections={sections}
         keyExtractor={(item) =>

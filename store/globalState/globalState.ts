@@ -4,6 +4,7 @@ import { act } from "react";
 
 const initialState = {
   companyInfo: {},
+  country: "",
   value: 0,
   userState: {},
   eventHours: { start: null, end: null },
@@ -54,6 +55,9 @@ export const counterSlice = createSlice({
       state.companyInfo = updatedCompanyInfo;
       // state.value += action.payload;
     },
+    setCountry: (state, action) => {
+      state.country = action.payload.country;
+    },
     setEventHours: (state, action) => {
       const payLoad = action.payload;
       state.eventHours = {
@@ -85,6 +89,7 @@ export const {
   increment,
   decrement,
   incrementByAmount,
+  setCountry,
   setUserState,
   setGlobalBusinessHours,
   setEventHours,
