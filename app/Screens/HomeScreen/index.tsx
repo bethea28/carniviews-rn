@@ -98,7 +98,7 @@ export function HomeScreen() {
       </View>
     );
   }
-
+  console.log("all companies now", allCompanies);
   return (
     <View style={styles.container}>
       <View style={styles.header}>

@@ -59,7 +59,8 @@ export const CompanyCard = ({ title, mainImage, wholeData }) => {
     }, 0);
     return rating / length;
   }, [isLoading]);
-  const compData = useSelector((state) => state.counter.companyInfo);
+  const compData = useSelector((state) => state.counter);
+  console.log("ALL COMPANY DATA", compData);
   return (
     <View style={styles.card}>
       <View style={styles.cardContent}>

@@ -21,6 +21,25 @@ const backgroundColor = "#FFB347"; // Example lighter orange (adjust as needed)
 const textColorPrimary = "#ffffff"; // White
 const textColorSecondary = "#333333"; // Dark Gray
 
+const FullAddressDisplay = ({ compInfo }) => {
+  if (!compInfo) return null;
+
+  const { address_line1, address_line2, city, region, postal_code, country } =
+    compInfo;
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.descriptionDetailsHeader}>Company Address</Text>
+      {address_line1 ? <Text style={styles.line}>{address_line1}</Text> : null}
+      {address_line2 ? <Text style={styles.line}>{address_line2}</Text> : null}
+      {city ? <Text style={styles.line}>{city}</Text> : null}
+      {region ? <Text style={styles.line}>{region}</Text> : null}
+      {postal_code ? <Text style={styles.line}>{postal_code}</Text> : null}
+      {country ? <Text style={styles.line}>{country}</Text> : null}
+    </View>
+  );
+};
+
 const ImageDetails = ({ companyInfo }) => {
   const navigation = useNavigation();
   const user = useSelector((state) => state.counter.userState);
@@ -61,7 +80,7 @@ const BasicDetails = () => (
 const DescriptionDetails = ({ companyInfo }) =>
   console.log("details now", companyInfo) || (
     <View style={styles.descriptionDetailsContainer}>
-      <Text style={styles.descriptionDetailsHeader}>Info Details</Text>
+      <Text style={styles.descriptionDetailsHeader}>Company Details</Text>
       <Text style={styles.descriptionDetailsText}>
         {companyInfo.companyDescription}
       </Text>
@@ -189,7 +208,7 @@ const Recommend = ({ companyInfo, user }) => (
 export function DetailsScreen() {
   const companyInfo = useSelector((state) => state.counter.companyInfo);
   const user = useSelector((state) => state.counter.userState);
-  console.log("all company info", user);
+  console.log("all company info bryanb", companyInfo);
 
   return (
     <ScrollView
@@ -198,6 +217,7 @@ export function DetailsScreen() {
     >
       <ImageDetails companyInfo={companyInfo} />
       <DescriptionDetails companyInfo={companyInfo} />
+      <FullAddressDisplay compInfo={companyInfo.compInfo} />
       {/* <BasicDetails params={params} /> */}
       {/* <BusinessHours staleHours={params?.hoursData} stale={true} /> */}
       <Recommend companyInfo={companyInfo} user={user} />
@@ -321,5 +341,21 @@ const styles = StyleSheet.create({
   recommendActions: {
     flexDirection: "row",
     marginTop: 20,
+  },
+  container: {
+    padding: 16,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 6,
+    elevation: 3,
+    marginVertical: 10,
+  },
+  line: {
+    fontSize: 16,
+    color: "#333",
+    marginBottom: 2,
   },
 });

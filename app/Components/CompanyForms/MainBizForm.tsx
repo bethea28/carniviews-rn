@@ -73,7 +73,7 @@ export function MainBizForm({
       hoursData,
       userId: userData?.data?.user?.user_id,
     };
-
+    console.log("main biz form", finalData);
     try {
       const response = await addCompany(finalData);
 

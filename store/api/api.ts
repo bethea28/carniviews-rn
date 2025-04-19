@@ -357,6 +357,7 @@ export const api = createApi({
       query: (data) => {
         const userId = data?.userId;
         console.log("ADD COMAPNY NOW", data);
+        // return;
         return {
           url: `company/${userId}/addUnverifiedCompany/`,
           method: "POST",
