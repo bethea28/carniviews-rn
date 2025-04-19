@@ -17,7 +17,7 @@ import { useImagePicker } from "@/app/customHooks";
 import { Notifier, Easing } from "react-native-notifier";
 import { useNavigation } from "@react-navigation/native";
 import { useAddCompanyMutation } from "@/store/api/api";
-
+import { timeConvert } from "@/app/customHooks";
 const primaryColor = "#a349a4";
 const secondaryColor = "#FF8C00";
 const backgroundColor = "#FFB347";
@@ -75,9 +75,8 @@ export function MainBizForm({
     };
     console.log("main biz form", finalData);
     try {
+      console.log("Submission response:", hoursData);
       const response = await addCompany(finalData);
-
-      console.log("Submission response:", response);
 
       Notifier.showNotification({
         title: "Success!",
@@ -88,8 +87,8 @@ export function MainBizForm({
         hideOnPress: true,
       });
 
-      reset();
-      navigation.navigate("Home");
+      // reset();
+      // navigation.navigate("Home");
     } catch (err) {
       Notifier.showNotification({
         title: "Error",

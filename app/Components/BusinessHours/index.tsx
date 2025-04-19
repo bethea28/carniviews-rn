@@ -65,7 +65,7 @@ export function BusinessHours({
 
   const handleConfirm = (time) => {
     console.log("comnfrim", time);
-    const finalTime = timeConvert(new Date(time).toISOString());
+    const finalTime = time.toISOString();
     if (eventType === "company") {
       if (selectedDayIndex !== null) {
         dispatch(
@@ -106,7 +106,7 @@ export function BusinessHours({
               >
                 <Text style={styles.buttonText}>Open</Text>
                 <Text style={styles.buttonTime}>
-                  {businessData[dayKey]?.open}
+                  {timeConvert(businessData[dayKey]?.open)}
                 </Text>
               </Pressable>
 
@@ -124,7 +124,7 @@ export function BusinessHours({
               >
                 <Text style={styles.buttonText}>Close</Text>
                 <Text style={styles.buttonTime}>
-                  {businessData[dayKey]?.close}
+                  {timeConvert(businessData[dayKey]?.close)}
                 </Text>
               </Pressable>
             </View>
@@ -163,7 +163,9 @@ export function BusinessHours({
                   {event.toLocaleUpperCase()}
                 </Text>
                 <Text style={styles.buttonTime}>
-                  {event === "start" ? eventHours?.start : eventHours?.end}
+                  {event === "start"
+                    ? timeConvert(eventHours?.start)
+                    : timeConvert(eventHours?.end)}
                 </Text>
               </Pressable>
             </View>

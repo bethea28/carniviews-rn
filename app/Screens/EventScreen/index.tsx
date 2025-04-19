@@ -6,7 +6,6 @@ import {
   SafeAreaView,
   RefreshControl,
   Modal,
-  Pressable,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useGetAllEventsQuery } from "@/store/api/api";
@@ -19,6 +18,7 @@ import {
   ActivityIndicator,
 } from "react-native-paper";
 import { useSelector } from "react-redux";
+import { timeConvert } from "@/app/customHooks";
 // Color Scheme
 const primaryColor = "#a349a4";
 const secondaryColor = "#FF8C00";
@@ -59,33 +59,38 @@ export const EventScreen = () => {
     setModalVisible(true);
   };
 
-  const renderEventItem = ({ item }) => (
-    <Card onPress={() => handleEventDetails(item)} style={styles.card}>
-      {item.images[0]?.uri ? (
-        <Card.Cover
-          style={styles.eventImage}
-          source={{ uri: item.images[0].uri }}
-        />
-      ) : null}
-      <Card.Content>
-        <Title style={styles.title}>{item.name}</Title>
-        <Title style={styles.title}>{item.price}</Title>
-        <Paragraph style={styles.paragraph} numberOfLines={2}>
-          {item.description}
-        </Paragraph>
-        <Text style={styles.text}>
-          🕒 {item.hours?.start} - {item.hours?.end}
-        </Text>
-        <Text style={styles.text}>
-          📍 {item.address}, {item.city}, {item.state} {item.zip_code}
-        </Text>
-      </Card.Content>
-    </Card>
-  );
+  const renderEventItem = ({ item }) =>
+    console.log("tiem object now", item) || (
+      <Card onPress={() => handleEventDetails(item)} style={styles.card}>
+        {item.images?.[0]?.uri ? (
+          <Card.Cover
+            style={styles.eventImage}
+            source={{ uri: item.images[0].uri }}
+          />
+        ) : null}
+        <Card.Content>
+          <Title style={styles.title}>{item.name}</Title>
+          <Title style={styles.title}>${item.price}</Title>
+          <Paragraph style={styles.paragraph} numberOfLines={2}>
+            {item.description}
+          </Paragraph>
+          <Text style={styles.text}>
+            🕒 {timeConvert(item.start_time)} - {timeConvert(item.end_time)}
+          </Text>
+          <Text style={styles.text}>
+            📍 {item.addressLine1 || "N/A"}
+            {item.city ? `, ${item.city}` : ""}
+            {item.region ? `, ${item.region}` : ""}
+            {item.postal ? ` ${item.postal}` : ""}
+          </Text>
+        </Card.Content>
+      </Card>
+    );
 
   const groupEventsAlphabetically = (events) => {
     const grouped = events.reduce((acc, event) => {
-      const firstLetter = event.name?.[0]?.toUpperCase() || "#";
+      const name = event.name || "";
+      const firstLetter = name[0]?.toUpperCase() || "#";
       if (!acc[firstLetter]) acc[firstLetter] = [];
       acc[firstLetter].push(event);
       return acc;
@@ -98,12 +103,12 @@ export const EventScreen = () => {
         data: grouped[letter].sort((a, b) => a.name.localeCompare(b.name)),
       }));
   };
-  console.log("country man", country);
+  console.log("select hours now", allEvents?.events);
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <Button
-          disabled={!country}
+          // disabled={!country}
           mode="contained"
           onPress={() =>
             navigation.navigate("CompanyForms", { eventType: "event" })
@@ -134,7 +139,7 @@ export const EventScreen = () => {
                 tintColor={primaryColor}
               />
             }
-            stickySectionHeadersEnabled={true} // <-- Make headers sticky!
+            stickySectionHeadersEnabled={true}
             contentContainerStyle={{ paddingBottom: 32 }}
           />
         )}
@@ -156,13 +161,16 @@ export const EventScreen = () => {
                   {selectedEvent.description}
                 </Text>
                 <Text style={styles.modalText}>
-                  🕒 {selectedEvent.hours?.start} - {selectedEvent.hours?.end}
+                  🕒 {timeConvert(selectedEvent.start_time)} -{" "}
+                  {timeConvert(selectedEvent.end_time)}
                 </Text>
                 <Text style={styles.modalText}>
-                  📍 {selectedEvent.address}, {selectedEvent.city},{" "}
-                  {selectedEvent.state} {selectedEvent.zip_code}
+                  📍 {selectedEvent.addressLine1 || "N/A"}
+                  {selectedEvent.city ? `, ${selectedEvent.city}` : ""}
+                  {selectedEvent.region ? `, ${selectedEvent.region}` : ""}
+                  {selectedEvent.postal ? ` ${selectedEvent.postal}` : ""}
                 </Text>
-                <Text style={styles.modalText}>💰 {selectedEvent.price}</Text>
+                <Text style={styles.modalText}>💰 ${selectedEvent.price}</Text>
               </>
             )}
             <Button
