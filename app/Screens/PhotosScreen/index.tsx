@@ -56,7 +56,6 @@ export const Photos = () => {
     await refetch();
     setRefreshing(false);
   };
-  console.log("what about braind", allCompanyImages);
   const parseImageUri = (image_url) => {
     try {
       const parsed = JSON.parse(image_url);
@@ -89,9 +88,7 @@ export const Photos = () => {
       const pathToFile = `file://${uri}`;
 
       await reference.putFile(pathToFile);
-      console.log("File uploaded to Firebase Storage!");
       const downloadURL = await reference.getDownloadURL();
-      console.log("DOWN LOAD URL JOSH", downloadURL);
       return downloadURL; // Return the download URL
     } catch (error) {
       console.error("Firebase upload error:", error);
@@ -107,7 +104,6 @@ export const Photos = () => {
   };
 
   const pickImage = async () => {
-    console.log("adding multiple images");
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ["images"],
@@ -128,14 +124,12 @@ export const Photos = () => {
       }
 
       const selectedImages = result?.assets;
-      console.log("ASSETS Selected", selectedImages);
       const uploadPromises = selectedImages.map(async (asset) => {
         return await uploadToFirebase(asset.uri);
       });
 
       const downloadURLs = await Promise.all(uploadPromises);
       const validDownloadURLs = downloadURLs.filter((url) => url !== null); // Filter out failed uploads
-      console.log("VALID UROS", validDownloadURLs);
       if (validDownloadURLs.length > 0) {
         const final = { imageUrls: validDownloadURLs, user, companyInfo }; // Send array of URLs
         const addImages = await addCompImage(final);
@@ -162,7 +156,6 @@ export const Photos = () => {
         });
       }
     } catch (error) {
-      console.log("Image upload error:", error);
       Notifier.showNotification({
         title: "Upload Failed",
         description: "There was a problem uploading your image(s).",
@@ -192,7 +185,6 @@ export const Photos = () => {
       </View>
     );
   }
-  console.log("all company images james", allCompanyImages);
   return (
     <FlatList
       data={allCompanyImages.images}

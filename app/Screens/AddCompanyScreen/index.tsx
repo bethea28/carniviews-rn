@@ -51,7 +51,6 @@ export function AddCompanyScreen({ route: params }) {
 
   const navigation = useNavigation();
   const onSubmit = async (data) => {
-    console.log("all my hours data", data);
     return;
     if (params.eventType === "company") {
       const finalData = {

@@ -77,12 +77,9 @@ export function MainEventForm({
       eventHours,
       userId: userData?.data?.user?.user_id,
     };
-    console.log("MAIN EVENT FINAL", finalData);
     // return;
     try {
       const response = await addEvent(finalData);
-
-      console.log("Submission response:", response);
 
       Notifier.showNotification({
         title: "Success!",
@@ -106,7 +103,6 @@ export function MainEventForm({
       });
     }
   };
-  console.log("all images", allImages);
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}

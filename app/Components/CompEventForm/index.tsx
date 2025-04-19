@@ -42,7 +42,6 @@ export function AddCompEventForm({ route: params }) {
   const eventHours = useSelector((state) => state.counter.eventHours);
   const navigation = useNavigation();
 
-  console.log("event type now", params?.params?.eventType);
   const onSubmit = async (data) => {
     const eventType = params?.params?.eventType;
     // Notifier.showNotification({
@@ -80,8 +79,6 @@ export function AddCompEventForm({ route: params }) {
           ? await addCompany(finalData)
           : await addEvent(finalData);
 
-      console.log("Submission response:", response);
-
       Notifier.showNotification({
         title: "Success!",
         description:
@@ -114,7 +111,6 @@ export function AddCompEventForm({ route: params }) {
   const addPhotos = () => {
     pickImages();
   };
-  console.log("comapny evengt whagt chris", params.params);
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}

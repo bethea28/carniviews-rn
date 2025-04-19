@@ -48,7 +48,6 @@ export function BusinessHours({
   const eventHours = useSelector((state) => state.counter.eventHours);
 
   const showDatePicker = (event, index) => {
-    console.log("oke event");
     if (eventType === "company") {
       setSelectedDayIndex(index);
       setEvent(event);
@@ -64,7 +63,6 @@ export function BusinessHours({
   };
 
   const handleConfirm = (time) => {
-    console.log("comnfrim", time);
     const finalTime = time.toISOString();
     if (eventType === "company") {
       if (selectedDayIndex !== null) {
@@ -84,7 +82,6 @@ export function BusinessHours({
 
   const businessData = addCompany === true ? bizHour : companyInfo?.hoursData;
   const daysOfWeek = businessData ? Object.keys(businessData) : [];
-  console.log("what is the evebnt type NICK YOUNG", eventType);
   return eventType === "company" || referrer === "tabs" ? (
     <View style={[styles.container, { backgroundColor: secondaryColor }]}>
       <Text style={styles.businessHoursTitle}>Business Hours</Text>

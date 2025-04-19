@@ -67,8 +67,6 @@ export function AmericanForm({ setModalVis, addPhotos, thumbNail, country }) {
     try {
       const response = await addCompany(finalData);
 
-      console.log("Submission response:", response);
-
       Notifier.showNotification({
         title: "Success!",
         description: "Company created successfully!",
@@ -91,7 +89,6 @@ export function AmericanForm({ setModalVis, addPhotos, thumbNail, country }) {
       });
     }
   };
-  console.log("all images", allImages);
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}

@@ -57,7 +57,6 @@ export function MainForm({
   const navigation = useNavigation();
   const bizHours = useSelector((state) => state.counter.businessHours);
   const eventHours = useSelector((state) => state.counter.evenHours);
-  console.log("MAIN FORM MAIN DAREN", eventType);
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}

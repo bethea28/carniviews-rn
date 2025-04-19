@@ -18,7 +18,6 @@ export function CountrySelect() {
       search={true}
       searchPlaceHolder="Search Countries"
       onSelect={(selectedItem, index) => {
-        console.log("Selected:", selectedItem, "at index", index);
         dispatch(setCountry(selectedItem));
       }}
       renderButton={(selectedItem, isOpened) => (

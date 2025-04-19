@@ -73,9 +73,7 @@ export function MainBizForm({
       hoursData,
       userId: userData?.data?.user?.user_id,
     };
-    console.log("main biz form", finalData);
     try {
-      console.log("Submission response:", hoursData);
       const response = await addCompany(finalData);
 
       Notifier.showNotification({
@@ -100,7 +98,6 @@ export function MainBizForm({
       });
     }
   };
-  console.log("all images", allImages);
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
