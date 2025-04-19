@@ -53,6 +53,7 @@ export function MainEventForm({
       country: country?.country,
       hours: "",
       type: "",
+      ticket: "",
       description: "",
       photos: [],
       price: "",
@@ -92,8 +93,8 @@ export function MainEventForm({
         hideOnPress: true,
       });
 
-      //   reset();
-      //   navigation.goBack();
+      reset();
+      navigation.goBack();
     } catch (err) {
       Notifier.showNotification({
         title: "Error",
@@ -205,6 +206,20 @@ export function MainEventForm({
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
               placeholder="Address Line 2"
+              placeholderTextColor={placeholderTextColor}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              style={styles.input}
+            />
+          )}
+        />
+        <Controller
+          control={control}
+          name="ticket"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              placeholder="Ticket Link"
               placeholderTextColor={placeholderTextColor}
               onBlur={onBlur}
               onChangeText={onChange}

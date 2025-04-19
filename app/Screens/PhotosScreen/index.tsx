@@ -16,6 +16,7 @@ import { Notifier, NotifierComponents } from "react-native-notifier";
 import * as ImagePicker from "expo-image-picker";
 import storage from "@react-native-firebase/storage"; // Firebase storage
 import RNFS from "react-native-fs"; // For file system access
+import ImageModal from "react-native-image-modal";
 
 // Material Design-inspired color palette
 const primaryColor = "#a349a4";
@@ -55,7 +56,7 @@ export const Photos = () => {
     await refetch();
     setRefreshing(false);
   };
-
+  console.log("what about braind", allCompanyImages);
   const parseImageUri = (image_url) => {
     try {
       const parsed = JSON.parse(image_url);
@@ -70,6 +71,12 @@ export const Photos = () => {
     return (
       <View style={styles.imageWrapper}>
         <Image source={{ uri }} style={styles.image} resizeMode="cover" />
+        {/* <ImageModal
+          // resizeMode="cover"
+          imageBackgroundColor="#000000"
+          style={styles.image}
+          source={{ uri }}
+        /> */}
       </View>
     );
   };
@@ -185,7 +192,7 @@ export const Photos = () => {
       </View>
     );
   }
-
+  console.log("all company images james", allCompanyImages);
   return (
     <FlatList
       data={allCompanyImages.images}

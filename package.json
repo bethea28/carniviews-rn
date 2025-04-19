@@ -17,6 +17,7 @@
     "preset": "jest-expo"
   },
   "dependencies": {
+    "@d11/react-native-fast-image": "^8.9.2",
     "@expo/vector-icons": "^14.0.2",
     "@react-native-async-storage/async-storage": "^2.1.2",
     "@react-native-camera-roll/camera-roll": "^7.10.0",
@@ -51,6 +52,7 @@
     "react-native-date-picker": "^5.0.10",
     "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "~2.20.2",
+    "react-native-image-modal": "^3.0.13",
     "react-native-image-picker": "^8.2.0",
     "react-native-modal-datetime-picker": "^18.0.0",
     "react-native-notifier": "^2.0.0",

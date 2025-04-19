@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   RefreshControl,
   Modal,
+  Linking,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useGetAllEventsQuery } from "@/store/api/api";
@@ -19,6 +20,9 @@ import {
 } from "react-native-paper";
 import { useSelector } from "react-redux";
 import { timeConvert } from "@/app/customHooks";
+// import { Icon } from "react-native-vector-icons/Icon";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+
 // Color Scheme
 const primaryColor = "#a349a4";
 const secondaryColor = "#FF8C00";
@@ -59,33 +63,48 @@ export const EventScreen = () => {
     setModalVisible(true);
   };
 
-  const renderEventItem = ({ item }) =>
-    console.log("tiem object now", item) || (
-      <Card onPress={() => handleEventDetails(item)} style={styles.card}>
-        {item.images?.[0]?.uri ? (
-          <Card.Cover
-            style={styles.eventImage}
-            source={{ uri: item.images[0].uri }}
-          />
-        ) : null}
-        <Card.Content>
-          <Title style={styles.title}>{item.name}</Title>
-          <Title style={styles.title}>${item.price}</Title>
-          <Paragraph style={styles.paragraph} numberOfLines={2}>
-            {item.description}
-          </Paragraph>
-          <Text style={styles.text}>
-            🕒 {timeConvert(item.start_time)} - {timeConvert(item.end_time)}
-          </Text>
-          <Text style={styles.text}>
-            📍 {item.addressLine1 || "N/A"}
-            {item.city ? `, ${item.city}` : ""}
-            {item.region ? `, ${item.region}` : ""}
-            {item.postal ? ` ${item.postal}` : ""}
-          </Text>
-        </Card.Content>
-      </Card>
-    );
+  const renderEventItem = ({ item }) => (
+    <Card onPress={() => handleEventDetails(item)} style={styles.card}>
+      {item.images?.[0]?.uri ? (
+        <Card.Cover
+          style={styles.eventImage}
+          source={{ uri: item.images[0].uri }}
+        />
+      ) : null}
+      <Card.Content>
+        <Title style={styles.title}>{item.name}</Title>
+        <Title style={styles.title}>${item.price}</Title>
+        <Paragraph style={styles.paragraph} numberOfLines={2}>
+          {item.description}
+        </Paragraph>
+        <Text style={styles.text}>
+          🕒 {timeConvert(item.start_time)} - {timeConvert(item.end_time)}
+        </Text>
+        <Text style={styles.text}>
+          📍 {item.addressLine1 || "N/A"}
+          {item.city ? `, ${item.city}` : ""}
+          {item.region ? `, ${item.region}` : ""}
+          {item.postal ? ` ${item.postal}` : ""}
+        </Text>
+        {item.ticket && (
+          <View
+            style={{ flexDirection: "row", alignItems: "center", marginTop: 2 }}
+          >
+            <Icon name="ticket" style={{ marginLeft: 4, marginRight: 12 }} />
+            <Text
+              onPress={() => Linking.openURL(item.ticket)}
+              style={[
+                styles.text,
+                { color: "blue", textDecorationLine: "underline" },
+              ]}
+            >
+              {item.ticket}
+            </Text>
+          </View>
+        )}
+      </Card.Content>
+    </Card>
+  );
 
   const groupEventsAlphabetically = (events) => {
     const grouped = events.reduce((acc, event) => {
@@ -103,7 +122,7 @@ export const EventScreen = () => {
         data: grouped[letter].sort((a, b) => a.name.localeCompare(b.name)),
       }));
   };
-  console.log("select hours now", allEvents?.events);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
