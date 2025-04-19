@@ -58,7 +58,6 @@ export const timeConvert = (isoString) => {
     minute: "2-digit",
     hour12: true,
   });
-  console.log(formattedTime); // Output: "6:15 PM"
   return formattedTime;
 };
 export const useAsyncStorage = () => {
