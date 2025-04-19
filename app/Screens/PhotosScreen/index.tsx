@@ -132,7 +132,7 @@ export const Photos = () => {
       if (validDownloadURLs.length > 0) {
         const final = { imageUrls: validDownloadURLs, user, companyInfo }; // Send array of URLs
         const addImages = await addCompImage(final);
-        return;
+
         if (addImages?.data) {
           Notifier.showNotification({
             title: "Upload Successful",

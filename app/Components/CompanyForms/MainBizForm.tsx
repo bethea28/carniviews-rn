@@ -87,8 +87,8 @@ export function MainBizForm({
         hideOnPress: true,
       });
 
-      // reset();
-      // navigation.navigate("Home");
+      reset();
+      navigation.navigate("Home");
     } catch (err) {
       Notifier.showNotification({
         title: "Error",
