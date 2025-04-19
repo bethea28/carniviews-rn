@@ -7,7 +7,7 @@ export const CompanyForms = ({ route }) => {
   const country = useSelector((state) => state.counter.country);
   const eventType = route.params.eventType;
   // const lower = country?.toLowerCase();
-  console.log("company forms bryan", eventType);
+  console.log("company forms bryan", country);
   // return;
   return (
     <View style={{ flex: 1 }}>

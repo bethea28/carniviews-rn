@@ -18,7 +18,7 @@ import {
   Paragraph,
   ActivityIndicator,
 } from "react-native-paper";
-
+import { useSelector } from "react-redux";
 // Color Scheme
 const primaryColor = "#a349a4";
 const secondaryColor = "#FF8C00";
@@ -37,6 +37,7 @@ export const EventScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const country = useSelector((state) => state.counter.country);
 
   useEffect(() => {
     console.log("EventScreen loaded");
@@ -97,11 +98,12 @@ export const EventScreen = () => {
         data: grouped[letter].sort((a, b) => a.name.localeCompare(b.name)),
       }));
   };
-
+  console.log("country man", country);
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <Button
+          disabled={!country}
           mode="contained"
           onPress={() =>
             navigation.navigate("CompanyForms", { eventType: "event" })
