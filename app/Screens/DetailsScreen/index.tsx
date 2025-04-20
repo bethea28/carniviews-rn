@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   useAddCompanyImagesMutation,
   useAddRecMutation,
+  useGetCompanyRecsQuery,
 } from "@/store/api/api";
 import { Notifier, Easing, NotifierComponents } from "react-native-notifier";
 
@@ -257,8 +258,11 @@ const Recommend = ({ companyInfo, user, handleRec }) => (
 export function DetailsScreen() {
   const companyInfo = useSelector((state) => state.counter.companyInfo);
   const user = useSelector((state) => state.counter.userState);
+  const { data: allCompRecs } = useGetCompanyRecsQuery({
+    companyId: companyInfo.companyId,
+  });
   const [addRec] = useAddRecMutation();
-  console.log("all company info bryanb", companyInfo);
+  console.log("all company info bryanb", companyInfo.companyId);
   const handleRec = (rec) => {
     console.log("rec company id rec", companyInfo.companyId);
     const giveRec = addRec({
@@ -267,6 +271,8 @@ export function DetailsScreen() {
       companyId: companyInfo.companyId,
     });
   };
+
+  console.log("all comp recs now john", allCompRecs);
   return (
     <ScrollView
       contentContainerStyle={{ paddingBottom: 50 }}

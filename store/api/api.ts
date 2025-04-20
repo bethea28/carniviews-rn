@@ -305,6 +305,19 @@ export const api = createApi({
         };
       },
     }),
+    getCompanyRecs: build.query<any, any>({
+      query: (data) => {
+        console.log("data is king add revieww", data);
+        // return;
+        return {
+          url: `company/${data.companyId}/getCompanyRecs/`,
+          method: "GET",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        };
+      },
+    }),
     addCompanyImages: build.mutation<any, any>({
       query: (data) => {
         const companyId = data.companyInfo?.companyId;
@@ -476,6 +489,7 @@ export const {
   useGetAllEventsQuery,
   useAddCompanyImagesMutation,
   useAddRecMutation,
+  useGetCompanyRecsQuery,
   // useAddBookMutation,
   useGetMyShiftsQuery,
   useGetCalendarDataQuery,
