@@ -7,6 +7,7 @@ import {
   RefreshControl,
   Modal,
   Linking,
+  Pressable,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useGetAllEventsQuery } from "@/store/api/api";
@@ -102,6 +103,23 @@ export const EventScreen = () => {
             </Text>
           </View>
         )}
+        <Pressable
+          onPress={() =>
+            navigation.navigate("CompanyForms", {
+              eventType: "event",
+              item,
+            })
+          }
+          style={({ pressed }) => [
+            styles.button,
+            {
+              backgroundColor: pressed ? secondaryColor : primaryColor,
+            },
+          ]}
+          android_ripple={{ color: primaryColor }}
+        >
+          <Text style={styles.button}>Edit</Text>
+        </Pressable>
       </Card.Content>
     </Card>
   );

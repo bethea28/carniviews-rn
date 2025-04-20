@@ -51,7 +51,6 @@ export const counterSlice = createSlice({
         companyId: action.payload.id,
         compInfo: action.payload.companyInfo,
         hoursData: action.payload.hoursData,
-        companyDescription: action.payload.companyInfo.description,
       };
       state.companyInfo = updatedCompanyInfo;
       // state.value += action.payload;

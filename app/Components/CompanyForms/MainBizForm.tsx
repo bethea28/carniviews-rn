@@ -224,6 +224,21 @@ export function MainBizForm({
           )}
         />
 
+        <Controller
+          control={control}
+          name="country"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              // placeholder={`State/Province/Region (e.g. ${country.exampleAddress.subRegion})`}
+              placeholderTextColor={placeholderTextColor}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={country?.country}
+              style={styles.input}
+            />
+          )}
+        />
+
         <Pressable
           onPress={() => setShowHoursComp((prev) => !prev)}
           style={styles.input}

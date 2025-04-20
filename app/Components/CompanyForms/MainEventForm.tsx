@@ -35,6 +35,7 @@ export function MainEventForm({
   thumbNail,
   country,
   eventType,
+  editEventData,
 }) {
   const countrySpecific = country?.country;
   const {
@@ -44,19 +45,19 @@ export function MainEventForm({
     formState: { errors },
   } = useForm({
     defaultValues: {
-      name: "",
-      addressLine1: "",
-      addressLine2: "",
-      city: "",
-      postal: "",
-      region: "", // Could be St. James, etc.
+      name: editEventData?.name,
+      addressLine1: editEventData?.addressLine1,
+      addressLine2: editEventData?.addressLine2,
+      city: editEventData?.city,
+      postal: editEventData?.postal,
+      region: editEventData?.region, // Could be St. James, etc.
       country: country?.country,
       hours: "",
-      type: "",
-      ticket: "",
-      description: "",
+      type: editEventData?.type,
+      ticket: editEventData?.ticket,
+      description: editEventData?.description,
       photos: [],
-      price: "",
+      price: editEventData?.price,
     },
   });
 

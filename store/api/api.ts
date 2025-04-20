@@ -287,6 +287,24 @@ export const api = createApi({
         };
       },
     }),
+    addRec: build.mutation<any, any>({
+      query: (data) => {
+        console.log("data is king add revieww", data);
+        // return;
+        return {
+          url: `company/addRec/`,
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: JSON.stringify({
+            rec: data.rec,
+            user_id: data.userId,
+            company_id: data.companyId,
+          }),
+        };
+      },
+    }),
     addCompanyImages: build.mutation<any, any>({
       query: (data) => {
         const companyId = data.companyInfo?.companyId;
@@ -457,6 +475,7 @@ export const {
   useAddEventMutation,
   useGetAllEventsQuery,
   useAddCompanyImagesMutation,
+  useAddRecMutation,
   // useAddBookMutation,
   useGetMyShiftsQuery,
   useGetCalendarDataQuery,

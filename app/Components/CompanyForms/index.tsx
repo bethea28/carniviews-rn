@@ -6,14 +6,20 @@ import { MainEventForm } from "./MainEventForm";
 export const CompanyForms = ({ route }) => {
   const country = useSelector((state) => state.counter.country);
   const eventType = route.params.eventType;
+  const editEventData = route.params.item || null;
   // const lower = country?.toLowerCase();
   // return;
+  console.log("company form route", route.params.item);
   return (
     <View style={{ flex: 1 }}>
       {eventType === "company" ? (
         <MainBizForm eventType={eventType} country={country} />
       ) : (
-        <MainEventForm eventType={eventType} country={country} />
+        <MainEventForm
+          editEventData={editEventData}
+          eventType={eventType}
+          country={country}
+        />
       )}
       {/* {country === null && <AmericanForm country={country} />}
       {lower?.includes("states") && <AmericanForm country={country} />}

@@ -7,11 +7,15 @@ import {
   Image,
   ScrollView,
   StyleSheet,
+  Linking,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import { useDispatch, useSelector } from "react-redux";
-import { useAddCompanyImagesMutation } from "@/store/api/api";
+import {
+  useAddCompanyImagesMutation,
+  useAddRecMutation,
+} from "@/store/api/api";
 import { Notifier, Easing, NotifierComponents } from "react-native-notifier";
 
 // Define the color palette based on the image (same as other components)
@@ -24,19 +28,53 @@ const textColorSecondary = "#333333"; // Dark Gray
 const FullAddressDisplay = ({ compInfo }) => {
   if (!compInfo) return null;
 
-  const { address_line1, address_line2, city, region, postal_code, country } =
-    compInfo;
+  const {
+    address_line1,
+    address_line2,
+    city,
+    region,
+    postal_code,
+    country,
+    website,
+    contact,
+  } = compInfo;
+  console.log("city now ", city);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.descriptionDetailsHeader}>Company Address</Text>
-      {address_line1 ? <Text style={styles.line}>{address_line1}</Text> : null}
-      {address_line2 ? <Text style={styles.line}>{address_line2}</Text> : null}
-      {city ? <Text style={styles.line}>{city}</Text> : null}
-      {region ? <Text style={styles.line}>{region}</Text> : null}
-      {postal_code ? <Text style={styles.line}>{postal_code}</Text> : null}
-      {country ? <Text style={styles.line}>{country}</Text> : null}
-    </View>
+    <>
+      <View style={styles.container}>
+        <Text style={styles.descriptionDetailsHeader}>Location</Text>
+        {address_line1 !== "null" ? (
+          <Text style={styles.line}>{address_line1}</Text>
+        ) : undefined}
+        {address_line2 ? (
+          <Text style={styles.line}>{address_line2}</Text>
+        ) : null}
+        {city === "null" ? undefined : <Text style={styles.line}>{city}</Text>}
+        {region ? <Text style={styles.line}>{region}</Text> : null}
+        {postal_code ? (
+          <Text style={styles.line}>{postal_code}</Text>
+        ) : undefined}
+        {country ? <Text style={styles.line}>{country}</Text> : null}
+      </View>
+      <View style={styles.container}>
+        <Text style={styles.descriptionDetailsHeader}>Contacts</Text>
+        {contact !== null ? (
+          <Text style={styles.line}>{contact}</Text>
+        ) : undefined}
+        {website !== null ? (
+          <Text
+            onPress={() => Linking.openURL(website)}
+            style={[
+              styles.line,
+              { color: "blue", textDecorationLine: "underline" },
+            ]}
+          >
+            {website}
+          </Text>
+        ) : undefined}
+      </View>
+    </>
   );
 };
 
@@ -77,15 +115,14 @@ const BasicDetails = () => (
   </View>
 );
 
-const DescriptionDetails = ({ companyInfo }) =>
-  console.log("details now", companyInfo) || (
-    <View style={styles.descriptionDetailsContainer}>
-      <Text style={styles.descriptionDetailsHeader}>Company Details</Text>
-      <Text style={styles.descriptionDetailsText}>
-        {companyInfo.companyDescription}
-      </Text>
-    </View>
-  );
+const DescriptionDetails = ({ companyInfo }) => (
+  <View style={styles.descriptionDetailsContainer}>
+    <Text style={styles.descriptionDetailsHeader}>Company Details</Text>
+    <Text style={styles.descriptionDetailsText}>
+      {companyInfo.compInfo.description}
+    </Text>
+  </View>
+);
 
 const Actions = ({ camera, action, header, companyInfo, user }) => {
   const [image, setImage] = React.useState(null);
@@ -165,26 +202,38 @@ const Actions = ({ camera, action, header, companyInfo, user }) => {
   );
 };
 
-const Recommend = ({ companyInfo, user }) => (
+const Recommend = ({ companyInfo, user, handleRec }) => (
   <View style={styles.recommendContainer}>
-    <Text style={styles.recommendQuestion}>
-      Do you recommend this business?
-    </Text>
+    <Text style={styles.recommendQuestion}>Do you recommend this Band?</Text>
     <View style={styles.recommendButtons}>
       <Pressable
+        onPress={() => handleRec("yes")}
         style={({ pressed }) => [
           styles.recommendButton,
-          { backgroundColor: pressed ? "red" : "green" },
+          { backgroundColor: pressed ? secondaryColor : primaryColor },
         ]}
       >
         <Text style={styles.recommendButtonText}>Yes</Text>
       </Pressable>
-      <Pressable style={[styles.recommendButton, styles.recommendButtonMargin]}>
+      <Pressable
+        onPress={() => handleRec("no")}
+        style={({ pressed }) => [
+          styles.recommendButton,
+          styles.recommendButtonMargin,
+          { backgroundColor: pressed ? secondaryColor : primaryColor },
+        ]}
+      >
         <Text style={styles.recommendButtonText}>No</Text>
       </Pressable>
-      <Pressable style={[styles.recommendButton, styles.recommendButtonMargin]}>
+      {/* <Pressable
+        style={({ pressed }) => [
+          styles.recommendButton,
+          styles.recommendButtonMargin,
+          { backgroundColor: pressed ? secondaryColor : primaryColor },
+        ]}
+      >
         <Text style={styles.recommendButtonText}>Maybe</Text>
-      </Pressable>
+      </Pressable> */}
     </View>
     <View style={styles.recommendActions}>
       <Actions
@@ -208,8 +257,16 @@ const Recommend = ({ companyInfo, user }) => (
 export function DetailsScreen() {
   const companyInfo = useSelector((state) => state.counter.companyInfo);
   const user = useSelector((state) => state.counter.userState);
+  const [addRec] = useAddRecMutation();
   console.log("all company info bryanb", companyInfo);
-
+  const handleRec = (rec) => {
+    console.log("rec company id rec", companyInfo.companyId);
+    const giveRec = addRec({
+      userId: user.data.user.user_id,
+      rec,
+      companyId: companyInfo.companyId,
+    });
+  };
   return (
     <ScrollView
       contentContainerStyle={{ paddingBottom: 50 }}
@@ -220,7 +277,7 @@ export function DetailsScreen() {
       <FullAddressDisplay compInfo={companyInfo.compInfo} />
       {/* <BasicDetails params={params} /> */}
       {/* <BusinessHours staleHours={params?.hoursData} stale={true} /> */}
-      <Recommend companyInfo={companyInfo} user={user} />
+      <Recommend handleRec={handleRec} companyInfo={companyInfo} user={user} />
     </ScrollView>
   );
 }

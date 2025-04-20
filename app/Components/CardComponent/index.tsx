@@ -71,7 +71,7 @@ export const CompanyCard = ({ title, mainImage, wholeData }) => {
         source={{
           uri:
             mainImage ||
-            "https://www.rollingstone.com/wp-content/uploads/2022/02/0001x.jpg?w=1581&h=1054&crop=1&s",
+            "https://carnivaltribe.com/wp-content/uploads/2024/07/Tribe25-Group-Hero-02.jpg",
         }}
         onError={(err) => console.log("what is image error", err)}
       />

@@ -52,7 +52,14 @@ export function HomeScreen() {
   const sections = useMemo(() => {
     if (!allCompanies) return [];
 
-    const grouped = allCompanies.reduce((acc, company) => {
+    const filteredComp = allCompanies.filter(
+      (item) => item?.companyInfo?.country === country?.country
+    );
+    const parsedCompanies =
+      filteredComp.length === 0 ? allCompanies : filteredComp;
+    console.log("filter comps bethea anser", parsedCompanies);
+    console.log("filter comps bethea", filteredComp[0]?.companyInfo.country);
+    const grouped = parsedCompanies.reduce((acc, company) => {
       const name = company.companyInfo?.name || "";
       const firstLetter = name.charAt(0).toUpperCase();
       if (!acc[firstLetter]) acc[firstLetter] = [];
@@ -60,10 +67,11 @@ export function HomeScreen() {
       return acc;
     }, {});
 
-    return Object.keys(grouped)
+    const finalGroup = Object.keys(grouped)
       .sort()
       .map((letter) => ({ title: letter, data: grouped[letter] }));
-  }, [allCompanies]);
+    return finalGroup;
+  }, [allCompanies, country?.country]);
 
   const renderItem = ({ item }) => (
     <View style={styles.cardWrapper}>
@@ -98,7 +106,7 @@ export function HomeScreen() {
       </View>
     );
   }
-  console.log("all companies now", allCompanies);
+  // console.log("all companies now", country);
   return (
     <View style={styles.container}>
       <View style={styles.header}>
