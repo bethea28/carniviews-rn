@@ -40,18 +40,7 @@ export const api = createApi({
   //   baseQuery: fetchBaseQuery({ baseUrl: "http://127.0.0.1:8000/" }),
   // baseQuery,
   reducerPath: "api",
-  tagTypes: [
-    "myShifts",
-    "shiftsToGrab",
-    "upComingShifts",
-    "teamShifts",
-    "swapAlerts",
-    "accountInfo",
-    "alertsSettings",
-    "unavailabilityCalendar",
-    "payHistory",
-    "empRequests",
-  ],
+  tagTypes: ["company", "review", "event", "recommendation"],
   endpoints: (build) => ({
     getWeather: build.query<any, void>({
       // TODO: move this endpoint to the main mocked server and update it here
@@ -271,6 +260,7 @@ export const api = createApi({
           }),
         };
       },
+      invalidatesTags: ["review"],
     }),
     addFeedback: build.mutation<any, any>({
       query: (data) => {
@@ -304,6 +294,7 @@ export const api = createApi({
           }),
         };
       },
+      invalidatesTags: ["recommendation"],
     }),
     getCompanyRecs: build.query<any, any>({
       query: (data) => {
@@ -317,6 +308,7 @@ export const api = createApi({
           },
         };
       },
+      providesTags: ["recommendation"],
     }),
     addCompanyImages: build.mutation<any, any>({
       query: (data) => {
@@ -370,6 +362,7 @@ export const api = createApi({
           }),
         };
       },
+      invalidatesTags: ["event"],
     }),
     getAllEvents: build.query<any, any>({
       query: (data) => {
@@ -383,6 +376,7 @@ export const api = createApi({
           },
         };
       },
+      providesTags: ["event"],
     }),
     addCompany: build.mutation<any, any>({
       query: (data) => {
@@ -403,19 +397,23 @@ export const api = createApi({
           }),
         };
       },
+      invalidatesTags: ["comapany"],
     }),
     getReviews: build.query({
       query: (data) => ({
         url: `reviews/${data.companyId}/getReviews/`,
         params: {},
       }),
+      providesTags: ["review"],
     }),
     getCompanies: build.query({
       query: () => ({
         url: "company/getCompanies/",
         params: {},
       }),
+      providesTags: ["company"],
     }),
+
     // submitMessge: build.mutation<any, any>({
     //     query: ({ notes, punchId, shiftId }) => {
     //         return {

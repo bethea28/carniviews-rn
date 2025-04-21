@@ -39,7 +39,6 @@ const FullAddressDisplay = ({ compInfo }) => {
     website,
     contact,
   } = compInfo;
-  console.log("city now ", city);
 
   return (
     <>
@@ -82,7 +81,6 @@ const FullAddressDisplay = ({ compInfo }) => {
 const ImageDetails = ({ companyInfo }) => {
   const navigation = useNavigation();
   const user = useSelector((state) => state.counter.userState);
-  console.log("user now", user);
   return (
     <ImageBackground
       resizeMode="cover"
@@ -203,10 +201,11 @@ const Actions = ({ camera, action, header, companyInfo, user }) => {
   );
 };
 
-const Recommend = ({ companyInfo, user, handleRec }) => (
+const Recommend = ({ companyInfo, user, handleRec, recScore }) => (
   <View style={styles.recommendContainer}>
     <Text style={styles.recommendQuestion}>Do you recommend this Band?</Text>
     <View style={styles.recommendButtons}>
+      <Text style={styles.recommendButtonText}>{recScore?.yes}</Text>
       <Pressable
         onPress={() => handleRec("yes")}
         style={({ pressed }) => [
@@ -226,6 +225,7 @@ const Recommend = ({ companyInfo, user, handleRec }) => (
       >
         <Text style={styles.recommendButtonText}>No</Text>
       </Pressable>
+      <Text style={styles.recommendButtonText}>{recScore?.no}</Text>
       {/* <Pressable
         style={({ pressed }) => [
           styles.recommendButton,
@@ -262,17 +262,29 @@ export function DetailsScreen() {
     companyId: companyInfo.companyId,
   });
   const [addRec] = useAddRecMutation();
+  const [recommend, setRecommend] = React.useState("");
   console.log("all company info bryanb", companyInfo.companyId);
   const handleRec = (rec) => {
     console.log("rec company id rec", companyInfo.companyId);
+    setRecommend(rec);
     const giveRec = addRec({
       userId: user.data.user.user_id,
-      rec,
+      rec: recommend,
       companyId: companyInfo.companyId,
     });
   };
 
-  console.log("all comp recs now john", allCompRecs);
+  const recScore = React.useMemo(() => {
+    if (allCompRecs?.allRecs?.length === 0) return 0;
+    let yes = 0;
+    let no = 0;
+    allCompRecs?.allRecs.forEach((rec) => {
+      if (rec.rec === "no") no += 1;
+      if (rec.rec === "yes") yes += 1;
+    });
+    return { yes, no };
+  }, [recommend]);
+  console.log("all comp recs now john", recScore);
   return (
     <ScrollView
       contentContainerStyle={{ paddingBottom: 50 }}
@@ -283,7 +295,12 @@ export function DetailsScreen() {
       <FullAddressDisplay compInfo={companyInfo.compInfo} />
       {/* <BasicDetails params={params} /> */}
       {/* <BusinessHours staleHours={params?.hoursData} stale={true} /> */}
-      <Recommend handleRec={handleRec} companyInfo={companyInfo} user={user} />
+      <Recommend
+        recScore={recScore}
+        handleRec={handleRec}
+        companyInfo={companyInfo}
+        user={user}
+      />
     </ScrollView>
   );
 }
