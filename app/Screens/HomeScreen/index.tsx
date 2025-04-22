@@ -153,7 +153,7 @@ export function HomeScreen() {
       <ReusableTab
         views={[
           { key: "first", route: BandsList, title: "Bands" },
-          { key: "third", route: ThirdRoute, title: "Services" },
+          { key: "third", route: ThirdRoute, title: "MarketPlace" },
           { key: "second", route: EventScreen, title: "Events" },
         ]}
       />

@@ -11,16 +11,9 @@ const renderScene = SceneMap({
   third: ThirdRoute,
 });
 
-// const routes = [
-//   { key: "first", title: "Bands" },
-//   { key: "second", title: "Events" },
-//   { key: "third", title: "Services" },
-// ];
-
 export function ReusableTab({ views }) {
   const layout = useWindowDimensions();
   const [index, setIndex] = React.useState(0);
-  console.log("views now ", views);
   const routes = views.reduce((acc, curr) => {
     return [...acc, { key: curr.key, title: curr.title }];
   }, []);
@@ -28,9 +21,7 @@ export function ReusableTab({ views }) {
   const scene = views.reduce((acc, curr) => {
     return { ...acc, [curr.key]: curr.route };
   }, {});
-  console.log("views route tho ", scene);
   const renderScene = SceneMap(scene);
-  //   const renderScene = SceneMap(scene);
   return (
     <TabView
       navigationState={{ index, routes }}

@@ -122,6 +122,45 @@ export function AddReviewScreen({ route }) {
             rating={rating}
             changeRating={setRating}
           />
+          <StarRate
+            styles={styles.starRating}
+            rating={rating}
+            changeRating={setRating}
+          />
+          <StarRate
+            styles={styles.starRating}
+            rating={rating}
+            changeRating={setRating}
+          />
+          <StarRate
+            styles={styles.starRating}
+            rating={rating}
+            changeRating={setRating}
+          />
+        </View>
+        <ScrollView horizontal>
+          <TouchableOpacity>
+            <Text>Tag</Text>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Text>Tag</Text>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Text>Tag</Text>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Text>Tag</Text>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Text>Tag</Text>
+          </TouchableOpacity>
+        </ScrollView>
+        <View style={styles.ratingAndButtonContainer}>
+          <StarRate
+            styles={styles.starRating}
+            rating={rating}
+            changeRating={setRating}
+          />
           <TouchableOpacity
             onPress={handleSubmit(onSubmit)}
             activeOpacity={0.85}
@@ -143,7 +182,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     // height: 300,
-    flex: 1,
+    // flex: 1,
     backgroundColor: surfaceColor,
     borderRadius: 16,
     padding: 20,
@@ -151,6 +190,7 @@ const styles = StyleSheet.create({
     color: textColorSecondary,
     borderColor: dividerColor,
     borderWidth: 1,
+    height: 300,
   },
   ratingAndButtonContainer: {
     alignItems: "center",
