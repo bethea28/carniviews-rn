@@ -15,9 +15,6 @@ import { useAsyncStorage } from "@/app/customHooks";
 import { useSelector } from "react-redux";
 import { CountrySelect } from "@/app/Components/CountrySelect";
 import { TabComponent } from "@/app/Components/TabComponent";
-import { ReusableTab } from "./reusabelTab";
-import { BandsList } from "@/app/Components/BandsList";
-import { EventScreen } from "../EventScreen";
 // Colors
 const primaryColor = "#a349a4";
 const primaryLightColor = "#d67bff";
@@ -34,7 +31,7 @@ const FirstRoute = () => <Text>firt</Text>;
 const SecondRoute = () => <Text>second</Text>;
 const ThirdRoute = () => <Text>thrird</Text>;
 
-export function HomeScreen() {
+export function BandsList() {
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
   const {
@@ -117,47 +114,6 @@ export function HomeScreen() {
   // console.log("all companies now", country);
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <Text style={styles.greeting}>Hi {userName}!</Text>
-          <Pressable
-            disabled={!country}
-            onPress={() =>
-              navigation.navigate("CompanyForms", { eventType: "company" })
-            }
-            style={[
-              {
-                // width: 150,
-                padding: 20,
-                marginRight: 10,
-                borderRadius: 100,
-                backgroundColor: "#a349a4",
-              },
-            ]}
-          >
-            <Text style={{ color: "white" }}>Add Company</Text>
-          </Pressable>
-        </View>
-        {/* <Text style={styles.title}>Welcome To TriniViews!</Text>
-        <Text style={styles.title}>
-          Let Us Help You Find Your Next Carnival Costume!
-        </Text> */}
-        <CountrySelect />
-      </View>
-      <ReusableTab
-        views={[
-          { key: "first", route: BandsList, title: "Bands" },
-          { key: "third", route: ThirdRoute, title: "Services" },
-          { key: "second", route: EventScreen, title: "Events" },
-        ]}
-      />
-      {/* 
       <SectionList
         sections={sections}
         keyExtractor={(item) =>
@@ -175,7 +131,7 @@ export function HomeScreen() {
         }
         contentContainerStyle={styles.listContentContainer}
         ItemSeparatorComponent={() => <View style={styles.divider} />}
-      /> */}
+      />
     </View>
   );
 }
@@ -212,7 +168,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   listContentContainer: {
-    paddingHorizontal: 16,
+    // paddingHorizontal: 16,
     paddingBottom: 20,
   },
   cardWrapper: {

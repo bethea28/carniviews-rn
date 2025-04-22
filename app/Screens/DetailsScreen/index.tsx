@@ -283,7 +283,6 @@ export function DetailsScreen() {
     });
     return { yes, no };
   }, [allCompRecs?.allRecs]);
-  console.log("all comp recs now john", recScore);
   return (
     <ScrollView
       contentContainerStyle={{ paddingBottom: 50 }}

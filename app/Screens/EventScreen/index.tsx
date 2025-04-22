@@ -44,10 +44,6 @@ export const EventScreen = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const country = useSelector((state) => state.counter.country);
 
-  useEffect(() => {
-    console.log("EventScreen loaded");
-  }, []);
-
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
@@ -125,7 +121,13 @@ export const EventScreen = () => {
   );
 
   const groupEventsAlphabetically = (events) => {
-    const grouped = events.reduce((acc, event) => {
+    if (!events) return [];
+    console.log("all events", events[0].country);
+    const filteredComp = events.filter(
+      (item) => item?.country === country?.country
+    );
+    const parsedCompanies = filteredComp.length === 0 ? events : filteredComp;
+    const grouped = parsedCompanies.reduce((acc, event) => {
       const name = event.name || "";
       const firstLetter = name[0]?.toUpperCase() || "#";
       if (!acc[firstLetter]) acc[firstLetter] = [];

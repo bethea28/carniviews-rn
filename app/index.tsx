@@ -73,11 +73,11 @@ function MyBottomTabs() {
         name="Bands"
         component={HomeScreen}
       />
-      <BottomTab.Screen
+      {/* <BottomTab.Screen
         options={{ headerShown: false, goBack: true }}
         name="Events"
         component={EventScreen}
-      />
+      /> */}
       <BottomTab.Screen
         options={{ headerShown: false, goBack: true }}
         name="Feedback"
