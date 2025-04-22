@@ -77,7 +77,7 @@ export function AmericanForm({ setModalVis, addPhotos, thumbNail, country }) {
       });
 
       reset();
-      navigation.navigate("Bands");
+      navigation.navigate("Home");
     } catch (err) {
       Notifier.showNotification({
         title: "Error",

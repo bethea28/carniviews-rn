@@ -93,7 +93,7 @@ export function AddCompEventForm({ route: params }) {
 
       reset();
       eventType === "company"
-        ? navigation.navigate("Bands")
+        ? navigation.navigate("Home")
         : navigation.goBack();
     } catch (err) {
       console.error("Error submitting:", err);
