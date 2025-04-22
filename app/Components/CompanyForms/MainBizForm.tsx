@@ -86,7 +86,7 @@ export function MainBizForm({
       });
 
       reset();
-      navigation.navigate("Home");
+      navigation.navigate("Bands");
     } catch (err) {
       Notifier.showNotification({
         title: "Error",

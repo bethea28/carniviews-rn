@@ -54,7 +54,7 @@ export const AnonymousFeedback = () => {
         duration: 6000,
       });
 
-      navigation.navigate("Home");
+      navigation.navigate("Bands");
     } catch (err) {
       console.log("feedback error", err);
 

@@ -6,7 +6,7 @@ import { setCountry } from "@/store/globalState/globalState";
 import { useDispatch } from "react-redux";
 import { carnivalCountries } from "@/carnivalCountries";
 const countries = [
-  // { country: "Choose Your Country" },
+  { country: "All Countries" },
   { country: "United States" },
   { country: " Trinidad and Tobago" },
 ];

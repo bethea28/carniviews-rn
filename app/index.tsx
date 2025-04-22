@@ -70,7 +70,7 @@ function MyBottomTabs() {
         //     </Pressable>
         //   ),
         // }}
-        name="Home"
+        name="Bands"
         component={HomeScreen}
       />
       <BottomTab.Screen
@@ -91,7 +91,7 @@ function RootStack() {
   return (
     <StackNav.Navigator>
       <StackNav.Screen
-        name="Home"
+        name="Bands"
         component={MyBottomTabs}
         options={{ headerShown: false }} // Keep it here if you want to hide in Home
       />
@@ -201,7 +201,9 @@ function MainApp() {
     <View style={{ flex: 1 }}>
       {userData?.data?.message?.includes("successful") ? (
         // <NavigationContainer>
-        <RootStack />
+        <>
+          <RootStack />
+        </>
       ) : (
         // </NavigationContainer>
         // <WebViewComp

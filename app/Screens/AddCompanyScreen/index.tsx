@@ -72,7 +72,7 @@ export function AddCompanyScreen({ route: params }) {
     }
     console.log("respoine request", createCompany);
     reset();
-    navigation.navigate("Home");
+    navigation.navigate("Bands");
   };
 
   const addPhotos = () => {

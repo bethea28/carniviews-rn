@@ -118,7 +118,7 @@ const DescriptionDetails = ({ companyInfo }) => (
   <View style={styles.descriptionDetailsContainer}>
     <Text style={styles.descriptionDetailsHeader}>Company Details</Text>
     <Text style={styles.descriptionDetailsText}>
-      {companyInfo.compInfo.description}
+      {companyInfo?.compInfo?.description}
     </Text>
   </View>
 );
@@ -265,11 +265,10 @@ export function DetailsScreen() {
   const [recommend, setRecommend] = React.useState("");
   console.log("all company info bryanb", companyInfo.companyId);
   const handleRec = (rec) => {
-    console.log("rec company id rec", companyInfo.companyId);
-    setRecommend(rec);
+    console.log("rec company id rec", rec);
     const giveRec = addRec({
       userId: user.data.user.user_id,
-      rec: recommend,
+      rec: rec,
       companyId: companyInfo.companyId,
     });
   };
@@ -283,7 +282,7 @@ export function DetailsScreen() {
       if (rec.rec === "yes") yes += 1;
     });
     return { yes, no };
-  }, [recommend]);
+  }, [allCompRecs?.allRecs]);
   console.log("all comp recs now john", recScore);
   return (
     <ScrollView
