@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import { useGetReviewsQuery } from "@/store/api/api";
 import { useNavigation } from "@react-navigation/native";
 import { format } from "date-fns";
+import StarRating from "react-native-star-rating-widget";
 
 const primaryColor = "#a349a4";
 const secondaryColor = "#FF8C00";
@@ -31,16 +32,83 @@ export function ReviewScreen() {
     companyId: companyInfo?.companyId,
   });
 
-  const renderItem = ({ item }) => (
-    <View style={styles.reviewContainer}>
-      <Text style={styles.reviewText}>Review: {item.review}</Text>
-      <Text style={styles.ratingText}>Rating: {item.rating}</Text>
-      <Text style={styles.displayNameText}>Reviewer: {item.displayName}</Text>
-      <Text style={styles.displayNameText}>
-        Review Date: {format(new Date(item.review_date), "MM/dd/yy")}
-      </Text>
-    </View>
-  );
+  const renderItem = ({ item }) => {
+    console.log("tewst", item);
+
+    return (
+      <View style={styles.reviewContainer}>
+        <Text style={styles.reviewText}>Review: {item.review}</Text>
+        <View style={{ paddingHorizontal: 20, marginBottom: 10 }}>
+          <Text
+            style={[
+              styles.ratingText,
+              { alignSelf: "center", marginBottom: 8 },
+            ]}
+          >
+            Ratings {item.rating}
+          </Text>
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
+            <Text>Amenities:</Text>
+            <StarRating rating={item.amenities} starSize={20} />
+          </View>
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
+            <Text>Food/Drinks:</Text>
+            <StarRating rating={item.food} starSize={20} />
+          </View>
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
+            <Text>Music:</Text>
+            <StarRating rating={item.music} starSize={20} />
+          </View>
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
+            <Text>Costume Pickup:</Text>
+            <StarRating rating={item.pickup} starSize={20} />
+          </View>
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
+            <Text>Vibes/Energy:</Text>
+            <StarRating rating={item.vibes} starSize={20} />
+          </View>
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
+            <Text>Price:</Text>
+            <StarRating rating={item.price} starSize={20} />
+          </View>
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
+            <Text>Customer Service:</Text>
+            <StarRating rating={item.service} starSize={20} />
+          </View>
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
+            <Text>Value for Money:</Text>
+            <StarRating rating={item.value} starSize={20} />
+          </View>
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
+            <Text>Costume Quality:</Text>
+            <StarRating rating={item.costume} starSize={20} />
+          </View>
+        </View>
+        <Text style={styles.displayNameText}>Reviewer: {item.displayName}</Text>
+        <Text style={styles.displayNameText}>
+          Review Date: {format(new Date(item.review_date), "MM/dd/yy")}
+        </Text>
+      </View>
+    );
+  };
 
   const renderHeader = () => (
     <TouchableOpacity
