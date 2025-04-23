@@ -11,7 +11,7 @@ import { useSelector } from "react-redux";
 import { useGetReviewsQuery } from "@/store/api/api";
 import { useNavigation } from "@react-navigation/native";
 import { format } from "date-fns";
-import StarRating from "react-native-star-rating-widget";
+import { StarRatingDisplay } from "react-native-star-rating-widget";
 
 const primaryColor = "#a349a4";
 const secondaryColor = "#FF8C00";
@@ -51,55 +51,55 @@ export function ReviewScreen() {
             style={{ flexDirection: "row", justifyContent: "space-between" }}
           >
             <Text>Amenities:</Text>
-            <StarRating rating={item.amenities} starSize={20} />
+            <StarRatingDisplay rating={item.amenities} starSize={20} />
           </View>
           <View
             style={{ flexDirection: "row", justifyContent: "space-between" }}
           >
             <Text>Food/Drinks:</Text>
-            <StarRating rating={item.food} starSize={20} />
+            <StarRatingDisplay rating={item.food} starSize={20} />
           </View>
           <View
             style={{ flexDirection: "row", justifyContent: "space-between" }}
           >
             <Text>Music:</Text>
-            <StarRating rating={item.music} starSize={20} />
+            <StarRatingDisplay rating={item.music} starSize={20} />
           </View>
           <View
             style={{ flexDirection: "row", justifyContent: "space-between" }}
           >
             <Text>Costume Pickup:</Text>
-            <StarRating rating={item.pickup} starSize={20} />
+            <StarRatingDisplay rating={item.pickup} starSize={20} />
           </View>
           <View
             style={{ flexDirection: "row", justifyContent: "space-between" }}
           >
             <Text>Vibes/Energy:</Text>
-            <StarRating rating={item.vibes} starSize={20} />
+            <StarRatingDisplay rating={item.vibes} starSize={20} />
           </View>
           <View
             style={{ flexDirection: "row", justifyContent: "space-between" }}
           >
             <Text>Price:</Text>
-            <StarRating rating={item.price} starSize={20} />
+            <StarRatingDisplay rating={item.price} starSize={20} />
           </View>
           <View
             style={{ flexDirection: "row", justifyContent: "space-between" }}
           >
             <Text>Customer Service:</Text>
-            <StarRating rating={item.service} starSize={20} />
+            <StarRatingDisplay rating={item.service} starSize={20} />
           </View>
           <View
             style={{ flexDirection: "row", justifyContent: "space-between" }}
           >
             <Text>Value for Money:</Text>
-            <StarRating rating={item.value} starSize={20} />
+            <StarRatingDisplay rating={item.value} starSize={20} />
           </View>
           <View
             style={{ flexDirection: "row", justifyContent: "space-between" }}
           >
             <Text>Costume Quality:</Text>
-            <StarRating rating={item.costume} starSize={20} />
+            <StarRatingDisplay rating={item.costume} starSize={20} />
           </View>
         </View>
         <Text style={styles.displayNameText}>Reviewer: {item.displayName}</Text>
