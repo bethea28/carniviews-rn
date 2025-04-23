@@ -257,6 +257,15 @@ export const api = createApi({
           body: JSON.stringify({
             rating: data.rating,
             review: data.review,
+            price: data.rating[0],
+            music: data.rating[1],
+            amenities: data.rating[2],
+            food: data.rating[3],
+            vibes: data.rating[4],
+            pickup: data.rating[5],
+            costume: data.rating[6],
+            value: data.rating[7],
+            service: data.rating[8],
           }),
         };
       },

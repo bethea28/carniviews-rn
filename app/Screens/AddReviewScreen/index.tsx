@@ -28,16 +28,50 @@ const errorColor = "#B00020";
 const surfaceColor = "#FFFFFF";
 const dividerColor = "#E0E0E0";
 
-const StarRate = ({ changeRating, rating, styles }) => {
+const StarRate = ({ changeRating, rating = 0, styles = {} }) => {
   return <StarRating style={styles} rating={rating} onChange={changeRating} />;
 };
 
+const StarFeedback = ({ categories = [], handleChangeRating, rater }) => {
+  return (
+    <View>
+      {categories.map((cat, index) => {
+        return (
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <Text style={{ marginLeft: 10 }}> {cat}: </Text>
+            <StarRate
+              rating={rater[index]}
+              changeRating={(rate) => handleChangeRating(rate, index)}
+            />
+          </View>
+        );
+      })}
+    </View>
+  );
+};
 export function AddReviewScreen({ route }) {
   const [addReview] = useAddReviewMutation();
   const [rating, setRating] = React.useState(0);
   const navigation = useNavigation();
   const userData = useSelector((state) => state.counter.userState);
-
+  const categories = [
+    "Customer Service",
+    "Value for Money",
+    "Costume Quality",
+    "Costume Pickup",
+    "Vibes/Energy",
+    "Food/Drinks",
+    "Amenities",
+    "Music",
+    "Price",
+  ].reverse();
+  const [rater, setRater] = React.useState(Array(categories.length).fill(0));
   const {
     control,
     handleSubmit,
@@ -53,7 +87,7 @@ export function AddReviewScreen({ route }) {
     try {
       const final = {
         review: data.review,
-        rating,
+        rating: rater,
         userId: userData?.data?.user?.user_id,
         companyId: route.params?.companyInfo?.companyId,
       };
@@ -85,7 +119,13 @@ export function AddReviewScreen({ route }) {
       reset();
     }
   };
-
+  console.log("rate now", rater);
+  const handleChangeRating = (rate, index) => {
+    console.log("rating now", rate);
+    let updateRate = [...rater];
+    updateRate[index] = rate;
+    setRater(updateRate);
+  };
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -116,51 +156,34 @@ export function AddReviewScreen({ route }) {
           <Text style={styles.errorText}>This field is required.</Text>
         )}
 
+        <StarFeedback
+          handleChangeRating={handleChangeRating}
+          categories={categories}
+          rater={rater}
+        />
+        {/* <ScrollView horizontal>
+          <TouchableOpacity>
+            <Text>Tag</Text>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Text>Tag</Text>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Text>Tag</Text>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Text>Tag</Text>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Text>Tag</Text>
+          </TouchableOpacity>
+        </ScrollView> */}
         <View style={styles.ratingAndButtonContainer}>
-          <StarRate
+          {/* <StarRate
             styles={styles.starRating}
             rating={rating}
             changeRating={setRating}
-          />
-          <StarRate
-            styles={styles.starRating}
-            rating={rating}
-            changeRating={setRating}
-          />
-          <StarRate
-            styles={styles.starRating}
-            rating={rating}
-            changeRating={setRating}
-          />
-          <StarRate
-            styles={styles.starRating}
-            rating={rating}
-            changeRating={setRating}
-          />
-        </View>
-        <ScrollView horizontal>
-          <TouchableOpacity>
-            <Text>Tag</Text>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Text>Tag</Text>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Text>Tag</Text>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Text>Tag</Text>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Text>Tag</Text>
-          </TouchableOpacity>
-        </ScrollView>
-        <View style={styles.ratingAndButtonContainer}>
-          <StarRate
-            styles={styles.starRating}
-            rating={rating}
-            changeRating={setRating}
-          />
+          /> */}
           <TouchableOpacity
             onPress={handleSubmit(onSubmit)}
             activeOpacity={0.85}
@@ -194,7 +217,7 @@ const styles = StyleSheet.create({
   },
   ratingAndButtonContainer: {
     alignItems: "center",
-    marginTop: 30,
+    marginTop: 10,
     marginBottom: 20,
   },
   starRating: {

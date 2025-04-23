@@ -66,7 +66,7 @@ export function ReviewScreen() {
       </View>
     );
   }
-
+  console.log("all REVIEWS SCREENM", allCompanyReviews);
   return (
     <View style={styles.container}>
       <FlatList

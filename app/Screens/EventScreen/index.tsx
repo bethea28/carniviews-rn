@@ -122,7 +122,6 @@ export const EventScreen = () => {
 
   const groupEventsAlphabetically = (events) => {
     if (!events) return [];
-    console.log("all events", events[0].country);
     const filteredComp = events.filter(
       (item) => item?.country === country?.country
     );
@@ -142,7 +141,7 @@ export const EventScreen = () => {
         data: grouped[letter].sort((a, b) => a.name.localeCompare(b.name)),
       }));
   };
-
+  console.log("EVENTS IN YO HOOD", allEvents);
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
