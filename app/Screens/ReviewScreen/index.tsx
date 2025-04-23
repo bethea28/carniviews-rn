@@ -10,6 +10,8 @@ import { Text } from "react-native-paper";
 import { useSelector } from "react-redux";
 import { useGetReviewsQuery } from "@/store/api/api";
 import { useNavigation } from "@react-navigation/native";
+import { format } from "date-fns";
+
 const primaryColor = "#a349a4";
 const secondaryColor = "#FF8C00";
 const backgroundColor = "#FFB347";
@@ -33,8 +35,9 @@ export function ReviewScreen() {
     <View style={styles.reviewContainer}>
       <Text style={styles.reviewText}>Review: {item.review}</Text>
       <Text style={styles.ratingText}>Rating: {item.rating}</Text>
+      <Text style={styles.displayNameText}>Reviewer: {item.displayName}</Text>
       <Text style={styles.displayNameText}>
-        Display Name: {item.displayName}
+        Review Date: {format(new Date(item.review_date), "MM/dd/yy")}
       </Text>
     </View>
   );
