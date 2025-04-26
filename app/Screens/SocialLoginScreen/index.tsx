@@ -33,7 +33,7 @@ export function SocialLoginScreen() {
       console.log("NEW RESPONSE OBJH", fullUserResponse);
       // console.log("NEW test", decode);
       const formattedJwt = fullUserResponse.data;
-      storeData("tokens", formattedJwt);
+      // storeData("tokens", formattedJwt);
       dispatch(setUserState(fullUserResponse));
     } catch (error) {
       handleSignInError(error);

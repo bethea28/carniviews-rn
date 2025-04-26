@@ -230,7 +230,8 @@ export const api = createApi({
     }),
     addBook: build.mutation<any, any>({
       query: (data) => {
-        console.log("dpmt add any books", data);
+        console.log("ADDOMG BUSIENSS BACK HERE", data);
+        return;
         return {
           url: "bryan/bookPost/",
           method: "POST",
@@ -387,6 +388,48 @@ export const api = createApi({
       },
       providesTags: ["event"],
     }),
+    addBusiness: build.mutation<any, any>({
+      query: (data) => {
+        const userId = data?.userId;
+        console.log("ADD COMAPNY NOW", data);
+        // return;
+        return {
+          url: `business/${userId}/addBusiness/`,
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json", // Use JSON
+          },
+          body: JSON.stringify({
+            // Use JSON.stringify
+            companyInfo: data.companyInfo,
+            imageUrls: data.allImages,
+            hoursData: data.hoursData,
+          }),
+        };
+      },
+      invalidatesTags: ["company"],
+    }),
+    getBusinesses: build.query<any, any>({
+      query: (data) => {
+        const userId = data?.userId;
+        console.log("ADD COMAPNY NOW", data);
+        // return;
+        return {
+          url: `business/${userId}/addBusiness/`,
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json", // Use JSON
+          },
+          body: JSON.stringify({
+            // Use JSON.stringify
+            companyInfo: data.companyInfo,
+            imageUrls: data.allImages,
+            hoursData: data.hoursData,
+          }),
+        };
+      },
+      invalidatesTags: ["company"],
+    }),
     addCompany: build.mutation<any, any>({
       query: (data) => {
         const userId = data?.userId;
@@ -497,6 +540,8 @@ export const {
   useAddCompanyImagesMutation,
   useAddRecMutation,
   useGetCompanyRecsQuery,
+  useAddBusinessMutation,
+  useGetBusinessesQuery,
   // useAddBookMutation,
   useGetMyShiftsQuery,
   useGetCalendarDataQuery,

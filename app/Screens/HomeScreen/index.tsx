@@ -18,6 +18,7 @@ import { TabComponent } from "@/app/Components/TabComponent";
 import { ReusableTab } from "./reusabelTab";
 import { BandsList } from "@/app/Components/BandsList";
 import { EventScreen } from "../EventScreen";
+import { MarketPlaceScreen } from "../MarketPlace";
 // Colors
 const primaryColor = "#a349a4";
 const primaryLightColor = "#d67bff";
@@ -29,10 +30,6 @@ const textColorSecondary = "#333333";
 const errorColor = "#B00020";
 const surfaceColor = "#FFFFFF";
 const dividerColor = "#E0E0E0";
-
-const FirstRoute = () => <Text>firt</Text>;
-const SecondRoute = () => <Text>second</Text>;
-const ThirdRoute = () => <Text>thrird</Text>;
 
 export function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
@@ -153,7 +150,7 @@ export function HomeScreen() {
       <ReusableTab
         views={[
           { key: "first", route: BandsList, title: "Bands" },
-          { key: "third", route: ThirdRoute, title: "MarketPlace" },
+          { key: "third", route: MarketPlaceScreen, title: "MarketPlace" },
           { key: "second", route: EventScreen, title: "Events" },
         ]}
       />

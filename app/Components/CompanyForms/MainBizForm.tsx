@@ -16,7 +16,7 @@ import { useSelector } from "react-redux";
 import { useImagePicker } from "@/app/customHooks";
 import { Notifier, Easing } from "react-native-notifier";
 import { useNavigation } from "@react-navigation/native";
-import { useAddCompanyMutation } from "@/store/api/api";
+import { useAddBusinessMutation, useAddCompanyMutation } from "@/store/api/api";
 import { timeConvert } from "@/app/customHooks";
 const primaryColor = "#a349a4";
 const secondaryColor = "#FF8C00";
@@ -50,7 +50,7 @@ export function MainBizForm({
       city: "",
       postal: "",
       region: "", // Could be St. James, etc.
-      country: country.country,
+      country: country?.country,
       hours: "",
       type: "",
       description: "",
@@ -62,7 +62,7 @@ export function MainBizForm({
   const bizHours = useSelector((state) => state.counter.businessHours);
   const hoursData = useSelector((state) => state.counter.businessHours);
   const userData = useSelector((state) => state.counter.userState);
-  const [addCompany] = useAddCompanyMutation();
+  const [addBusiness] = useAddBusinessMutation();
   const navigation = useNavigation();
   const { pickImages, allImages } = useImagePicker();
 
@@ -74,11 +74,11 @@ export function MainBizForm({
       userId: userData?.data?.user?.user_id,
     };
     try {
-      const response = await addCompany(finalData);
+      const response = await addBusiness(finalData);
 
       Notifier.showNotification({
         title: "Success!",
-        description: "Company created successfully!",
+        description: "Business created successfully!",
         duration: 6000,
         showAnimationDuration: 800,
         showEasing: Easing.ease,
@@ -127,7 +127,7 @@ export function MainBizForm({
           name="type"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-              placeholder="Type"
+              placeholder="Business Type"
               placeholderTextColor={placeholderTextColor}
               onBlur={onBlur}
               onChangeText={onChange}
@@ -185,7 +185,7 @@ export function MainBizForm({
           name="city"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-              placeholder={`City/Town/Village (e.g. ${country.exampleAddress.locality})`}
+              placeholder={`City/Town/Village (e.g. ${country?.exampleAddress.locality})`}
               placeholderTextColor={placeholderTextColor}
               onBlur={onBlur}
               onChangeText={onChange}
@@ -199,7 +199,7 @@ export function MainBizForm({
           name="postal"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-              placeholder={`Zip/Postal Code (e.g.${country.exampleAddress.postalCode})`}
+              placeholder={`Zip/Postal Code (e.g.${country?.exampleAddress.postalCode})`}
               placeholderTextColor={placeholderTextColor}
               onBlur={onBlur}
               onChangeText={onChange}
@@ -214,7 +214,7 @@ export function MainBizForm({
           name="region"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-              placeholder={`State/Province/Region (e.g. ${country.exampleAddress.subRegion})`}
+              placeholder={`State/Province/Region (e.g. ${country?.exampleAddress.subRegion})`}
               placeholderTextColor={placeholderTextColor}
               onBlur={onBlur}
               onChangeText={onChange}
