@@ -104,13 +104,13 @@ export function HomeScreen() {
     );
   }
 
-  if (isError) {
-    return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>Error loading companies.</Text>
-      </View>
-    );
-  }
+  // if (isError) {
+  //   return (
+  //     <View style={styles.errorContainer}>
+  //       <Text style={styles.errorText}>Error loading companies.</Text>
+  //     </View>
+  //   );
+  // }
   // console.log("all companies now", country);
   return (
     <View style={styles.container}>

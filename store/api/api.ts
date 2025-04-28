@@ -36,7 +36,9 @@ export const objectToUrlEncodedString = (
 
 export const api = createApi({
   // http://127.0.0.1:8000/reviews/
-  baseQuery: fetchBaseQuery({ baseUrl: "http://192.168.1.161:8000/" }),
+  // baseQuery: fetchBaseQuery({ baseUrl: "http://10.0.2.2:8000/" }), // works for iphone
+  // baseQuery: fetchBaseQuery({ baseUrl: "http://172.20.10.3:8000/" }), // works for iphone
+  baseQuery: fetchBaseQuery({ baseUrl: "http://192.168.1.161:8000/" }), //local
   //   baseQuery: fetchBaseQuery({ baseUrl: "http://127.0.0.1:8000/" }),
   // baseQuery,
   reducerPath: "api",
@@ -379,7 +381,7 @@ export const api = createApi({
         const userId = data?.userId;
         console.log("ADD event NOW.hours", data);
         return {
-          url: `event/getAllEvents/`,
+          url: `event/${data.country}/getAllEvents/`,
           method: "GET",
           headers: {
             "Content-Type": "application/json", // Use JSON
@@ -459,10 +461,11 @@ export const api = createApi({
       providesTags: ["review"],
     }),
     getCompanies: build.query({
-      query: () => ({
-        url: "company/getCompanies/",
-        params: {},
-      }),
+      query: (data) =>
+        console.log("data country", data) || {
+          url: `company/${data.country}/getCompanies/`,
+          params: {},
+        },
       providesTags: ["company"],
     }),
 

@@ -34,14 +34,14 @@ const ThirdRoute = () => <Text>thrird</Text>;
 export function BandsList() {
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
+  const country = useSelector((state) => state.counter.country);
   const {
     data: allCompanies,
     isLoading,
     isError,
     refetch,
-  } = useGetCompaniesQuery();
+  } = useGetCompaniesQuery(country);
   const userData = useSelector((state) => state.counter.userState);
-  const country = useSelector((state) => state.counter.country);
   const userName = userData?.data?.user?.name || "Guest";
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -111,7 +111,7 @@ export function BandsList() {
       </View>
     );
   }
-  // console.log("all companies now", country);
+  console.log("all companies now", allCompanies);
   return (
     <View style={styles.container}>
       <SectionList

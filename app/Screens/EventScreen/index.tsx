@@ -38,11 +38,16 @@ const placeholderTextColor = "gray";
 
 export const EventScreen = () => {
   const navigation = useNavigation();
-  const { data: allEvents, isLoading, error, refetch } = useGetAllEventsQuery();
+  const country = useSelector((state) => state.counter.country);
+  const {
+    data: allEvents,
+    isLoading,
+    error,
+    refetch,
+  } = useGetAllEventsQuery(country);
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const country = useSelector((state) => state.counter.country);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
