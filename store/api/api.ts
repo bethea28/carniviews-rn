@@ -308,6 +308,24 @@ export const api = createApi({
       },
       invalidatesTags: ["recommendation"],
     }),
+    addReviewAgreement: build.mutation<any, any>({
+      query: (data) => {
+        console.log("AGREEMMENT ADD jake", data);
+        // return;
+        return {
+          url: `reviews/addRevAgreement/`,
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: JSON.stringify({
+            agreement: data.agreem,
+            user_id: data.userId,
+            reviewId: data.reviewId,
+          }),
+        };
+      },
+    }),
     getCompanyRecs: build.query<any, any>({
       query: (data) => {
         console.log("data is king add revieww", data);
@@ -378,10 +396,9 @@ export const api = createApi({
     }),
     getAllEvents: build.query<any, any>({
       query: (data) => {
-        const userId = data?.userId;
         console.log("ADD event NOW.hours", data);
         return {
-          url: `event/${data.country}/getAllEvents/`,
+          url: `event/${data?.country}/getAllEvents/`,
           method: "GET",
           headers: {
             "Content-Type": "application/json", // Use JSON
@@ -463,7 +480,7 @@ export const api = createApi({
     getCompanies: build.query({
       query: (data) =>
         console.log("data country", data) || {
-          url: `company/${data.country}/getCompanies/`,
+          url: `company/${data?.country}/getCompanies/`,
           params: {},
         },
       providesTags: ["company"],
@@ -528,6 +545,7 @@ export const api = createApi({
   refetchOnMountOrArgChange: true,
 });
 export const {
+  useAddReviewAgreementMutation,
   useGetBooksQuery,
   useGetWeatherQuery,
   useGetDjangoQuery,

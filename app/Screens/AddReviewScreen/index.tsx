@@ -38,6 +38,7 @@ const StarFeedback = ({ categories = [], handleChangeRating, rater }) => {
       {categories.map((cat, index) => {
         return (
           <View
+            key={index.toString()}
             style={{
               flexDirection: "row",
               alignItems: "center",

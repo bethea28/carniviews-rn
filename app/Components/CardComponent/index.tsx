@@ -7,7 +7,6 @@ import { useDispatch } from "react-redux";
 import StarRatingDisplay from "react-native-star-rating-widget";
 import { useGetReviewsQuery } from "@/store/api/api";
 import { useSelector } from "react-redux";
-
 // Define a Material Design inspired color palette (using the provided colors)
 const primaryColor = "#a349a4"; // Purple 500 (approx.)
 const primaryLightColor = "#d67bff"; // Purple 200 (approx.)

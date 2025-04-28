@@ -5,6 +5,8 @@ import {
   StyleSheet,
   RefreshControl,
   TouchableOpacity,
+  ScrollView,
+  Pressable,
 } from "react-native";
 import { Text } from "react-native-paper";
 import { useSelector } from "react-redux";
@@ -12,7 +14,8 @@ import { useGetReviewsQuery } from "@/store/api/api";
 import { useNavigation } from "@react-navigation/native";
 import { format } from "date-fns";
 import { StarRatingDisplay } from "react-native-star-rating-widget";
-
+import Icon from "react-native-vector-icons/EvilIcons";
+import { useAddReviewAgreementMutation } from "@/store/api/api";
 const primaryColor = "#a349a4";
 const secondaryColor = "#FF8C00";
 const backgroundColor = "#FFB347";
@@ -21,7 +24,10 @@ const textColorSecondary = "#333333";
 
 export function ReviewScreen() {
   const companyInfo = useSelector((state) => state.counter.companyInfo);
+  const userData = useSelector((state) => state.counter.userState);
+  const [addRevAgreem] = useAddReviewAgreementMutation();
   const navigation = useNavigation();
+
   const {
     data: allCompanyReviews,
     isLoading,
@@ -31,13 +37,22 @@ export function ReviewScreen() {
   } = useGetReviewsQuery({
     companyId: companyInfo?.companyId,
   });
-
-  const renderItem = ({ item }) => {
-    console.log("tewst", item);
+  const handleAgreement = async (agreem, item) => {
+    console.log("agreement handle", item.id);
+    const addAgreem = await addRevAgreem({
+      agreem,
+      reviewId: item.id,
+      userId: userData.data.user.user_id,
+    });
+  };
+  const renderItem = ({ item, index }) => {
+    console.log("tewst index", index);
 
     return (
       <View style={styles.reviewContainer}>
-        <Text style={styles.reviewText}>Review: {item.review}</Text>
+        <ScrollView style={{ maxHeight: 300 }}>
+          <Text style={styles.reviewText}>Review: {item.review}</Text>
+        </ScrollView>
         <View style={{ paddingHorizontal: 20, marginBottom: 10 }}>
           <Text
             style={[
@@ -102,10 +117,38 @@ export function ReviewScreen() {
             <StarRatingDisplay rating={item.costume} starSize={20} />
           </View>
         </View>
-        <Text style={styles.displayNameText}>Reviewer: {item.displayName}</Text>
-        <Text style={styles.displayNameText}>
-          Review Date: {format(new Date(item.review_date), "MM/dd/yy")}
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <View>
+            <Text style={styles.displayNameText}>
+              Reviewer: {item.displayName}
+            </Text>
+            <Text style={styles.displayNameText}>
+              Review Date: {format(new Date(item.review_date), "MM/dd/yy")}
+            </Text>
+          </View>
+        </View>
+        <Text style={{ alignSelf: "center", marginTop: 8 }}>
+          Agree With Review
         </Text>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-around",
+            marginTop: 16,
+            paddingHorizontal: 120,
+          }}
+        >
+          <Pressable onPress={() => handleAgreement("like", item)}>
+            <Icon size={30} name="like" color="green" />
+          </Pressable>
+
+          <Pressable
+            onPress={() => handleAgreement("dislike", item)}
+            style={{ transform: [{ rotate: "180deg" }] }}
+          >
+            <Icon color="red" size={30} name="like" />
+          </Pressable>
+        </View>
       </View>
     );
   };
@@ -134,7 +177,7 @@ export function ReviewScreen() {
       </View>
     );
   }
-  console.log("all REVIEWS SCREENM", allCompanyReviews);
+  console.log("all REVIEWS user data", userData.data.user.user_id);
   return (
     <View style={styles.container}>
       <FlatList
@@ -174,9 +217,12 @@ const styles = StyleSheet.create({
     borderColor: "#ddd",
   },
   reviewText: {
+    backgroundColor: "red",
     fontSize: 16,
     color: textColorSecondary,
     marginBottom: 5,
+    // maxHeight: 300,
+    // overflowY: "scroll",
   },
   ratingText: {
     fontSize: 14,

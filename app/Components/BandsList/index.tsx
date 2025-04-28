@@ -15,6 +15,7 @@ import { useAsyncStorage } from "@/app/customHooks";
 import { useSelector } from "react-redux";
 import { CountrySelect } from "@/app/Components/CountrySelect";
 import { TabComponent } from "@/app/Components/TabComponent";
+import { EmptyCardComponent } from "../EmptyCardComponent";
 // Colors
 const primaryColor = "#a349a4";
 const primaryLightColor = "#d67bff";
@@ -62,8 +63,7 @@ export function BandsList() {
     );
     const parsedCompanies =
       filteredComp.length === 0 ? allCompanies : filteredComp;
-    console.log("filter comps bethea anser", parsedCompanies);
-    console.log("filter comps bethea", filteredComp[0]?.companyInfo.country);
+
     const grouped = parsedCompanies.reduce((acc, company) => {
       const name = company.companyInfo?.name || "";
       const firstLetter = name.charAt(0).toUpperCase();
@@ -114,24 +114,28 @@ export function BandsList() {
   console.log("all companies now", allCompanies);
   return (
     <View style={styles.container}>
-      <SectionList
-        sections={sections}
-        keyExtractor={(item) =>
-          item.companyInfo?.id?.toString() || Math.random().toString()
-        }
-        renderItem={renderItem}
-        renderSectionHeader={renderSectionHeader}
-        stickySectionHeadersEnabled
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            tintColor={primaryColor}
-          />
-        }
-        contentContainerStyle={styles.listContentContainer}
-        ItemSeparatorComponent={() => <View style={styles.divider} />}
-      />
+      {!country ? (
+        <EmptyCardComponent />
+      ) : (
+        <SectionList
+          sections={sections}
+          keyExtractor={(item) =>
+            item.companyInfo?.id?.toString() || Math.random().toString()
+          }
+          renderItem={renderItem}
+          renderSectionHeader={renderSectionHeader}
+          stickySectionHeadersEnabled
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              tintColor={primaryColor}
+            />
+          }
+          contentContainerStyle={styles.listContentContainer}
+          ItemSeparatorComponent={() => <View style={styles.divider} />}
+        />
+      )}
     </View>
   );
 }

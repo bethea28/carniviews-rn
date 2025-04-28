@@ -23,7 +23,7 @@ import { useSelector } from "react-redux";
 import { timeConvert } from "@/app/customHooks";
 // import { Icon } from "react-native-vector-icons/Icon";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-
+import { EmptyCardComponent } from "@/app/Components/EmptyCardComponent";
 // Color Scheme
 const primaryColor = "#a349a4";
 const secondaryColor = "#FF8C00";
@@ -146,7 +146,14 @@ export const EventScreen = () => {
         data: grouped[letter].sort((a, b) => a.name.localeCompare(b.name)),
       }));
   };
-  console.log("EVENTS IN YO HOOD", allEvents);
+  console.log("EVENTS IN YO HOOD", allEvents, country);
+  if (isLoading) {
+    return <ActivityIndicator animating={true} color={primaryColor} />;
+  }
+  if (error) {
+    console.log("what is error", error);
+    return <Text style={styles.errorText}>Error fetching events</Text>;
+  }
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -161,11 +168,8 @@ export const EventScreen = () => {
         >
           Add Event
         </Button>
-
-        {isLoading && !refreshing ? (
-          <ActivityIndicator animating={true} color={primaryColor} />
-        ) : error ? (
-          <Text style={styles.errorText}>Error fetching events</Text>
+        {!country ? (
+          <EmptyCardComponent />
         ) : (
           <SectionList
             sections={groupEventsAlphabetically(allEvents?.events || [])}

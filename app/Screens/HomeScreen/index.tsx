@@ -19,6 +19,7 @@ import { ReusableTab } from "./reusabelTab";
 import { BandsList } from "@/app/Components/BandsList";
 import { EventScreen } from "../EventScreen";
 import { MarketPlaceScreen } from "../MarketPlace";
+import { EmptyCardComponent } from "@/app/Components/EmptyCardComponent";
 // Colors
 const primaryColor = "#a349a4";
 const primaryLightColor = "#d67bff";
@@ -34,75 +35,75 @@ const dividerColor = "#E0E0E0";
 export function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
-  const {
-    data: allCompanies,
-    isLoading,
-    isError,
-    refetch,
-  } = useGetCompaniesQuery();
-  const userData = useSelector((state) => state.counter.userState);
   const country = useSelector((state) => state.counter.country);
+  // const {
+  //   data: allCompanies,
+  //   isLoading,
+  //   isError,
+  //   refetch,
+  // } = useGetCompaniesQuery(country);
+  const userData = useSelector((state) => state.counter.userState);
   const userName = userData?.data?.user?.name || "Guest";
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    try {
-      await refetch();
-    } catch (err) {
-      console.error("Error refreshing data:", err);
-    } finally {
-      setRefreshing(false);
-    }
-  };
+  // const handleRefresh = async () => {
+  //   setRefreshing(true);
+  //   try {
+  //     await refetch();
+  //   } catch (err) {
+  //     console.error("Error refreshing data:", err);
+  //   } finally {
+  //     setRefreshing(false);
+  //   }
+  // };
 
-  const sections = useMemo(() => {
-    if (!allCompanies) return [];
+  // const sections = useMemo(() => {
+  //   if (!allCompanies) return [];
 
-    const filteredComp = allCompanies.filter(
-      (item) => item?.companyInfo?.country === country?.country
-    );
-    const parsedCompanies =
-      filteredComp.length === 0 ? allCompanies : filteredComp;
-    console.log("filter comps bethea anser", parsedCompanies);
-    console.log("filter comps bethea", filteredComp[0]?.companyInfo.country);
-    const grouped = parsedCompanies.reduce((acc, company) => {
-      const name = company.companyInfo?.name || "";
-      const firstLetter = name.charAt(0).toUpperCase();
-      if (!acc[firstLetter]) acc[firstLetter] = [];
-      acc[firstLetter].push(company);
-      return acc;
-    }, {});
+  //   const filteredComp = allCompanies.filter(
+  //     (item) => item?.companyInfo?.country === country?.country
+  //   );
+  //   const parsedCompanies =
+  //     filteredComp.length === 0 ? allCompanies : filteredComp;
+  //   console.log("filter comps bethea anser", parsedCompanies);
+  //   console.log("filter comps bethea", filteredComp[0]?.companyInfo.country);
+  //   const grouped = parsedCompanies.reduce((acc, company) => {
+  //     const name = company.companyInfo?.name || "";
+  //     const firstLetter = name.charAt(0).toUpperCase();
+  //     if (!acc[firstLetter]) acc[firstLetter] = [];
+  //     acc[firstLetter].push(company);
+  //     return acc;
+  //   }, {});
 
-    const finalGroup = Object.keys(grouped)
-      .sort()
-      .map((letter) => ({ title: letter, data: grouped[letter] }));
-    return finalGroup;
-  }, [allCompanies, country?.country]);
+  //   const finalGroup = Object.keys(grouped)
+  //     .sort()
+  //     .map((letter) => ({ title: letter, data: grouped[letter] }));
+  //   return finalGroup;
+  // }, [allCompanies, country?.country]);
 
-  const renderItem = ({ item }) => (
-    <View style={styles.cardWrapper}>
-      <CompanyCard
-        wholeData={item}
-        title={item.companyInfo.name}
-        mainImage={item.mainImage}
-        style={styles.companyCard}
-      />
-    </View>
-  );
+  // const renderItem = ({ item }) => (
+  //   <View style={styles.cardWrapper}>
+  //     <CompanyCard
+  //       wholeData={item}
+  //       title={item.companyInfo.name}
+  //       mainImage={item.mainImage}
+  //       style={styles.companyCard}
+  //     />
+  //   </View>
+  // );
 
-  const renderSectionHeader = ({ section: { title } }) => (
-    <View style={styles.sectionHeader}>
-      <Text style={styles.sectionHeaderText}>{title}</Text>
-    </View>
-  );
+  // const renderSectionHeader = ({ section: { title } }) => (
+  //   <View style={styles.sectionHeader}>
+  //     <Text style={styles.sectionHeaderText}>{title}</Text>
+  //   </View>
+  // );
 
-  if (isLoading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={primaryColor} />
-        <Text style={styles.loadingText}>Loading Companies...</Text>
-      </View>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <View style={styles.loadingContainer}>
+  //       <ActivityIndicator size="large" color={primaryColor} />
+  //       <Text style={styles.loadingText}>Loading Companies...</Text>
+  //     </View>
+  //   );
+  // }
 
   // if (isError) {
   //   return (
@@ -150,7 +151,7 @@ export function HomeScreen() {
       <ReusableTab
         views={[
           { key: "first", route: BandsList, title: "Bands" },
-          { key: "third", route: MarketPlaceScreen, title: "MarketPlace" },
+          // { key: "third", route: MarketPlaceScreen, title: "MarketPlace" },
           { key: "second", route: EventScreen, title: "Events" },
         ]}
       />

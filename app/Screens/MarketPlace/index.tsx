@@ -43,7 +43,7 @@ export const MarketPlaceScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const country = useSelector((state) => state.counter.country);
-  const { data: allBusineses } = useGetBusinessesQuery();
+  // const { data: allBusineses } = useGetBusinessesQuery();
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
