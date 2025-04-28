@@ -86,7 +86,7 @@ export function MainBizForm({
       });
 
       reset();
-      navigation.navigate("Home");
+      navigation.goBack();
     } catch (err) {
       Notifier.showNotification({
         title: "Error",

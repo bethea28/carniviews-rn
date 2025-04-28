@@ -62,65 +62,70 @@ export const MarketPlaceScreen = () => {
     setModalVisible(true);
   };
 
-  const renderEventItem = ({ item }) => (
-    <Card onPress={() => handleEventDetails(item)} style={styles.card}>
-      {item.images?.[0]?.uri ? (
-        <Card.Cover
-          style={styles.eventImage}
-          source={{ uri: item.images[0].uri }}
-        />
-      ) : null}
-      <Card.Content>
-        <Title style={styles.title}>{item.name}</Title>
-        <Title style={styles.title}>${item.price}</Title>
-        <Paragraph style={styles.paragraph} numberOfLines={2}>
-          {item.description}
-        </Paragraph>
-        <Text style={styles.text}>
-          🕒 {timeConvert(item.start_time)} - {timeConvert(item.end_time)}
-        </Text>
-        <Text style={styles.text}>
-          📍 {item.addressLine1 || "N/A"}
-          {item.city ? `, ${item.city}` : ""}
-          {item.region ? `, ${item.region}` : ""}
-          {item.postal ? ` ${item.postal}` : ""}
-        </Text>
-        {item.ticket && (
-          <View
-            style={{ flexDirection: "row", alignItems: "center", marginTop: 2 }}
-          >
-            <Icon name="ticket" style={{ marginLeft: 4, marginRight: 12 }} />
-            <Text
-              onPress={() => Linking.openURL(item.ticket)}
-              style={[
-                styles.text,
-                { color: "blue", textDecorationLine: "underline" },
-              ]}
+  const renderEventItem = ({ item }) =>
+    console.log("MY FIRST NAME", item) || (
+      <Card onPress={() => handleEventDetails(item)} style={styles.card}>
+        {item.images?.[0]?.uri ? (
+          <Card.Cover
+            style={styles.eventImage}
+            source={{ uri: item.images[0].uri }}
+          />
+        ) : null}
+        <Card.Content>
+          <Title style={styles.title}>{item.companyInfo.name}</Title>
+          <Title style={styles.title}>${item.price}</Title>
+          <Paragraph style={styles.paragraph} numberOfLines={2}>
+            {item.description}
+          </Paragraph>
+          <Text style={styles.text}>
+            🕒 {timeConvert(item.start_time)} - {timeConvert(item.end_time)}
+          </Text>
+          <Text style={styles.text}>
+            📍 {item.addressLine1 || "N/A"}
+            {item.city ? `, ${item.city}` : ""}
+            {item.region ? `, ${item.region}` : ""}
+            {item.postal ? ` ${item.postal}` : ""}
+          </Text>
+          {item.ticket && (
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginTop: 2,
+              }}
             >
-              {item.ticket}
-            </Text>
-          </View>
-        )}
-        <Pressable
-          onPress={() =>
-            navigation.navigate("CompanyForms", {
-              eventType: "event",
-              item,
-            })
-          }
-          style={({ pressed }) => [
-            styles.button,
-            {
-              backgroundColor: pressed ? secondaryColor : primaryColor,
-            },
-          ]}
-          android_ripple={{ color: primaryColor }}
-        >
-          <Text style={styles.button}>Edit</Text>
-        </Pressable>
-      </Card.Content>
-    </Card>
-  );
+              <Icon name="ticket" style={{ marginLeft: 4, marginRight: 12 }} />
+              <Text
+                onPress={() => Linking.openURL(item.ticket)}
+                style={[
+                  styles.text,
+                  { color: "blue", textDecorationLine: "underline" },
+                ]}
+              >
+                {item.ticket}
+              </Text>
+            </View>
+          )}
+          <Pressable
+            onPress={() =>
+              navigation.navigate("CompanyForms", {
+                eventType: "event",
+                item,
+              })
+            }
+            style={({ pressed }) => [
+              styles.button,
+              {
+                backgroundColor: pressed ? secondaryColor : primaryColor,
+              },
+            ]}
+            android_ripple={{ color: primaryColor }}
+          >
+            <Text style={styles.button}>Edit</Text>
+          </Pressable>
+        </Card.Content>
+      </Card>
+    );
 
   const groupEventsAlphabetically = (events) => {
     if (!events) return [];
@@ -129,7 +134,7 @@ export const MarketPlaceScreen = () => {
     );
     const parsedCompanies = filteredComp.length === 0 ? events : filteredComp;
     const grouped = parsedCompanies.reduce((acc, event) => {
-      const name = event.name || "";
+      const name = event.companyInfo.name || "";
       const firstLetter = name[0]?.toUpperCase() || "#";
       if (!acc[firstLetter]) acc[firstLetter] = [];
       acc[firstLetter].push(event);
@@ -140,7 +145,7 @@ export const MarketPlaceScreen = () => {
       .sort()
       .map((letter) => ({
         title: letter,
-        data: grouped[letter].sort((a, b) => a.name.localeCompare(b.name)),
+        data: grouped[letter].sort((a, b) => a?.name?.localeCompare(b?.name)),
       }));
   };
   console.log("ALL BUSINESSE BIZ", allBusineses);
@@ -151,7 +156,7 @@ export const MarketPlaceScreen = () => {
           // disabled={!country}
           mode="contained"
           onPress={() =>
-            navigation.navigate("CompanyForms", { eventType: "company" })
+            navigation.navigate("CompanyForms", { eventType: "business" })
           }
           style={styles.button}
           labelStyle={styles.buttonLabel}

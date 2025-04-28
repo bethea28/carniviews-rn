@@ -42,7 +42,7 @@ export const api = createApi({
   //   baseQuery: fetchBaseQuery({ baseUrl: "http://127.0.0.1:8000/" }),
   // baseQuery,
   reducerPath: "api",
-  tagTypes: ["company", "review", "event", "recommendation"],
+  tagTypes: ["company", "review", "event", "recommendation", "business"],
   endpoints: (build) => ({
     getWeather: build.query<any, void>({
       // TODO: move this endpoint to the main mocked server and update it here
@@ -410,7 +410,6 @@ export const api = createApi({
     addBusiness: build.mutation<any, any>({
       query: (data) => {
         const userId = data?.userId;
-        console.log("ADD COMAPNY NOW", data);
         // return;
         return {
           url: `business/${userId}/addBusiness/`,
@@ -426,7 +425,7 @@ export const api = createApi({
           }),
         };
       },
-      invalidatesTags: ["company"],
+      invalidatesTags: ["business"],
     }),
     getBusinesses: build.query<any, any>({
       query: (data) => {
@@ -447,13 +446,11 @@ export const api = createApi({
           // }),
         };
       },
-      // invalidatesTags: ["company"],
+      providesTags: ["business"],
     }),
     addCompany: build.mutation<any, any>({
       query: (data) => {
         const userId = data?.userId;
-        console.log("ADD COMAPNY NOW", data);
-        // return;
         return {
           url: `company/${userId}/addUnverifiedCompany/`,
           method: "POST",
@@ -468,7 +465,7 @@ export const api = createApi({
           }),
         };
       },
-      invalidatesTags: ["comapany"],
+      invalidatesTags: ["company"],
     }),
     getReviews: build.query({
       query: (data) => ({
