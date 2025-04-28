@@ -23,7 +23,7 @@ import { useSelector } from "react-redux";
 import { timeConvert } from "@/app/customHooks";
 // import { Icon } from "react-native-vector-icons/Icon";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-
+import { useAddBusinessMutation } from "@/store/api/api";
 // Color Scheme
 const primaryColor = "#a349a4";
 const secondaryColor = "#FF8C00";
@@ -39,11 +39,12 @@ const placeholderTextColor = "gray";
 export const MarketPlaceScreen = () => {
   const navigation = useNavigation();
   const { data: allEvents, isLoading, error, refetch } = useGetAllEventsQuery();
+  const [addBusiness] = useAddBusinessMutation();
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const country = useSelector((state) => state.counter.country);
-  // const { data: allBusineses } = useGetBusinessesQuery();
+  const { data: allBusineses } = useGetBusinessesQuery(country);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -142,7 +143,7 @@ export const MarketPlaceScreen = () => {
         data: grouped[letter].sort((a, b) => a.name.localeCompare(b.name)),
       }));
   };
-  console.log("EVENTS IN YO HOOD", allEvents);
+  console.log("ALL BUSINESSE BIZ", allBusineses);
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -164,7 +165,7 @@ export const MarketPlaceScreen = () => {
           <Text style={styles.errorText}>Error fetching events</Text>
         ) : (
           <SectionList
-            sections={groupEventsAlphabetically(allEvents?.events || [])}
+            sections={groupEventsAlphabetically(allBusineses || [])}
             keyExtractor={(item) => item.id.toString()}
             renderItem={renderEventItem}
             renderSectionHeader={({ section: { title } }) => (

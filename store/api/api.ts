@@ -434,20 +434,20 @@ export const api = createApi({
         console.log("ADD COMAPNY NOW", data);
         // return;
         return {
-          url: `business/${userId}/addBusiness/`,
-          method: "POST",
+          url: `business/${data?.country}/getBusinesses/`,
+          method: "GET",
           headers: {
             "Content-Type": "application/json", // Use JSON
           },
-          body: JSON.stringify({
-            // Use JSON.stringify
-            companyInfo: data.companyInfo,
-            imageUrls: data.allImages,
-            hoursData: data.hoursData,
-          }),
+          // body: JSON.stringify({
+          //   // Use JSON.stringify
+          //   companyInfo: data.companyInfo,
+          //   imageUrls: data.allImages,
+          //   hoursData: data.hoursData,
+          // }),
         };
       },
-      invalidatesTags: ["company"],
+      // invalidatesTags: ["company"],
     }),
     addCompany: build.mutation<any, any>({
       query: (data) => {

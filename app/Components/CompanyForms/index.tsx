@@ -12,7 +12,7 @@ export const CompanyForms = ({ route }) => {
   console.log("company form route", route.params.item);
   return (
     <View style={{ flex: 1 }}>
-      {eventType === "company" ? (
+      {eventType !== "event" ? (
         <MainBizForm eventType={eventType} country={country} />
       ) : (
         <MainEventForm
