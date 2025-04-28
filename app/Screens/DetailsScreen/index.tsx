@@ -8,6 +8,7 @@ import {
   ScrollView,
   StyleSheet,
   Linking,
+  TouchableOpacity,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
@@ -18,6 +19,7 @@ import {
   useGetCompanyRecsQuery,
 } from "@/store/api/api";
 import { Notifier, Easing, NotifierComponents } from "react-native-notifier";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 // Define the color palette based on the image (same as other components)
 const primaryColor = "#a349a4"; // Purple
@@ -38,8 +40,13 @@ const FullAddressDisplay = ({ compInfo }) => {
     country,
     website,
     contact,
+    socials,
   } = compInfo;
-
+  const handleSocial = () => {
+    console.log("handle soci");
+    Linking.openURL("http.google.com");
+  };
+  console.log("socials", socials);
   return (
     <>
       <View style={styles.container}>
@@ -73,6 +80,43 @@ const FullAddressDisplay = ({ compInfo }) => {
             {website}
           </Text>
         ) : undefined}
+        <View style={{ flexDirection: "row", marginTop: 4 }}>
+          {/* <Text> social</Text> */}
+          {socials?.facebook && (
+            <TouchableOpacity
+              onPress={() => Linking.openURL(socials?.facebook)}
+            >
+              <Icon
+                color="blue"
+                size={20}
+                style={{ marginRight: 8 }}
+                name="facebook-square"
+              />
+            </TouchableOpacity>
+          )}
+          {socials?.twitter && (
+            <TouchableOpacity onPress={() => Linking.openURL(socials?.twitter)}>
+              <Icon
+                color="lightblue"
+                size={20}
+                style={{ marginRight: 8 }}
+                name="twitter"
+              />
+            </TouchableOpacity>
+          )}
+          {socials.instagram && (
+            <TouchableOpacity
+              onPress={() => Linking.openURL(socials?.instagram)}
+            >
+              <Icon
+                color="gold"
+                size={20}
+                style={{ marginRight: 8 }}
+                name="instagram"
+              />
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
     </>
   );
@@ -254,6 +298,19 @@ const Recommend = ({ companyInfo, user, handleRec, recScore }) => (
     </View>
   </View>
 );
+
+// const SocialDisplay = ({ socials }) => {
+//   console.log("social ");
+//   const formattedSocials = Object.entries(socials);
+//   return (
+//     <View style={{ flexDirection: "row" }}>
+//       <Text> social</Text>
+//       <Icon name="facebook-square" />
+//       <Icon name="twitter" />
+//       <Icon name="instagram" />
+//     </View>
+//   );
+// };
 
 export function DetailsScreen() {
   const companyInfo = useSelector((state) => state.counter.companyInfo);
