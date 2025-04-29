@@ -427,6 +427,25 @@ export const api = createApi({
       },
       invalidatesTags: ["business"],
     }),
+    addUnverifiedBusiness: build.mutation<any, any>({
+      query: (data) => {
+        const userId = data?.userId;
+        // return;
+        return {
+          url: `business/${userId}/addUnverifiedBusiness/`,
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json", // Use JSON
+          },
+          body: JSON.stringify({
+            // Use JSON.stringify
+            companyInfo: data.companyInfo,
+            imageUrls: data.allImages,
+            hoursData: data.hoursData,
+          }),
+        };
+      },
+    }),
     duplicateCheck: build.mutation<any, any>({
       query: (data) => {
         console.log("duplicateCheck", data);
@@ -579,6 +598,7 @@ export const {
   useAddRecMutation,
   useGetCompanyRecsQuery,
   useAddBusinessMutation,
+  useAddUnverifiedBusinessMutation,
   useGetBusinessesQuery,
   // useAddBookMutation,
   useGetMyShiftsQuery,

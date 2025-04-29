@@ -124,7 +124,7 @@ export function HomeScreen() {
           }}
         >
           <Text style={styles.greeting}>Hi {userName}!</Text>
-          <Pressable
+          {/* <Pressable
             disabled={!country}
             onPress={() =>
               navigation.navigate("CompanyForms", { eventType: "company" })
@@ -140,7 +140,7 @@ export function HomeScreen() {
             ]}
           >
             <Text style={{ color: "white" }}>Add Company</Text>
-          </Pressable>
+          </Pressable> */}
         </View>
         {/* <Text style={styles.title}>Welcome To TriniViews!</Text>
         <Text style={styles.title}>

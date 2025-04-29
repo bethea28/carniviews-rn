@@ -16,7 +16,10 @@ import { useSelector } from "react-redux";
 import { useImagePicker } from "@/app/customHooks";
 import { Notifier, Easing } from "react-native-notifier";
 import { useNavigation } from "@react-navigation/native";
-import { useAddBusinessMutation, useAddCompanyMutation } from "@/store/api/api";
+import {
+  useAddUnverifiedBusinessMutation,
+  useAddCompanyMutation,
+} from "@/store/api/api";
 import { timeConvert } from "@/app/customHooks";
 const primaryColor = "#a349a4";
 const secondaryColor = "#FF8C00";
@@ -62,7 +65,7 @@ export function MainBizForm({
   const bizHours = useSelector((state) => state.counter.businessHours);
   const hoursData = useSelector((state) => state.counter.businessHours);
   const userData = useSelector((state) => state.counter.userState);
-  const [addBusiness] = useAddBusinessMutation();
+  const [addBusiness] = useAddUnverifiedBusinessMutation();
   const navigation = useNavigation();
   const { pickImages, allImages } = useImagePicker();
 
@@ -85,8 +88,8 @@ export function MainBizForm({
         hideOnPress: true,
       });
 
-      reset();
-      navigation.navigate("MarketPlace");
+      // reset();
+      // navigation.navigate("MarketPlace");
       // navigation.goBack();
     } catch (err) {
       Notifier.showNotification({
