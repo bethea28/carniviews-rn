@@ -3,6 +3,8 @@ import { AmericanForm } from "./AmericanForm";
 import { MainBizForm } from "./MainBizForm";
 import { useSelector } from "react-redux";
 import { MainEventForm } from "./MainEventForm";
+import { DuplicationCheck } from "../DuplicationCheck";
+
 export const CompanyForms = ({ route }) => {
   const country = useSelector((state) => state.counter.country);
   const eventType = route.params.eventType;

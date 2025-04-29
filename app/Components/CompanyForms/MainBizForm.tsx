@@ -86,7 +86,8 @@ export function MainBizForm({
       });
 
       reset();
-      navigation.goBack();
+      navigation.navigate("MarketPlace");
+      // navigation.goBack();
     } catch (err) {
       Notifier.showNotification({
         title: "Error",

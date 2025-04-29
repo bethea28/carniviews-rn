@@ -161,7 +161,7 @@ export const EventScreen = () => {
           // disabled={!country}
           mode="contained"
           onPress={() =>
-            navigation.navigate("CompanyForms", { eventType: "event" })
+            navigation.navigate("Duplication", { eventType: "event" })
           }
           style={styles.button}
           labelStyle={styles.buttonLabel}

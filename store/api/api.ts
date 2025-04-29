@@ -427,6 +427,25 @@ export const api = createApi({
       },
       invalidatesTags: ["business"],
     }),
+    duplicateCheck: build.mutation<any, any>({
+      query: (data) => {
+        console.log("duplicateCheck", data);
+        // return;
+        return {
+          url: `duplicates/duplicationCheck/`,
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json", // Use JSON
+          },
+          body: JSON.stringify({
+            // Use JSON.stringify
+            name: data.name,
+            country: data.country,
+            type: data.type,
+          }),
+        };
+      },
+    }),
     getBusinesses: build.query<any, any>({
       query: (data) => {
         const userId = data?.userId;
@@ -542,6 +561,7 @@ export const api = createApi({
   refetchOnMountOrArgChange: true,
 });
 export const {
+  useDuplicateCheckMutation,
   useAddReviewAgreementMutation,
   useGetBooksQuery,
   useGetWeatherQuery,

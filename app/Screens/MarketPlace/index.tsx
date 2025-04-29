@@ -155,8 +155,9 @@ export const MarketPlaceScreen = () => {
         <Button
           // disabled={!country}
           mode="contained"
-          onPress={() =>
-            navigation.navigate("CompanyForms", { eventType: "business" })
+          onPress={
+            () => navigation.navigate("Duplication", { eventType: "business" })
+            // navigation.navigate("CompanyForms", { eventType: "business" })
           }
           style={styles.button}
           labelStyle={styles.buttonLabel}
