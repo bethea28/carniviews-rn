@@ -10,6 +10,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { timeConvert } from "@/app/customHooks";
+import { format } from "date-fns";
 import {
   setGlobalBusinessHours,
   setEventHours,
@@ -53,6 +54,7 @@ export function BusinessHours({
       setEvent(event);
       setDatePickViz(true);
     } else {
+      setSelectedDayIndex(index);
       setEvent(event);
       setDatePickViz(true);
     }
@@ -63,8 +65,10 @@ export function BusinessHours({
   };
 
   const handleConfirm = (time) => {
-    const finalTime = time.toISOString();
+    console.log("final time", time);
+    // return;
     if (eventType === "company") {
+      const finalTime = time.toISOString();
       if (selectedDayIndex !== null) {
         dispatch(
           setGlobalBusinessHours({
@@ -75,6 +79,7 @@ export function BusinessHours({
         );
       }
     } else {
+      const finalTime = time.toISOString();
       dispatch(setEventHours({ event, finalTime }));
     }
     hideDatePicker();
@@ -82,6 +87,7 @@ export function BusinessHours({
 
   const businessData = addCompany === true ? bizHour : companyInfo?.hoursData;
   const daysOfWeek = businessData ? Object.keys(businessData) : [];
+  console.log("HOURS DATES", eventHours);
   return eventType === "company" || referrer === "tabs" ? (
     <View style={[styles.container, { backgroundColor: secondaryColor }]}>
       <Text style={styles.businessHoursTitle}>Business Hours</Text>
@@ -139,7 +145,7 @@ export function BusinessHours({
     </View>
   ) : (
     <View>
-      {["start", "end"].map((event, key) => {
+      {["date", "start", "end"].map((event, key) => {
         return (
           <View
             key={event}
@@ -148,7 +154,7 @@ export function BusinessHours({
             <View style={styles.buttonsContainer}>
               <Pressable
                 disabled={!addCompany}
-                onPress={() => showDatePicker(event)}
+                onPress={() => showDatePicker(event, key)}
                 style={({ pressed }) => [
                   styles.timeButton,
                   styles.openButton,
@@ -162,14 +168,17 @@ export function BusinessHours({
                 <Text style={styles.buttonTime}>
                   {event === "start"
                     ? timeConvert(eventHours?.start)
-                    : timeConvert(eventHours?.end)}
+                    : event === "end"
+                    ? timeConvert(eventHours?.end)
+                    : eventHours?.date &&
+                      format(eventHours?.date, "MM/dd/yyyy")}
                 </Text>
               </Pressable>
             </View>
 
             <DateTimePickerModal
               isVisible={datePickViz}
-              mode="time"
+              mode={selectedDayIndex === 0 ? "calendar" : "time"}
               onConfirm={handleConfirm}
               onCancel={hideDatePicker}
               themeVariant="light" // Or "dark" based on your app's theme

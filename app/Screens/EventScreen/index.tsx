@@ -24,6 +24,7 @@ import { timeConvert } from "@/app/customHooks";
 // import { Icon } from "react-native-vector-icons/Icon";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { EmptyCardComponent } from "@/app/Components/EmptyCardComponent";
+import { format } from "date-fns";
 // Color Scheme
 const primaryColor = "#a349a4";
 const secondaryColor = "#FF8C00";
@@ -39,6 +40,7 @@ const placeholderTextColor = "gray";
 export const EventScreen = () => {
   const navigation = useNavigation();
   const country = useSelector((state) => state.counter.country);
+  const userInfo = useSelector((state) => state.counter.userState);
   const {
     data: allEvents,
     isLoading,
@@ -65,65 +67,75 @@ export const EventScreen = () => {
     setModalVisible(true);
   };
 
-  const renderEventItem = ({ item }) => (
-    <Card onPress={() => handleEventDetails(item)} style={styles.card}>
-      {item.images?.[0]?.uri ? (
-        <Card.Cover
-          style={styles.eventImage}
-          source={{ uri: item.images[0].uri }}
-        />
-      ) : null}
-      <Card.Content>
-        <Title style={styles.title}>{item.name}</Title>
-        <Title style={styles.title}>${item.price}</Title>
-        <Paragraph style={styles.paragraph} numberOfLines={2}>
-          {item.description}
-        </Paragraph>
-        <Text style={styles.text}>
-          🕒 {timeConvert(item.start_time)} - {timeConvert(item.end_time)}
-        </Text>
-        <Text style={styles.text}>
-          📍 {item.addressLine1 || "N/A"}
-          {item.city ? `, ${item.city}` : ""}
-          {item.region ? `, ${item.region}` : ""}
-          {item.postal ? ` ${item.postal}` : ""}
-        </Text>
-        {item.ticket && (
-          <View
-            style={{ flexDirection: "row", alignItems: "center", marginTop: 2 }}
-          >
-            <Icon name="ticket" style={{ marginLeft: 4, marginRight: 12 }} />
-            <Text
-              onPress={() => Linking.openURL(item.ticket)}
-              style={[
-                styles.text,
-                { color: "blue", textDecorationLine: "underline" },
-              ]}
+  const renderEventItem = ({ item }) =>
+    console.log("ITEM USER NOW", item.id) || (
+      <Card onPress={() => handleEventDetails(item)} style={styles.card}>
+        {item.images?.[0]?.uri ? (
+          <Card.Cover
+            style={styles.eventImage}
+            source={{ uri: item.images[0].uri }}
+          />
+        ) : null}
+        <Card.Content>
+          <Title style={styles.title}>{item.name}</Title>
+          <Title style={styles.title}>${item.price}</Title>
+          <Paragraph style={styles.paragraph} numberOfLines={2}>
+            {item.description}
+          </Paragraph>
+          <Text style={styles.text}>{format(item.date, "MM/dd/yyyy")}</Text>
+          <Text style={styles.text}>
+            🕒 {timeConvert(item.start_time)} - {timeConvert(item.end_time)}
+          </Text>
+          <Text style={styles.text}>
+            📍 {item.addressLine1 || "N/A"}
+            {item.city ? `, ${item.city}` : ""}
+            {item.region ? `, ${item.region}` : ""}
+            {item.postal ? ` ${item.postal}` : ""}
+          </Text>
+          {item.ticket && (
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginTop: 2,
+              }}
             >
-              {item.ticket}
-            </Text>
-          </View>
-        )}
-        <Pressable
-          onPress={() =>
-            navigation.navigate("CompanyForms", {
-              eventType: "event",
-              item,
-            })
-          }
-          style={({ pressed }) => [
-            styles.button,
-            {
-              backgroundColor: pressed ? secondaryColor : primaryColor,
-            },
-          ]}
-          android_ripple={{ color: primaryColor }}
-        >
-          <Text style={styles.button}>Edit</Text>
-        </Pressable>
-      </Card.Content>
-    </Card>
-  );
+              <Icon name="ticket" style={{ marginLeft: 4, marginRight: 12 }} />
+              <Text
+                onPress={() => Linking.openURL(item.ticket)}
+                style={[
+                  styles.text,
+                  { color: "blue", textDecorationLine: "underline" },
+                ]}
+              >
+                {item.ticket}
+              </Text>
+            </View>
+          )}
+          {Number(item?.user?.id) === Number(userInfo?.data?.user?.user_id) && (
+            <Pressable
+              onPress={() =>
+                navigation.navigate("CompanyForms", {
+                  operation: "edit",
+                  eventId: item.id,
+                  eventType: "event",
+                  item,
+                })
+              }
+              style={({ pressed }) => [
+                styles.button,
+                {
+                  backgroundColor: pressed ? secondaryColor : primaryColor,
+                },
+              ]}
+              android_ripple={{ color: primaryColor }}
+            >
+              <Text style={[styles.button, { textAlign: "center" }]}>Edit</Text>
+            </Pressable>
+          )}
+        </Card.Content>
+      </Card>
+    );
 
   const groupEventsAlphabetically = (events) => {
     if (!events) return [];
@@ -146,7 +158,7 @@ export const EventScreen = () => {
         data: grouped[letter].sort((a, b) => a.name.localeCompare(b.name)),
       }));
   };
-  console.log("EVENTS IN YO HOOD", allEvents, country);
+  console.log("EVENTS IN YO HOOD", userInfo.data.user.user_id);
   if (isLoading) {
     return <ActivityIndicator animating={true} color={primaryColor} />;
   }
@@ -208,7 +220,8 @@ export const EventScreen = () => {
                   {selectedEvent.description}
                 </Text>
                 <Text style={styles.modalText}>
-                  🕒 {timeConvert(selectedEvent.start_time)} -{" "}
+                  🕒 {selectedEvent.date} - 🕒{" "}
+                  {timeConvert(selectedEvent.start_time)} -{" "}
                   {timeConvert(selectedEvent.end_time)}
                 </Text>
                 <Text style={styles.modalText}>
@@ -270,7 +283,9 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: buttonBackgroundColor,
     marginBottom: 20,
+    marginTop: 8,
     borderRadius: 6,
+    // width: 100,
   },
   buttonLabel: {
     color: buttonTextColor,

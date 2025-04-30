@@ -43,7 +43,7 @@ export const DuplicationCheck = ({ route }) => {
     // if (onNextStep) {
     //   onNextStep(); // Call the callback to move to the next step
     // }
-    navigation.navigate("CompanyForms", { eventType: "business" });
+    navigation.navigate("CompanyForms", { eventType: route.params.eventType });
   };
 
   return (

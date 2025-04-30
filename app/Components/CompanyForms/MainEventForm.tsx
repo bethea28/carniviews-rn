@@ -16,7 +16,7 @@ import { useSelector } from "react-redux";
 import { useImagePicker } from "@/app/customHooks";
 import { Notifier, Easing } from "react-native-notifier";
 import { useNavigation } from "@react-navigation/native";
-import { useAddEventMutation } from "@/store/api/api";
+import { useAddEventMutation, useEditEventMutation } from "@/store/api/api";
 
 const primaryColor = "#a349a4";
 const secondaryColor = "#FF8C00";
@@ -36,6 +36,8 @@ export function MainEventForm({
   country,
   eventType,
   editEventData,
+  operation,
+  eventId,
 }) {
   const countrySpecific = country?.country;
   const {
@@ -68,20 +70,39 @@ export function MainEventForm({
   const eventHours = useSelector((state) => state.counter.eventHours);
 
   const [addEvent] = useAddEventMutation();
+  const [editEvent] = useEditEventMutation();
   const navigation = useNavigation();
   const { pickImages, allImages } = useImagePicker();
 
   const onSubmit = async (data) => {
-    const finalData = {
+    const finalAddData = {
       eventInfo: data,
       allImages,
       eventHours,
       userId: userData?.data?.user?.user_id,
     };
-    // return;
-    try {
-      const response = await addEvent(finalData);
-
+    const finalEditData = {
+      eventInfo: data,
+      allImages,
+      eventHours,
+      userId: userData?.data?.user?.user_id,
+      eventId: eventId,
+    };
+    let response = null;
+    operation === "edit"
+      ? (response = await editEvent(finalEditData))
+      : (response = await addEvent(finalAddData));
+    console.log("response add event change", response);
+    if (response?.error) {
+      Notifier.showNotification({
+        title: "Error",
+        description: `${response?.error?.data?.error}`,
+        // duration: 3000,
+        // showAnimationDuration: 800,
+        showEasing: Easing.ease,
+        hideOnPress: true,
+      });
+    } else {
       Notifier.showNotification({
         title: "Success!",
         description: "Event created successfully!",
@@ -90,18 +111,8 @@ export function MainEventForm({
         showEasing: Easing.ease,
         hideOnPress: true,
       });
-
       reset();
       navigation.goBack();
-    } catch (err) {
-      Notifier.showNotification({
-        title: "Error",
-        description: "Something went wrong. Please try again.",
-        duration: 3000,
-        showAnimationDuration: 800,
-        showEasing: Easing.ease,
-        hideOnPress: true,
-      });
     }
   };
   return (

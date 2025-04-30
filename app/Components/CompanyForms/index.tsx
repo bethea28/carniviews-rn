@@ -8,7 +8,10 @@ import { DuplicationCheck } from "../DuplicationCheck";
 export const CompanyForms = ({ route }) => {
   const country = useSelector((state) => state.counter.country);
   const eventType = route.params.eventType;
+  const operation = route.params.operation;
+  const eventId = route.params.eventId;
   const editEventData = route.params.item || null;
+
   // const lower = country?.toLowerCase();
   // return;
   console.log("company form route", route.params.item);
@@ -21,6 +24,8 @@ export const CompanyForms = ({ route }) => {
           editEventData={editEventData}
           eventType={eventType}
           country={country}
+          operation={operation}
+          eventId={eventId}
         />
       )}
       {/* {country === null && <AmericanForm country={country} />}

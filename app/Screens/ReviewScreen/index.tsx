@@ -177,7 +177,7 @@ export function ReviewScreen() {
       </View>
     );
   }
-  console.log("all REVIEWS user data", userData.data.user.user_id);
+  console.log("all REVIEWS user data", allCompanyReviews);
   return (
     <View style={styles.container}>
       <FlatList

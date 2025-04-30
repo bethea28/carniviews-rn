@@ -394,6 +394,27 @@ export const api = createApi({
       },
       invalidatesTags: ["event"],
     }),
+    editEvent: build.mutation<any, any>({
+      query: (data) => {
+        const eventId = data?.eventId;
+        console.log("ADD event NOW.hours", eventId);
+        // return;
+        return {
+          url: `event/${eventId}/editEvent/`,
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json", // Use JSON
+          },
+          body: JSON.stringify({
+            // Use JSON.stringify
+            eventInfo: data.eventInfo,
+            allImages: data.allImages,
+            eventHours: data.eventHours,
+          }),
+        };
+      },
+      invalidatesTags: ["event"],
+    }),
     getAllEvents: build.query<any, any>({
       query: (data) => {
         console.log("ADD event NOW.hours", data);
@@ -599,6 +620,7 @@ export const {
   useGetCompanyRecsQuery,
   useAddBusinessMutation,
   useAddUnverifiedBusinessMutation,
+  useEditEventMutation,
   useGetBusinessesQuery,
   // useAddBookMutation,
   useGetMyShiftsQuery,

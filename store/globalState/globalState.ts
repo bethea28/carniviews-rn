@@ -7,7 +7,7 @@ const initialState = {
   country: null,
   value: 0,
   userState: {},
-  eventHours: { start: null, end: null },
+  eventHours: { date: null, start: null, end: null },
   businessHours: {
     0: { day: "Mon", open: "", close: "" },
     1: { day: "Tues", open: "", close: "" },
