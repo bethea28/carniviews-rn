@@ -33,9 +33,11 @@ const dividerColor = "#E0E0E0"; // Grey 300
 const errorColor = "#B00020"; // Red 600
 
 export function BusinessHours({
+  operation,
   addCompany,
   staleHours,
   stale,
+  editEventHours,
   referrer = "",
   eventType = "event",
 }) {
@@ -46,7 +48,10 @@ export function BusinessHours({
   const [datePickViz, setDatePickViz] = useState(false);
   const bizHour = useSelector((state) => state.counter.businessHours);
   const companyInfo = useSelector((state) => state.counter.companyInfo);
-  const eventHours = useSelector((state) => state.counter.eventHours);
+  const eventHours =
+    operation === "edit"
+      ? editEventHours
+      : useSelector((state) => state.counter.eventHours);
 
   const showDatePicker = (event, index) => {
     if (eventType === "company") {

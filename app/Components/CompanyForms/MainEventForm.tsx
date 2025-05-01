@@ -62,13 +62,13 @@ export function MainEventForm({
       price: editEventData?.price,
     },
   });
-
   const [hoursComp, setShowHoursComp] = useState(false);
   const bizHours = useSelector((state) => state.counter.businessHours);
   const hoursData = useSelector((state) => state.counter.businessHours);
   const userData = useSelector((state) => state.counter.userState);
   const eventHours = useSelector((state) => state.counter.eventHours);
 
+  console.log("edit evfnet data", eventHours);
   const [addEvent] = useAddEventMutation();
   const [editEvent] = useEditEventMutation();
   const navigation = useNavigation();
@@ -114,6 +114,12 @@ export function MainEventForm({
       reset();
       navigation.goBack();
     }
+  };
+
+  const editEventHours = {
+    date: editEventData.date,
+    start: editEventData.start_time,
+    end: editEventData.end_time,
   };
   return (
     <KeyboardAvoidingView
@@ -303,7 +309,14 @@ export function MainEventForm({
           )}
         </Pressable>
 
-        {hoursComp && <BusinessHours eventType={eventType} addCompany />}
+        {hoursComp && (
+          <BusinessHours
+            operation={operation}
+            editEventHours={editEventHours}
+            eventType={eventType}
+            addCompany
+          />
+        )}
 
         <View style={{ marginTop: 8, alignItems: "center" }}>{thumbNail}</View>
 

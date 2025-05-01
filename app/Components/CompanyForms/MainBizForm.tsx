@@ -59,23 +59,24 @@ export function MainBizForm({
   thumbNail,
   country,
   eventType,
+  editEventData,
 }) {
   const { control, handleSubmit, reset } = useForm({
     defaultValues: {
-      name: "",
-      type: "",
-      description: "",
-      phone: "",
-      email: "",
-      website: "",
-      twitter: "",
-      instagram: "",
-      facebook: "",
-      addressLine1: "",
-      addressLine2: "",
-      city: "",
-      postal: "",
-      region: "",
+      name: editEventData?.companyInfo.name,
+      type: editEventData?.companyInfo.company_type,
+      description: editEventData?.companyInfo.description,
+      phone: editEventData?.companyInfo.phone,
+      email: editEventData?.companyInfo.email,
+      website: editEventData?.companyInfo.website,
+      twitter: editEventData?.companyInfo.twitter,
+      instagram: editEventData?.companyInfo.instagram,
+      facebook: editEventData?.companyInfo.facebook,
+      addressLine1: editEventData?.companyInfo.address_line1,
+      addressLine2: editEventData?.companyInfo.address_line2,
+      city: editEventData?.companyInfo.city,
+      postal: editEventData?.companyInfo.postal_code,
+      region: editEventData?.companyInfo.region,
       country: country?.country,
     },
   });
@@ -86,7 +87,7 @@ export function MainBizForm({
   const [addBusiness] = useAddUnverifiedBusinessMutation();
   const navigation = useNavigation();
   const { pickImages, allImages } = useImagePicker();
-
+  console.log("edit even data", editEventData);
   const onSubmit = async (data) => {
     console.log("data submit", data);
     // return;

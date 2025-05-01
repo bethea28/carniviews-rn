@@ -18,9 +18,16 @@ export const CompanyForms = ({ route }) => {
   return (
     <View style={{ flex: 1 }}>
       {eventType !== "event" ? (
-        <MainBizForm eventType={eventType} country={country} />
+        <MainBizForm
+          editEventData={editEventData}
+          eventType={eventType}
+          eventType={eventType}
+          country={country}
+          operation={operation}
+        />
       ) : (
         <MainEventForm
+          country={country}
           editEventData={editEventData}
           eventType={eventType}
           country={country}
