@@ -8,29 +8,50 @@ import {
   Platform,
   KeyboardAvoidingView,
   Pressable,
-  Image,
 } from "react-native";
 import { useForm, Controller } from "react-hook-form";
-import { BusinessHours } from "../BusinessHours";
 import { useSelector } from "react-redux";
 import { useImagePicker } from "@/app/customHooks";
 import { Notifier, Easing } from "react-native-notifier";
 import { useNavigation } from "@react-navigation/native";
-import {
-  useAddUnverifiedBusinessMutation,
-  useAddCompanyMutation,
-} from "@/store/api/api";
-import { timeConvert } from "@/app/customHooks";
-const primaryColor = "#a349a4";
-const secondaryColor = "#FF8C00";
-const backgroundColor = "#FFB347";
-const textColorPrimary = "#ffffff";
-const textColorSecondary = "#333333";
-const inputBackgroundColor = textColorPrimary;
-const buttonBackgroundColor = primaryColor;
-const buttonTextColor = textColorPrimary;
-const errorTextColor = "red";
-const placeholderTextColor = "gray";
+import { useAddUnverifiedBusinessMutation } from "@/store/api/api";
+import { BusinessHours } from "../BusinessHours";
+
+const colors = {
+  primary: "#a349a4",
+  secondary: "#FF8C00",
+  background: "#FFB347",
+  textPrimary: "#ffffff",
+  textSecondary: "#333333",
+  inputBg: "#ffffff",
+  error: "red",
+  placeholder: "gray",
+};
+
+const FormInput = ({
+  control,
+  name,
+  placeholder,
+  multiline = false,
+  value,
+}) => (
+  <Controller
+    control={control}
+    name={name}
+    render={({ field: { onChange, onBlur, value } }) => (
+      <TextInput
+        placeholder={placeholder}
+        placeholderTextColor={colors.placeholder}
+        onBlur={onBlur}
+        onChangeText={onChange}
+        value={value}
+        style={[styles.input, multiline && styles.multilineInput]}
+        multiline={multiline}
+        numberOfLines={multiline ? 3 : 1}
+      />
+    )}
+  />
+);
 
 export function MainBizForm({
   setModalVis,
@@ -39,30 +60,27 @@ export function MainBizForm({
   country,
   eventType,
 }) {
-  const countrySpecific = country?.country;
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm({
+  const { control, handleSubmit, reset } = useForm({
     defaultValues: {
       name: "",
+      type: "",
+      description: "",
+      phone: "",
+      email: "",
+      website: "",
+      twitter: "",
+      instagram: "",
+      facebook: "",
       addressLine1: "",
       addressLine2: "",
       city: "",
       postal: "",
-      region: "", // Could be St. James, etc.
+      region: "",
       country: country?.country,
-      hours: "",
-      type: "",
-      description: "",
-      photos: [],
     },
   });
 
   const [hoursComp, setShowHoursComp] = useState(false);
-  const bizHours = useSelector((state) => state.counter.businessHours);
   const hoursData = useSelector((state) => state.counter.businessHours);
   const userData = useSelector((state) => state.counter.userState);
   const [addBusiness] = useAddUnverifiedBusinessMutation();
@@ -70,15 +88,19 @@ export function MainBizForm({
   const { pickImages, allImages } = useImagePicker();
 
   const onSubmit = async (data) => {
+    console.log("data submit", data);
+    // return;
     const finalData = {
       companyInfo: data,
       allImages,
       hoursData,
       userId: userData?.data?.user?.user_id,
     };
-    try {
-      const response = await addBusiness(finalData);
 
+    const addingBiz = await addBusiness(finalData);
+
+    console.log("adding business messs", addingBiz);
+    if (!addingBiz?.error) {
       Notifier.showNotification({
         title: "Success!",
         description: "Business created successfully!",
@@ -87,11 +109,9 @@ export function MainBizForm({
         showEasing: Easing.ease,
         hideOnPress: true,
       });
-
       // reset();
       // navigation.navigate("MarketPlace");
-      // navigation.goBack();
-    } catch (err) {
+    } else {
       Notifier.showNotification({
         title: "Error",
         description: "Something went wrong. Please try again.",
@@ -102,6 +122,34 @@ export function MainBizForm({
       });
     }
   };
+
+  const textInputs = [
+    { name: "name", placeholder: "Business Name" },
+    { name: "type", placeholder: "Business Type" },
+    { name: "description", placeholder: "Description", multiline: true },
+    { name: "phone", placeholder: "Phone" },
+    { name: "email", placeholder: "Email" },
+    { name: "website", placeholder: "Website" },
+    { name: "twitter", placeholder: "Twitter" },
+    { name: "instagram", placeholder: "Instagram" },
+    { name: "facebook", placeholder: "Facebook" },
+    { name: "addressLine1", placeholder: "Address Line 1" },
+    { name: "addressLine2", placeholder: "Address Line 2" },
+    {
+      name: "city",
+      placeholder: `City/Town/Village (e.g. ${country?.exampleAddress?.locality})`,
+    },
+    {
+      name: "postal",
+      placeholder: `Zip/Postal Code (e.g. ${country?.exampleAddress?.postalCode})`,
+    },
+    {
+      name: "region",
+      placeholder: `State/Province/Region (e.g. ${country?.exampleAddress?.subRegion})`,
+    },
+    { name: "country", placeholder: "Country" },
+  ];
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -110,171 +158,22 @@ export function MainBizForm({
       <ScrollView
         contentContainerStyle={styles.scrollViewContent}
         keyboardShouldPersistTaps="handled"
-        style={{ marginBottom: 10 }}
       >
-        <Controller
-          control={control}
-          name="name"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              placeholder="Business Name"
-              placeholderTextColor={placeholderTextColor}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              style={styles.input}
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="type"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              placeholder="Business Type"
-              placeholderTextColor={placeholderTextColor}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              style={styles.input}
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="description"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              placeholder="Description"
-              placeholderTextColor={placeholderTextColor}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              style={[styles.input, styles.multilineInput]}
-              multiline
-              numberOfLines={3}
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="addressLine1"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              placeholder="Address Line 1"
-              placeholderTextColor={placeholderTextColor}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              style={styles.input}
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="addressLine2"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              placeholder="Address Line 2"
-              placeholderTextColor={placeholderTextColor}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              style={styles.input}
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="city"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              placeholder={`City/Town/Village (e.g. ${country?.exampleAddress.locality})`}
-              placeholderTextColor={placeholderTextColor}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              style={styles.input}
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="postal"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              placeholder={`Zip/Postal Code (e.g.${country?.exampleAddress.postalCode})`}
-              placeholderTextColor={placeholderTextColor}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              style={styles.input}
-            />
-          )}
-        />
-
-        <Controller
-          control={control}
-          name="region"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              placeholder={`State/Province/Region (e.g. ${country?.exampleAddress.subRegion})`}
-              placeholderTextColor={placeholderTextColor}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              style={styles.input}
-            />
-          )}
-        />
-
-        <Controller
-          control={control}
-          name="country"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              // placeholder={`State/Province/Region (e.g. ${country.exampleAddress.subRegion})`}
-              placeholderTextColor={placeholderTextColor}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={country?.country}
-              style={styles.input}
-            />
-          )}
-        />
-
-        <Pressable
-          onPress={() => setShowHoursComp((prev) => !prev)}
-          style={styles.input}
-        >
-          {bizHours && Object.keys(bizHours).length > 0 && (
-            <Text style={styles.selectedHoursText}> Add Businness Hours</Text>
-          )}
-        </Pressable>
+        {textInputs.map((input) => (
+          <FormInput key={input.name} control={control} {...input} />
+        ))}
 
         {hoursComp && <BusinessHours eventType="company" addCompany />}
 
         <View style={{ marginTop: 8, alignItems: "center" }}>{thumbNail}</View>
 
-        {/* <View>
-          <Text>Add Thumbnail</Text>
-          {allImages.map((image) => {
-            console.log("images now, ", image.uri);
-            return (
-              <Image
-                style={{ width: 100, height: 100 }}
-                source={{ uri: image?.uri }}
-              />
-            );
-          })}
-        </View> */}
         <View style={styles.buttonContainer}>
           <Pressable onPress={pickImages} style={styles.addPhotosButton}>
             <Text style={styles.addPhotosText}>Add Photos</Text>
           </Pressable>
           <Pressable
-            style={styles.submitButton}
             onPress={handleSubmit(onSubmit)}
+            style={styles.submitButton}
           >
             <Text style={styles.submitButtonText}>Submit</Text>
           </Pressable>
@@ -287,86 +186,50 @@ export function MainBizForm({
 const styles = StyleSheet.create({
   keyboardAvoidingView: {
     flex: 1,
-    backgroundColor: backgroundColor,
+    backgroundColor: colors.background,
   },
   scrollViewContent: {
     flexGrow: 1,
     padding: 20,
-    justifyContent: "space-between",
   },
   input: {
     height: 50,
-    backgroundColor: inputBackgroundColor,
+    backgroundColor: colors.inputBg,
     borderRadius: 8,
     paddingHorizontal: 15,
     marginTop: 10,
-    color: textColorSecondary,
+    color: colors.textSecondary,
   },
   multilineInput: {
     minHeight: 80,
     textAlignVertical: "top",
   },
-  smallInput: {
-    flex: 1,
-    height: 50,
-    backgroundColor: inputBackgroundColor,
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    marginTop: 10,
-    marginHorizontal: 5,
-    color: textColorSecondary,
-  },
-  rowInputs: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 10,
-  },
-  errorText: {
-    color: errorTextColor,
-    marginTop: 5,
-  },
   buttonContainer: {
-    marginBottom: 10,
-    alignItems: "center",
+    marginVertical: 20,
     flexDirection: "row",
     justifyContent: "center",
   },
   submitButton: {
-    backgroundColor: buttonBackgroundColor,
+    backgroundColor: colors.primary,
     borderRadius: 8,
-    paddingVertical: 25,
+    paddingVertical: 15,
     paddingHorizontal: 30,
+    marginLeft: 10,
   },
   submitButtonText: {
-    color: buttonTextColor,
+    color: colors.textPrimary,
     fontSize: 18,
     fontWeight: "bold",
-    textAlign: "center",
   },
   addPhotosButton: {
+    backgroundColor: colors.secondary,
     borderRadius: 8,
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: secondaryColor,
-    // width: "50%",
-    paddingHorizontal: 15,
-
     paddingVertical: 15,
-    justifyContent: "center",
+    paddingHorizontal: 20,
   },
   addPhotosText: {
-    color: buttonTextColor,
-    padding: 10,
-    textAlign: "center",
+    color: colors.textPrimary,
     fontSize: 16,
     fontWeight: "bold",
-  },
-  placeholderText: {
-    color: placeholderTextColor,
-  },
-  selectedHoursText: {
-    color: primaryColor,
-    fontSize: 14,
-    margin: "auto",
   },
 });

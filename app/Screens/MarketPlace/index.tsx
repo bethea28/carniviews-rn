@@ -38,13 +38,18 @@ const placeholderTextColor = "gray";
 
 export const MarketPlaceScreen = () => {
   const navigation = useNavigation();
-  const { data: allEvents, isLoading, error, refetch } = useGetAllEventsQuery();
+  // const { data: allEvents, } = useGetAllEventsQuery();
   const [addBusiness] = useAddBusinessMutation();
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const country = useSelector((state) => state.counter.country);
-  const { data: allBusineses } = useGetBusinessesQuery(country);
+  const {
+    data: allBusineses,
+    error,
+    isLoading,
+    refetch,
+  } = useGetBusinessesQuery(country);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -73,19 +78,85 @@ export const MarketPlaceScreen = () => {
         ) : null}
         <Card.Content>
           <Title style={styles.title}>{item.companyInfo.name}</Title>
-          <Title style={styles.title}>${item.price}</Title>
+          <Title style={styles.title}>{item.companyInfo.company_type}</Title>
+
+          {item.companyInfo.website ? (
+            <Text
+              style={[
+                styles.text,
+                { color: "blue", textDecorationLine: "underline" },
+              ]}
+              onPress={() => Linking.openURL(item.companyInfo.website)}
+            >
+              🌐 {item.companyInfo.website}
+            </Text>
+          ) : null}
+
+          {item.companyInfo.contact && (
+            <Text style={styles.text}>📞 {item.companyInfo.contact}</Text>
+          )}
+          {item.companyInfo.phone && (
+            <Text style={styles.text}>📱 {item.companyInfo.phone}</Text>
+          )}
+          {item.companyInfo.email && (
+            <Text style={styles.text}>✉️ {item.companyInfo.email}</Text>
+          )}
+
           <Paragraph style={styles.paragraph} numberOfLines={2}>
-            {item.description}
+            {item.companyInfo.description || "No description available"}
           </Paragraph>
+
           <Text style={styles.text}>
             🕒 {timeConvert(item.start_time)} - {timeConvert(item.end_time)}
           </Text>
+
           <Text style={styles.text}>
-            📍 {item.addressLine1 || "N/A"}
-            {item.city ? `, ${item.city}` : ""}
-            {item.region ? `, ${item.region}` : ""}
-            {item.postal ? ` ${item.postal}` : ""}
+            📍 {item.companyInfo.address_line1 || "N/A"}
+            {item.companyInfo.city ? `, ${item.companyInfo.city}` : ""}
+            {item.companyInfo.region ? `, ${item.companyInfo.region}` : ""}
+            {item.companyInfo.postal_code
+              ? ` ${item.companyInfo.postal_code}`
+              : ""}
           </Text>
+
+          <Text style={styles.text}>🌎 {item.companyInfo.country}</Text>
+
+          {/* Social links */}
+          {item.companyInfo.facebook && (
+            <Text
+              style={[
+                styles.text,
+                { color: "blue", textDecorationLine: "underline" },
+              ]}
+              onPress={() => Linking.openURL(item.companyInfo.facebook)}
+            >
+              👍 Facebook
+            </Text>
+          )}
+          {item.companyInfo.instagram && (
+            <Text
+              style={[
+                styles.text,
+                { color: "blue", textDecorationLine: "underline" },
+              ]}
+              onPress={() => Linking.openURL(item.companyInfo.instagram)}
+            >
+              📸 Instagram
+            </Text>
+          )}
+          {item.companyInfo.twitter && (
+            <Text
+              style={[
+                styles.text,
+                { color: "blue", textDecorationLine: "underline" },
+              ]}
+              onPress={() => Linking.openURL(item.companyInfo.twitter)}
+            >
+              🐦 Twitter
+            </Text>
+          )}
+
+          {/* Ticket */}
           {item.ticket && (
             <View
               style={{
@@ -106,10 +177,11 @@ export const MarketPlaceScreen = () => {
               </Text>
             </View>
           )}
+
           <Pressable
             onPress={() =>
               navigation.navigate("CompanyForms", {
-                eventType: "event",
+                eventType: "business",
                 item,
               })
             }
