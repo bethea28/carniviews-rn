@@ -69,7 +69,8 @@ export const MarketPlaceScreen = () => {
 
   const renderEventItem = ({ item }) =>
     console.log("MY FIRST NAME", item) || (
-      <Card onPress={() => handleEventDetails(item)} style={styles.card}>
+      <Card style={styles.card}>
+        {/* <Card onPress={() => handleEventDetails(item)} style={styles.card}> */}
         {item.images?.[0]?.uri ? (
           <Card.Cover
             style={styles.eventImage}
@@ -112,6 +113,7 @@ export const MarketPlaceScreen = () => {
 
           <Text style={styles.text}>
             📍 {item.companyInfo.address_line1 || "N/A"}
+            📍 {item.companyInfo.address_line2 || "N/A"}
             {item.companyInfo.city ? `, ${item.companyInfo.city}` : ""}
             {item.companyInfo.region ? `, ${item.companyInfo.region}` : ""}
             {item.companyInfo.postal_code

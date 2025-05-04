@@ -95,7 +95,7 @@ export function MainBizForm({
   const onSubmit = async (data) => {
     // return;
     const finalFormData = { ...data, businessId: editEventData.id };
-    console.log("edit even data JAMES", finalFormData);
+    console.log("Raining now AMES", editEventData.companyInfo);
     const finalData = {
       // companyInfo: data,
       companyInfo: finalFormData,
@@ -119,8 +119,8 @@ export function MainBizForm({
     //     showEasing: Easing.ease,
     //     hideOnPress: true,
     //   });
-    //   // reset();
-    //   // navigation.navigate("MarketPlace");
+    reset();
+    navigation.navigate("MarketPlace");
     // } else {
     //   Notifier.showNotification({
     //     title: "Error",
