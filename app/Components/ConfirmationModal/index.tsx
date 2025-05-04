@@ -20,6 +20,7 @@ export function BusinessSubmitConfirmation({
   visible = false,
   onConfirm,
   onCancel,
+  operation,
   //   route: { params },
 }) {
   return (
@@ -32,10 +33,16 @@ export function BusinessSubmitConfirmation({
       <View style={styles.overlay}>
         <View style={styles.modalContainer}>
           <Text style={styles.title}>Submit Business?</Text>
-          <Text style={styles.message}>
-            Once submitted, this business cannot be edited until it's verified
-            by our team.
-          </Text>
+          {operation !== "edit" ? (
+            <Text style={styles.message}>
+              Once submitted, this business cannot be edited until it's verified
+              by our team.
+            </Text>
+          ) : (
+            <Text style={styles.message}>
+              Are you sure you want to update ?
+            </Text>
+          )}
 
           <View style={styles.buttonRow}>
             <Pressable onPress={onCancel} style={styles.cancelButton}>

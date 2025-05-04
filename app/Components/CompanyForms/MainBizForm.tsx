@@ -93,6 +93,7 @@ export function MainBizForm({
   const [addBusiness] = useAddUnverifiedBusinessMutation();
   const navigation = useNavigation();
   const { pickImages, allImages } = useImagePicker();
+
   const onSubmit = async (data) => {
     // return;
     const finalFormData = { ...data, businessId: editEventData?.id };
@@ -199,6 +200,7 @@ export function MainBizForm({
         onCancel={handleConfirmCancel}
         visible={confirmModal}
         onConfirm={handleSubmit(onSubmit)}
+        operation={operation}
       />
     </KeyboardAvoidingView>
   );
