@@ -19,7 +19,7 @@ import {
   useEditVerifiedBusinessMutation,
 } from "@/store/api/api";
 import { BusinessHours } from "../BusinessHours";
-
+import { BusinessSubmitConfirmation } from "../ConfirmationModal";
 const colors = {
   primary: "#a349a4",
   secondary: "#FF8C00",
@@ -86,6 +86,7 @@ export function MainBizForm({
   });
 
   const [hoursComp, setShowHoursComp] = useState(false);
+  const [confirmModal, setConfirmModal] = useState(false);
   const hoursData = useSelector((state) => state.counter.businessHours);
   const userData = useSelector((state) => state.counter.userState);
   const [editVerifiedBusiness] = useEditVerifiedBusinessMutation();
@@ -94,8 +95,9 @@ export function MainBizForm({
   const { pickImages, allImages } = useImagePicker();
   const onSubmit = async (data) => {
     // return;
-    const finalFormData = { ...data, businessId: editEventData.id };
-    console.log("Raining now AMES", editEventData.companyInfo);
+    const finalFormData = { ...data, businessId: editEventData?.id };
+    console.log("test me good");
+    // console.log("Raining now AMES", editEventData?.companyInfo);
     const finalData = {
       // companyInfo: data,
       companyInfo: finalFormData,
@@ -104,6 +106,8 @@ export function MainBizForm({
       userId: userData?.data?.user?.user_id,
     };
     console.log("data submit edit business", finalData);
+    // setConfirmModal(true);
+    // return;
     let response = null;
     operation === "edit"
       ? (response = await editVerifiedBusiness(finalData))
@@ -132,7 +136,10 @@ export function MainBizForm({
     //   });
     // }
   };
-
+  const handleSubmitConfirm = () => {
+    console.log("new confirm route");
+    setConfirmModal(true);
+  };
   const textInputs = [
     { name: "name", placeholder: "Business Name" },
     { name: "type", placeholder: "Business Type" },
@@ -159,7 +166,9 @@ export function MainBizForm({
     },
     { name: "country", placeholder: "Country" },
   ];
-
+  const handleConfirmCancel = () => {
+    setConfirmModal(false);
+  };
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -181,14 +190,16 @@ export function MainBizForm({
           <Pressable onPress={pickImages} style={styles.addPhotosButton}>
             <Text style={styles.addPhotosText}>Add Photos</Text>
           </Pressable>
-          <Pressable
-            onPress={handleSubmit(onSubmit)}
-            style={styles.submitButton}
-          >
+          <Pressable onPress={handleSubmitConfirm} style={styles.submitButton}>
             <Text style={styles.submitButtonText}>Submit</Text>
           </Pressable>
         </View>
       </ScrollView>
+      <BusinessSubmitConfirmation
+        onCancel={handleConfirmCancel}
+        visible={confirmModal}
+        onConfirm={handleSubmit(onSubmit)}
+      />
     </KeyboardAvoidingView>
   );
 }

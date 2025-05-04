@@ -41,6 +41,7 @@ import { CompanyForms } from "./Components/CompanyForms";
 import { DuplicationCheck } from "./Components/DuplicationCheck";
 import { MarketPlaceScreen } from "./Screens/MarketPlace";
 // WebView Component
+import { BusinessSubmitConfirmation } from "./Components/ConfirmationModal";
 
 const BottomTab = createBottomTabNavigator();
 const StackNav = createNativeStackNavigator();
@@ -103,6 +104,10 @@ function RootStack() {
       <StackNav.Screen name="Details" component={DetailsScreen} />
       <StackNav.Screen name="Duplication" component={DuplicationCheck} />
       <StackNav.Screen name="MarketPlace" component={MarketPlaceScreen} />
+      <StackNav.Screen
+        name="Confirmation"
+        component={BusinessSubmitConfirmation}
+      />
       <StackNav.Screen
         name="Info"
         component={InfoScreen}
