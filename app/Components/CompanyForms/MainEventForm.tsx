@@ -117,9 +117,9 @@ export function MainEventForm({
   };
 
   const editEventHours = {
-    date: editEventData.date,
-    start: editEventData.start_time,
-    end: editEventData.end_time,
+    date: editEventData?.date,
+    start: editEventData?.start_time,
+    end: editEventData?.end_time,
   };
   return (
     <KeyboardAvoidingView

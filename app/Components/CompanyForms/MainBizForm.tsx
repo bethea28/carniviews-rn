@@ -14,7 +14,10 @@ import { useSelector } from "react-redux";
 import { useImagePicker } from "@/app/customHooks";
 import { Notifier, Easing } from "react-native-notifier";
 import { useNavigation } from "@react-navigation/native";
-import { useAddUnverifiedBusinessMutation } from "@/store/api/api";
+import {
+  useAddUnverifiedBusinessMutation,
+  useEditVerifiedBusinessMutation,
+} from "@/store/api/api";
 import { BusinessHours } from "../BusinessHours";
 
 const colors = {
@@ -60,6 +63,7 @@ export function MainBizForm({
   country,
   eventType,
   editEventData,
+  operation,
 }) {
   const { control, handleSubmit, reset } = useForm({
     defaultValues: {
@@ -84,44 +88,49 @@ export function MainBizForm({
   const [hoursComp, setShowHoursComp] = useState(false);
   const hoursData = useSelector((state) => state.counter.businessHours);
   const userData = useSelector((state) => state.counter.userState);
+  const [editVerifiedBusiness] = useEditVerifiedBusinessMutation();
   const [addBusiness] = useAddUnverifiedBusinessMutation();
   const navigation = useNavigation();
   const { pickImages, allImages } = useImagePicker();
-  console.log("edit even data", editEventData);
   const onSubmit = async (data) => {
-    console.log("data submit", data);
     // return;
+    const finalFormData = { ...data, businessId: editEventData.id };
+    console.log("edit even data JAMES", finalFormData);
     const finalData = {
-      companyInfo: data,
+      // companyInfo: data,
+      companyInfo: finalFormData,
       allImages,
       hoursData,
       userId: userData?.data?.user?.user_id,
     };
+    console.log("data submit edit business", finalData);
+    let response = null;
+    operation === "edit"
+      ? (response = await editVerifiedBusiness(finalData))
+      : (response = await addBusiness(finalData));
 
-    const addingBiz = await addBusiness(finalData);
-
-    console.log("adding business messs", addingBiz);
-    if (!addingBiz?.error) {
-      Notifier.showNotification({
-        title: "Success!",
-        description: "Business created successfully!",
-        duration: 6000,
-        showAnimationDuration: 800,
-        showEasing: Easing.ease,
-        hideOnPress: true,
-      });
-      // reset();
-      // navigation.navigate("MarketPlace");
-    } else {
-      Notifier.showNotification({
-        title: "Error",
-        description: "Something went wrong. Please try again.",
-        duration: 3000,
-        showAnimationDuration: 800,
-        showEasing: Easing.ease,
-        hideOnPress: true,
-      });
-    }
+    console.log("done", operation);
+    // if (!addingBiz?.error) {
+    //   Notifier.showNotification({
+    //     title: "Success!",
+    //     description: "Business created successfully!",
+    //     duration: 6000,
+    //     showAnimationDuration: 800,
+    //     showEasing: Easing.ease,
+    //     hideOnPress: true,
+    //   });
+    //   // reset();
+    //   // navigation.navigate("MarketPlace");
+    // } else {
+    //   Notifier.showNotification({
+    //     title: "Error",
+    //     description: "Something went wrong. Please try again.",
+    //     duration: 3000,
+    //     showAnimationDuration: 800,
+    //     showEasing: Easing.ease,
+    //     hideOnPress: true,
+    //   });
+    // }
   };
 
   const textInputs = [

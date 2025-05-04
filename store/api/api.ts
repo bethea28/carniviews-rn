@@ -35,6 +35,8 @@ export const objectToUrlEncodedString = (
 };
 
 export const api = createApi({
+  // exp://192.168.1.161:8081//android real device must point here
+
   // http://127.0.0.1:8000/reviews/
   // baseQuery: fetchBaseQuery({ baseUrl: "http://10.0.2.2:8000/" }), // works for iphone
   // baseQuery: fetchBaseQuery({ baseUrl: "http://172.20.10.3:8000/" }), // works for iphone
@@ -401,7 +403,7 @@ export const api = createApi({
         // return;
         return {
           url: `event/${eventId}/editEvent/`,
-          method: "POST",
+          method: "PUT",
           headers: {
             "Content-Type": "application/json", // Use JSON
           },
@@ -414,6 +416,26 @@ export const api = createApi({
         };
       },
       invalidatesTags: ["event"],
+    }),
+    editVerifiedBusiness: build.mutation<any, any>({
+      query: (data) => {
+        const businessId = data.companyInfo?.businessId;
+        console.log("MONKEY WAS", data);
+        return {
+          url: `business/${businessId}/editVerifiedBusiness/`,
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json", // Use JSON
+          },
+          body: JSON.stringify({
+            // Use JSON.stringify
+            companyInfo: data.companyInfo,
+            imageUrls: data.allImages,
+            hoursData: data.hoursData,
+          }),
+        };
+      },
+      invalidatesTags: ["business"],
     }),
     getAllEvents: build.query<any, any>({
       query: (data) => {
@@ -601,6 +623,7 @@ export const api = createApi({
   refetchOnMountOrArgChange: true,
 });
 export const {
+  useEditVerifiedBusinessMutation,
   useDuplicateCheckMutation,
   useAddReviewAgreementMutation,
   useGetBooksQuery,

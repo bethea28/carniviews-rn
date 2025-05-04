@@ -183,6 +183,8 @@ export const MarketPlaceScreen = () => {
               navigation.navigate("CompanyForms", {
                 eventType: "business",
                 item,
+                operation: "edit",
+                eventId: item.id,
               })
             }
             style={({ pressed }) => [
