@@ -315,6 +315,7 @@ const Recommend = ({ companyInfo, user, handleRec, recScore }) => (
 export function DetailsScreen() {
   const companyInfo = useSelector((state) => state.counter.companyInfo);
   const user = useSelector((state) => state.counter.userState);
+  const navigation = useNavigation();
   const { data: allCompRecs } = useGetCompanyRecsQuery({
     companyId: companyInfo.companyId,
   });
@@ -356,6 +357,25 @@ export function DetailsScreen() {
         companyInfo={companyInfo}
         user={user}
       />
+      <Pressable
+        onPress={() =>
+          navigation.navigate("SuggestEdit", {
+            eventType: "band",
+            item: companyInfo,
+            operation: "edit",
+            eventId: "",
+          })
+        }
+        style={({ pressed }) => [
+          styles.recommendButton,
+          { marginTop: 10 },
+          { backgroundColor: pressed ? secondaryColor : primaryColor },
+        ]}
+      >
+        <Text style={[styles.recommendButtonText, { alignSelf: "center" }]}>
+          Suggest Edits
+        </Text>
+      </Pressable>
     </ScrollView>
   );
 }

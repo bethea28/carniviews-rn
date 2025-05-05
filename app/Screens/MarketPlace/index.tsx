@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   SectionList,
@@ -182,6 +182,25 @@ export const MarketPlaceScreen = () => {
 
           <Pressable
             onPress={() =>
+              navigation.navigate("SuggestEdit", {
+                eventType: "business",
+                item,
+                operation: "edit",
+                eventId: item.id,
+              })
+            }
+            style={({ pressed }) => [
+              styles.suggestEditButton,
+              {
+                backgroundColor: pressed ? secondaryColor : primaryColor,
+              },
+            ]}
+            android_ripple={{ color: primaryColor }}
+          >
+            <Text style={styles.button}>Suggest Edit</Text>
+          </Pressable>
+          {/* <Pressable
+            onPress={() =>
               navigation.navigate("CompanyForms", {
                 eventType: "business",
                 item,
@@ -198,7 +217,7 @@ export const MarketPlaceScreen = () => {
             android_ripple={{ color: primaryColor }}
           >
             <Text style={styles.button}>Edit</Text>
-          </Pressable>
+          </Pressable> */}
         </Card.Content>
       </Card>
     );
@@ -346,6 +365,13 @@ const styles = StyleSheet.create({
     backgroundColor: buttonBackgroundColor,
     marginBottom: 20,
     borderRadius: 6,
+  },
+  suggestEditButton: {
+    backgroundColor: buttonBackgroundColor,
+    marginBottom: 20,
+    borderRadius: 6,
+    width: 100,
+    alignSelf: "center",
   },
   buttonLabel: {
     color: buttonTextColor,

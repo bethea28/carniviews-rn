@@ -40,6 +40,7 @@ import { Photos } from "./Screens/PhotosScreen";
 import { CompanyForms } from "./Components/CompanyForms";
 import { DuplicationCheck } from "./Components/DuplicationCheck";
 import { MarketPlaceScreen } from "./Screens/MarketPlace";
+import { SuggestEditForm } from "./Components/SuggestEditForm";
 // WebView Component
 
 const BottomTab = createBottomTabNavigator();
@@ -103,6 +104,7 @@ function RootStack() {
       <StackNav.Screen name="Details" component={DetailsScreen} />
       <StackNav.Screen name="Duplication" component={DuplicationCheck} />
       <StackNav.Screen name="MarketPlace" component={MarketPlaceScreen} />
+      <StackNav.Screen name="SuggestEdit" component={SuggestEditForm} />
 
       <StackNav.Screen
         name="Info"
