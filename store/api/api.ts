@@ -291,6 +291,25 @@ export const api = createApi({
         };
       },
     }),
+    addEditSuggestion: build.mutation<any, any>({
+      query: (data) => {
+        console.log("ON OUR WAY TO THE BACK", data);
+        // return;
+        return {
+          url: `suggestion/addEditSuggestion/`,
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: JSON.stringify({
+            suggestion_text: data.description,
+            type: data.type,
+            entity_id: data.entityId,
+            user_id: data.userId,
+          }),
+        };
+      },
+    }),
     addRec: build.mutation<any, any>({
       query: (data) => {
         console.log("data is king add revieww", data);
@@ -635,6 +654,7 @@ export const {
   useGetCompanyImagesQuery,
   useGoogleAuthMutation,
   useGetReviewsQuery,
+  useAddEditSuggestionMutation,
   useAddFeedbackMutation,
   useAddEventMutation,
   useGetAllEventsQuery,
