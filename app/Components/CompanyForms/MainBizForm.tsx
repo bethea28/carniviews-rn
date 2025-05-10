@@ -8,18 +8,24 @@ import {
   Platform,
   KeyboardAvoidingView,
   Pressable,
+  Image,
 } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { useSelector } from "react-redux";
-import { useImagePicker } from "@/app/customHooks";
 import { Notifier, Easing } from "react-native-notifier";
 import { useNavigation } from "@react-navigation/native";
 import {
   useAddUnverifiedBusinessMutation,
   useEditVerifiedBusinessMutation,
+  useAddCompanyImagesMutation,
 } from "@/store/api/api";
 import { BusinessHours } from "../BusinessHours";
 import { BusinessSubmitConfirmation } from "../ConfirmationModal";
+import {
+  useImagePickerLoaderWithSubmit,
+  uploadToFirebase,
+} from "@/app/customHooks";
+
 const colors = {
   primary: "#a349a4",
   secondary: "#FF8C00",
@@ -56,6 +62,17 @@ const FormInput = ({
   />
 );
 
+const ImageListComponent = ({ props }) => {
+  const { uri } = props;
+  return (
+    <Image
+      source={{ uri: uri }}
+      style={{ width: 100, height: 100 }} // Apply default and custom image styles
+      // You can add other Image props here (e.g., resizeMode)
+    />
+  );
+};
+
 export function MainBizForm({
   setModalVis,
   addPhotos,
@@ -88,55 +105,67 @@ export function MainBizForm({
   const [hoursComp, setShowHoursComp] = useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
   const hoursData = useSelector((state) => state.counter.businessHours);
-  const userData = useSelector((state) => state.counter.userState);
+  const user = useSelector((state) => state.counter.userState);
+  const companyInfo = useSelector((state) => state.counter.companyInfo);
+  const [addCompImage] = useAddCompanyImagesMutation();
+
   const [editVerifiedBusiness] = useEditVerifiedBusinessMutation();
   const [addBusiness] = useAddUnverifiedBusinessMutation();
   const navigation = useNavigation();
-  const { pickImages, allImages } = useImagePicker();
+  const {
+    selectedImage,
+    uploadedUrl,
+    // uploading,
+    pickImage: pickAndUploadImages,
+    uploadImage,
+  } = useImagePickerLoaderWithSubmit();
 
-  const onSubmit = async (data) => {
+  // const { pickImages, allImages } = useImagePicker();
+  const pickImages = async () => {
+    console.log("good now");
+    const pickingImage = await pickAndUploadImages();
     // return;
-    const finalFormData = { ...data, businessId: editEventData?.id };
-    console.log("test me good");
-    // console.log("Raining now AMES", editEventData?.companyInfo);
-    const finalData = {
-      // companyInfo: data,
-      companyInfo: finalFormData,
-      allImages,
-      hoursData,
-      userId: userData?.data?.user?.user_id,
-    };
-    console.log("data submit edit business", finalData);
-    // setConfirmModal(true);
-    // return;
-    let response = null;
-    operation === "edit"
-      ? (response = await editVerifiedBusiness(finalData))
-      : (response = await addBusiness(finalData));
-
-    console.log("done", operation);
-    // if (!addingBiz?.error) {
-    //   Notifier.showNotification({
-    //     title: "Success!",
-    //     description: "Business created successfully!",
-    //     duration: 6000,
-    //     showAnimationDuration: 800,
-    //     showEasing: Easing.ease,
-    //     hideOnPress: true,
-    //   });
-    reset();
-    navigation.navigate("MarketPlace");
-    // } else {
-    //   Notifier.showNotification({
-    //     title: "Error",
-    //     description: "Something went wrong. Please try again.",
-    //     duration: 3000,
-    //     showAnimationDuration: 800,
-    //     showEasing: Easing.ease,
-    //     hideOnPress: true,
-    //   });
-    // }
   };
+  const onSubmit = async (data) => {
+    const finalFormData = { ...data, businessId: editEventData?.id };
+
+    console.log("uploading images dad", selectedImage);
+    const sendToFirebase = selectedImage.map((image) =>
+      uploadToFirebase(image.uri)
+    );
+
+    const uploadedUrls = await Promise.all(sendToFirebase);
+    console.log("Uploaded URLs: janky", uploadedUrls, selectedImage);
+
+    // return;
+    // Upload images and get the returned valid URLs directly
+    // const uploadedURLs = await uploadImages({
+    //   addCompImage,
+    //   user,
+    //   companyInfo,
+    // });
+    // console.log("show me URLS john", finalImages, validURLs, images);
+    // return;
+    const finalData = {
+      companyInfo: finalFormData,
+      validURLs: uploadedUrls ?? [], // Use freshly returned data
+      hoursData,
+      userId: user?.data?.user?.user_id,
+    };
+
+    console.log("BEFORE SENT TO BIZ", operation);
+
+    let response = null;
+    if (operation === "edit") {
+      response = await editVerifiedBusiness(finalData);
+    } else {
+      response = await addBusiness(finalData);
+    }
+
+    // Add success/failure Notifier logic here if needed
+    navigation.goBack();
+  };
+
   const handleSubmitConfirm = () => {
     console.log("new confirm route");
     setConfirmModal(true);
@@ -170,6 +199,8 @@ export function MainBizForm({
   const handleConfirmCancel = () => {
     setConfirmModal(false);
   };
+
+  console.log("slide everyday", selectedImage, uploadedUrl);
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -186,7 +217,13 @@ export function MainBizForm({
         {hoursComp && <BusinessHours eventType="company" addCompany />}
 
         <View style={{ marginTop: 8, alignItems: "center" }}>{thumbNail}</View>
-
+        {selectedImage?.map((image, key) => {
+          return (
+            <View key={key.toString()}>
+              <ImageListComponent props={image} />
+            </View>
+          );
+        })}
         <View style={styles.buttonContainer}>
           <Pressable onPress={pickImages} style={styles.addPhotosButton}>
             <Text style={styles.addPhotosText}>Add Photos</Text>

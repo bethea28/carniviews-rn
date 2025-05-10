@@ -20,7 +20,7 @@ import {
 } from "@/store/api/api";
 import { Notifier, Easing, NotifierComponents } from "react-native-notifier";
 import Icon from "react-native-vector-icons/FontAwesome";
-
+import { useImagePickerUploader } from "@/app/customHooks";
 // Define the color palette based on the image (same as other components)
 const primaryColor = "#a349a4"; // Purple
 const secondaryColor = "#FF8C00"; // Your new, more vibrant orange (replace with actual code)
@@ -171,55 +171,60 @@ const Actions = ({ camera, action, header, companyInfo, user }) => {
   const [image, setImage] = React.useState(null);
   const navigate = useNavigation();
   const [addCompImage] = useAddCompanyImagesMutation();
+
+  const { pickAndUploadImages, selectedImages } = useImagePickerUploader({
+    user: user,
+    companyInfo: companyInfo,
+    addCompImage: addCompImage,
+  });
   const pickImage = async () => {
-    console.log("adding");
+    const results = await pickAndUploadImages();
 
-    try {
-      let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ["images", "videos"],
-        aspect: [4, 3],
-        quality: 1,
-        allowsMultipleSelection: true,
-      });
-
-      if (result.canceled) {
-        Notifier.showNotification({
-          title: "No Image Selected",
-          description: "You did not select any image.",
-          Component: NotifierComponents.Alert,
-          componentProps: { alertType: "warn" },
-          duration: 3000,
-        });
-        return;
-      }
-
-      const final = { result, user, companyInfo };
-      const addImages = await addCompImage(final);
-
-      if (addImages?.data) {
-        Notifier.showNotification({
-          title: "Upload Successful",
-          description: "Your image(s) were uploaded successfully.",
-          Component: NotifierComponents.Alert,
-          componentProps: { alertType: "success" },
-          duration: 3000,
-        });
-
-        setImage(result.assets);
-      } else {
-        throw new Error("Failed to upload images");
-      }
-    } catch (error) {
-      console.log("Image upload error:", error);
-
-      Notifier.showNotification({
-        title: "Upload Failed",
-        description: "There was a problem uploading your image(s).",
-        Component: NotifierComponents.Alert,
-        componentProps: { alertType: "error" },
-        duration: 3000,
-      });
-    }
+    console.log("adding", results);
+    // try {
+    //   let result = await ImagePicker.launchImageLibraryAsync({
+    //     mediaTypes: ["images", "videos"],
+    //     aspect: [4, 3],
+    //     quality: 1,
+    //     allowsMultipleSelection: true,
+    //   });
+    //   console.log("aFTER   adding");
+    //   // return;
+    //   if (result.canceled) {
+    //     Notifier.showNotification({
+    //       title: "No Image Selected",
+    //       description: "You did not select any image.",
+    //       Component: NotifierComponents.Alert,
+    //       componentProps: { alertType: "warn" },
+    //       duration: 3000,
+    //     });
+    //     return;
+    //   }
+    //   // return;
+    //   const final = { result, user, companyInfo };
+    //   const addImages = await addCompImage(final);
+    //   if (addImages?.data) {
+    //     Notifier.showNotification({
+    //       title: "Upload Successful",
+    //       description: "Your image(s) were uploaded successfully.",
+    //       Component: NotifierComponents.Alert,
+    //       componentProps: { alertType: "success" },
+    //       duration: 3000,
+    //     });
+    //     setImage(result.assets);
+    //   } else {
+    //     throw new Error("Failed to upload images");
+    //   }
+    // } catch (error) {
+    //   console.log("Image upload error:", error);
+    //   Notifier.showNotification({
+    //     title: "Upload Failed",
+    //     description: "There was a problem uploading your image(s).",
+    //     Component: NotifierComponents.Alert,
+    //     componentProps: { alertType: "error" },
+    //     duration: 3000,
+    //   });
+    // }
   };
 
   return (
@@ -316,11 +321,19 @@ export function DetailsScreen() {
   const companyInfo = useSelector((state) => state.counter.companyInfo);
   const user = useSelector((state) => state.counter.userState);
   const navigation = useNavigation();
+
   const { data: allCompRecs } = useGetCompanyRecsQuery({
     companyId: companyInfo.companyId,
   });
   const [addRec] = useAddRecMutation();
   const [recommend, setRecommend] = React.useState("");
+  const [addCompImage] = useAddCompanyImagesMutation();
+
+  const { pickAndUploadImages, selectedImages } = useImagePickerUploader({
+    user: user,
+    companyInfo: companyInfo,
+    addCompImage: addCompImage,
+  });
   console.log("all company info bryanb", companyInfo.companyId);
   const handleRec = (rec) => {
     console.log("rec company id rec", rec);

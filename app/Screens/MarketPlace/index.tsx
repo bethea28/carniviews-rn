@@ -8,6 +8,7 @@ import {
   Modal,
   Linking,
   Pressable,
+  ImageBackground,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useGetAllEventsQuery, useGetBusinessesQuery } from "@/store/api/api";
@@ -68,7 +69,7 @@ export const MarketPlaceScreen = () => {
   };
 
   const renderEventItem = ({ item }) =>
-    console.log("MY FIRST NAME", item) || (
+    console.log("PROBLEMSN", typeof item.companyInfo.photos[0]) || (
       <Card style={styles.card}>
         {/* <Card onPress={() => handleEventDetails(item)} style={styles.card}> */}
         {item.images?.[0]?.uri ? (
@@ -77,129 +78,142 @@ export const MarketPlaceScreen = () => {
             source={{ uri: item.images[0].uri }}
           />
         ) : null}
-        <Card.Content>
-          <Title style={styles.title}>{item.companyInfo.name}</Title>
-          <Title style={styles.title}>{item.companyInfo.company_type}</Title>
+        <ImageBackground
+          resizeMode="cover"
+          source={{
+            uri:
+              typeof item?.companyInfo?.photos?.[0] === "string"
+                ? item?.companyInfo?.photos[0]
+                : "",
+          }}
+          style={styles.imageDetailsBackground}
+        >
+          <Card.Content>
+            <Title style={styles.title}>{item.companyInfo.name}</Title>
+            <Title style={styles.title}>{item.companyInfo.company_type}</Title>
 
-          {item.companyInfo.website ? (
-            <Text
-              style={[
-                styles.text,
-                { color: "blue", textDecorationLine: "underline" },
-              ]}
-              onPress={() => Linking.openURL(item.companyInfo.website)}
-            >
-              🌐 {item.companyInfo.website}
-            </Text>
-          ) : null}
-
-          {item.companyInfo.contact && (
-            <Text style={styles.text}>📞 {item.companyInfo.contact}</Text>
-          )}
-          {item.companyInfo.phone && (
-            <Text style={styles.text}>📱 {item.companyInfo.phone}</Text>
-          )}
-          {item.companyInfo.email && (
-            <Text style={styles.text}>✉️ {item.companyInfo.email}</Text>
-          )}
-
-          <Paragraph style={styles.paragraph} numberOfLines={2}>
-            {item.companyInfo.description || "No description available"}
-          </Paragraph>
-
-          <Text style={styles.text}>
-            🕒 {timeConvert(item.start_time)} - {timeConvert(item.end_time)}
-          </Text>
-
-          <Text style={styles.text}>
-            📍 {item.companyInfo.address_line1 || "N/A"}
-            📍 {item.companyInfo.address_line2 || "N/A"}
-            {item.companyInfo.city ? `, ${item.companyInfo.city}` : ""}
-            {item.companyInfo.region ? `, ${item.companyInfo.region}` : ""}
-            {item.companyInfo.postal_code
-              ? ` ${item.companyInfo.postal_code}`
-              : ""}
-          </Text>
-
-          <Text style={styles.text}>🌎 {item.companyInfo.country}</Text>
-
-          {/* Social links */}
-          {item.companyInfo.facebook && (
-            <Text
-              style={[
-                styles.text,
-                { color: "blue", textDecorationLine: "underline" },
-              ]}
-              onPress={() => Linking.openURL(item.companyInfo.facebook)}
-            >
-              👍 Facebook
-            </Text>
-          )}
-          {item.companyInfo.instagram && (
-            <Text
-              style={[
-                styles.text,
-                { color: "blue", textDecorationLine: "underline" },
-              ]}
-              onPress={() => Linking.openURL(item.companyInfo.instagram)}
-            >
-              📸 Instagram
-            </Text>
-          )}
-          {item.companyInfo.twitter && (
-            <Text
-              style={[
-                styles.text,
-                { color: "blue", textDecorationLine: "underline" },
-              ]}
-              onPress={() => Linking.openURL(item.companyInfo.twitter)}
-            >
-              🐦 Twitter
-            </Text>
-          )}
-
-          {/* Ticket */}
-          {item.ticket && (
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginTop: 2,
-              }}
-            >
-              <Icon name="ticket" style={{ marginLeft: 4, marginRight: 12 }} />
+            {item.companyInfo.website ? (
               <Text
-                onPress={() => Linking.openURL(item.ticket)}
                 style={[
                   styles.text,
                   { color: "blue", textDecorationLine: "underline" },
                 ]}
+                onPress={() => Linking.openURL(item.companyInfo.website)}
               >
-                {item.ticket}
+                🌐 {item.companyInfo.website}
               </Text>
-            </View>
-          )}
+            ) : null}
 
-          <Pressable
-            onPress={() =>
-              navigation.navigate("SuggestEdit", {
-                eventType: "business",
-                item,
-                operation: "edit",
-                eventId: item.id,
-              })
-            }
-            style={({ pressed }) => [
-              styles.suggestEditButton,
-              {
-                backgroundColor: pressed ? secondaryColor : primaryColor,
-              },
-            ]}
-            android_ripple={{ color: primaryColor }}
-          >
-            <Text style={styles.button}>Suggest Edit</Text>
-          </Pressable>
-          {/* <Pressable
+            {item.companyInfo.contact && (
+              <Text style={styles.text}>📞 {item.companyInfo.contact}</Text>
+            )}
+            {item.companyInfo.phone && (
+              <Text style={styles.text}>📱 {item.companyInfo.phone}</Text>
+            )}
+            {item.companyInfo.email && (
+              <Text style={styles.text}>✉️ {item.companyInfo.email}</Text>
+            )}
+
+            <Paragraph style={styles.paragraph} numberOfLines={2}>
+              {item.companyInfo.description || "No description available"}
+            </Paragraph>
+
+            <Text style={styles.text}>
+              🕒 {timeConvert(item.start_time)} - {timeConvert(item.end_time)}
+            </Text>
+
+            <Text style={styles.text}>
+              📍 {item.companyInfo.address_line1 || "N/A"}
+              📍 {item.companyInfo.address_line2 || "N/A"}
+              {item.companyInfo.city ? `, ${item.companyInfo.city}` : ""}
+              {item.companyInfo.region ? `, ${item.companyInfo.region}` : ""}
+              {item.companyInfo.postal_code
+                ? ` ${item.companyInfo.postal_code}`
+                : ""}
+            </Text>
+
+            <Text style={styles.text}>🌎 {item.companyInfo.country}</Text>
+
+            {/* Social links */}
+            {item.companyInfo.facebook && (
+              <Text
+                style={[
+                  styles.text,
+                  { color: "blue", textDecorationLine: "underline" },
+                ]}
+                onPress={() => Linking.openURL(item.companyInfo.facebook)}
+              >
+                👍 Facebook
+              </Text>
+            )}
+            {item.companyInfo.instagram && (
+              <Text
+                style={[
+                  styles.text,
+                  { color: "blue", textDecorationLine: "underline" },
+                ]}
+                onPress={() => Linking.openURL(item.companyInfo.instagram)}
+              >
+                📸 Instagram
+              </Text>
+            )}
+            {item.companyInfo.twitter && (
+              <Text
+                style={[
+                  styles.text,
+                  { color: "blue", textDecorationLine: "underline" },
+                ]}
+                onPress={() => Linking.openURL(item.companyInfo.twitter)}
+              >
+                🐦 Twitter
+              </Text>
+            )}
+
+            {/* Ticket */}
+            {item.ticket && (
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginTop: 2,
+                }}
+              >
+                <Icon
+                  name="ticket"
+                  style={{ marginLeft: 4, marginRight: 12 }}
+                />
+                <Text
+                  onPress={() => Linking.openURL(item.ticket)}
+                  style={[
+                    styles.text,
+                    { color: "blue", textDecorationLine: "underline" },
+                  ]}
+                >
+                  {item.ticket}
+                </Text>
+              </View>
+            )}
+
+            <Pressable
+              onPress={() =>
+                navigation.navigate("SuggestEdit", {
+                  eventType: "business",
+                  item,
+                  operation: "edit",
+                  eventId: item.id,
+                })
+              }
+              style={({ pressed }) => [
+                styles.suggestEditButton,
+                {
+                  backgroundColor: pressed ? secondaryColor : primaryColor,
+                },
+              ]}
+              android_ripple={{ color: primaryColor }}
+            >
+              <Text style={styles.button}>Suggest Edit</Text>
+            </Pressable>
+            {/* <Pressable
             onPress={() =>
               navigation.navigate("CompanyForms", {
                 eventType: "business",
@@ -218,7 +232,8 @@ export const MarketPlaceScreen = () => {
           >
             <Text style={styles.button}>Edit</Text>
           </Pressable> */}
-        </Card.Content>
+          </Card.Content>
+        </ImageBackground>
       </Card>
     );
 
@@ -243,7 +258,6 @@ export const MarketPlaceScreen = () => {
         data: grouped[letter].sort((a, b) => a?.name?.localeCompare(b?.name)),
       }));
   };
-  console.log("ALL BUSINESSE BIZ", allBusineses);
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>

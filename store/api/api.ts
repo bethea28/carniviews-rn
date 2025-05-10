@@ -234,7 +234,7 @@ export const api = createApi({
     }),
     addBook: build.mutation<any, any>({
       query: (data) => {
-        console.log("ADDOMG BUSIENSS BACK HERE", data);
+        console.log("ADDOMG BUSIENSS BACK gone", data);
         return;
         return {
           url: "bryan/bookPost/",
@@ -492,7 +492,7 @@ export const api = createApi({
     addUnverifiedBusiness: build.mutation<any, any>({
       query: (data) => {
         const userId = data?.userId;
-        // return;
+        console.log("ALL PHOTOS TO THE BACK", data.validURLs);
         return {
           url: `business/${userId}/addUnverifiedBusiness/`,
           method: "POST",
@@ -502,7 +502,7 @@ export const api = createApi({
           body: JSON.stringify({
             // Use JSON.stringify
             companyInfo: data.companyInfo,
-            imageUrls: data.allImages,
+            imageUrls: data.validURLs,
             hoursData: data.hoursData,
           }),
         };

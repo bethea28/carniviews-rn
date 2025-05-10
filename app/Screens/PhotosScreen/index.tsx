@@ -17,6 +17,7 @@ import * as ImagePicker from "expo-image-picker";
 import storage from "@react-native-firebase/storage"; // Firebase storage
 import RNFS from "react-native-fs"; // For file system access
 import ImageModal from "react-native-image-modal";
+import { useImagePickerUploader } from "@/app/customHooks";
 
 // Material Design-inspired color palette
 const primaryColor = "#a349a4";
@@ -38,16 +39,20 @@ const imageSize = screenWidth / 2 - 24;
 
 export const Photos = () => {
   const companyId = useSelector((state) => state.counter.companyInfo.companyId);
+  const [addCompImage] = useAddCompanyImagesMutation();
   const companyInfo = useSelector((state) => state.counter.companyInfo);
   const user = useSelector((state) => state.counter.userState);
   const [image, setImage] = React.useState(null);
-
+  const { pickAndUploadImages, selectedImages } = useImagePickerUploader({
+    user: user,
+    companyInfo: companyInfo,
+    addCompImage: addCompImage,
+  });
   const {
     data: allCompanyImages,
     refetch,
     isFetching,
   } = useGetCompanyImagesQuery({ companyId });
-  const [addCompImage] = useAddCompanyImagesMutation();
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -104,66 +109,8 @@ export const Photos = () => {
   };
 
   const pickImage = async () => {
-    try {
-      let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ["images"],
-        aspect: [4, 3],
-        quality: 1,
-        allowsMultipleSelection: true, // Allow multiple selection
-      });
-
-      if (result.canceled || !result.assets) {
-        Notifier.showNotification({
-          title: "No Image Selected",
-          description: "You did not select any image.",
-          Component: NotifierComponents.Alert,
-          componentProps: { alertType: "warn" },
-          duration: 3000,
-        });
-        return;
-      }
-
-      const selectedImages = result?.assets;
-      const uploadPromises = selectedImages.map(async (asset) => {
-        return await uploadToFirebase(asset.uri);
-      });
-
-      const downloadURLs = await Promise.all(uploadPromises);
-      const validDownloadURLs = downloadURLs.filter((url) => url !== null); // Filter out failed uploads
-      if (validDownloadURLs.length > 0) {
-        const final = { imageUrls: validDownloadURLs, user, companyInfo }; // Send array of URLs
-        const addImages = await addCompImage(final);
-
-        if (addImages?.data) {
-          Notifier.showNotification({
-            title: "Upload Successful",
-            description: "Your image(s) were uploaded successfully.",
-            Component: NotifierComponents.Alert,
-            componentProps: { alertType: "success" },
-            duration: 3000,
-          });
-          setImage(selectedImages); // Update local state with selected images
-        } else {
-          throw new Error("Failed to upload images to backend");
-        }
-      } else {
-        Notifier.showNotification({
-          title: "Upload Failed",
-          description: "No images were successfully uploaded.",
-          Component: NotifierComponents.Alert,
-          componentProps: { alertType: "error" },
-          duration: 3000,
-        });
-      }
-    } catch (error) {
-      Notifier.showNotification({
-        title: "Upload Failed",
-        description: "There was a problem uploading your image(s).",
-        Component: NotifierComponents.Alert,
-        componentProps: { alertType: "error" },
-        duration: 3000,
-      });
-    }
+    const pickImage = await pickAndUploadImages();
+    console.log("add pres SILT THE SHOCKER", pickImage);
   };
 
   const renderHeader = () => (
@@ -185,6 +132,7 @@ export const Photos = () => {
       </View>
     );
   }
+  console.log("snoop dogg is most overated", selectedImages);
   return (
     <FlatList
       data={allCompanyImages.images}
