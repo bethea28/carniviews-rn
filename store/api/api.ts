@@ -490,6 +490,30 @@ export const api = createApi({
       },
       invalidatesTags: ["business"],
     }),
+    addBandStory: build.mutation<any, any>({
+      query: (data) => {
+        const userId = data?.userId;
+        return;
+        return {
+          url: `bandStory/addBandStory/`,
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json", // Use JSON
+          },
+          body: JSON.stringify({
+            // Use JSON.stringify
+            company_id: null,
+            user_id: null,
+            title: data.companyInfo,
+            intro: data.allImages,
+            vibe: data.allImages,
+            costume: data.hoursData,
+            reflection: data.hoursData,
+          }),
+        };
+      },
+      invalidatesTags: ["business"],
+    }),
     addUnverifiedBusiness: build.mutation<any, any>({
       query: (data) => {
         const userId = data?.userId;
@@ -643,6 +667,7 @@ export const api = createApi({
   refetchOnMountOrArgChange: true,
 });
 export const {
+  useAddBandStoryMutation,
   useEditVerifiedBusinessMutation,
   useDuplicateCheckMutation,
   useAddReviewAgreementMutation,

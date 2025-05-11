@@ -4,6 +4,7 @@ import { TabView, SceneMap } from "react-native-tab-view";
 import { ReviewScreen } from "@/app/Screens/ReviewScreen";
 import { DetailsScreen } from "@/app/Screens/DetailsScreen";
 import { BusinessHours } from "../BusinessHours";
+import { BandStoriesScreen } from "@/app/Screens/BandStoriesScreen";
 
 export const TabComponent = ({ params, navIndex }) => {
   const layout = useWindowDimensions();
@@ -12,13 +13,14 @@ export const TabComponent = ({ params, navIndex }) => {
   const renderScene = SceneMap({
     first: () => <DetailsScreen />,
     second: () => <ReviewScreen />,
-    third: () => <BusinessHours referrer="tabs" />,
+    third: () => <BandStoriesScreen />,
+    // third: () => <BusinessHours referrer="tabs" />,
   });
 
   const routes = [
     { key: "first", title: "Details" },
     { key: "second", title: "Reviews" },
-    { key: "third", title: "Hours" },
+    { key: "third", title: "Band Stories" },
   ];
 
   return (

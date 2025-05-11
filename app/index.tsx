@@ -41,6 +41,7 @@ import { CompanyForms } from "./Components/CompanyForms";
 import { DuplicationCheck } from "./Components/DuplicationCheck";
 import { MarketPlaceScreen } from "./Screens/MarketPlace";
 import { SuggestEditForm } from "./Components/SuggestEditForm";
+import { BandStoryForm, PageForm } from "./Components/BandStoryForm";
 // WebView Component
 
 const BottomTab = createBottomTabNavigator();
@@ -105,6 +106,7 @@ function RootStack() {
       <StackNav.Screen name="Duplication" component={DuplicationCheck} />
       <StackNav.Screen name="MarketPlace" component={MarketPlaceScreen} />
       <StackNav.Screen name="SuggestEdit" component={SuggestEditForm} />
+      <StackNav.Screen name="BandStoryForm" component={BandStoryForm} />
 
       <StackNav.Screen
         name="Info"
