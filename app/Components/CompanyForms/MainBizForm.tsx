@@ -12,7 +12,6 @@ import {
 } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { useSelector } from "react-redux";
-import { Notifier, Easing } from "react-native-notifier";
 import { useNavigation } from "@react-navigation/native";
 import {
   useAddUnverifiedBusinessMutation,

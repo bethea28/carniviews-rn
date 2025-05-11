@@ -13,10 +13,14 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import { BusinessHours } from "../BusinessHours";
 import { useSelector } from "react-redux";
-import { useImagePicker } from "@/app/customHooks";
+import {
+  useImagePickerLoaderWithSubmit,
+  uploadToFirebase,
+} from "@/app/customHooks";
 import { Notifier, Easing } from "react-native-notifier";
 import { useNavigation } from "@react-navigation/native";
 import { useAddEventMutation, useEditEventMutation } from "@/store/api/api";
+import { BusinessSubmitConfirmation } from "../ConfirmationModal";
 
 const primaryColor = "#a349a4";
 const secondaryColor = "#FF8C00";
@@ -28,6 +32,17 @@ const buttonBackgroundColor = primaryColor;
 const buttonTextColor = textColorPrimary;
 const errorTextColor = "red";
 const placeholderTextColor = "gray";
+
+const ImageListComponent = ({ props }) => {
+  const { uri } = props;
+  return (
+    <Image
+      source={{ uri: uri }}
+      style={{ width: 100, height: 100 }} // Apply default and custom image styles
+      // You can add other Image props here (e.g., resizeMode)
+    />
+  );
+};
 
 export function MainEventForm({
   setModalVis,
@@ -67,23 +82,38 @@ export function MainEventForm({
   const hoursData = useSelector((state) => state.counter.businessHours);
   const userData = useSelector((state) => state.counter.userState);
   const eventHours = useSelector((state) => state.counter.eventHours);
+  const [confirmModal, setConfirmModal] = useState(false);
 
-  console.log("edit evfnet data", eventHours);
   const [addEvent] = useAddEventMutation();
   const [editEvent] = useEditEventMutation();
+  const {
+    selectedImage,
+    uploadedUrl,
+    // uploading,
+    pickImage: pickAndUploadImages,
+    uploadImage,
+  } = useImagePickerLoaderWithSubmit();
+
   const navigation = useNavigation();
-  const { pickImages, allImages } = useImagePicker();
+  // const { pickImages, allImages } = useImagePicker();
 
   const onSubmit = async (data) => {
+    const sendToFirebase = selectedImage.map((image) =>
+      uploadToFirebase(image.uri)
+    );
+    const uploadedUrls = await Promise.all(sendToFirebase);
+    console.log("Uploaded URLs: JANK", uploadedUrls, selectedImage);
+
+    // return;
     const finalAddData = {
       eventInfo: data,
-      allImages,
+      allImages: uploadedUrls,
       eventHours,
       userId: userData?.data?.user?.user_id,
     };
     const finalEditData = {
       eventInfo: data,
-      allImages,
+      allImages: uploadedUrls,
       eventHours,
       userId: userData?.data?.user?.user_id,
       eventId: eventId,
@@ -120,6 +150,19 @@ export function MainEventForm({
     date: editEventData?.date,
     start: editEventData?.start_time,
     end: editEventData?.end_time,
+  };
+
+  const pickImage = async () => {
+    const pickingImages = await pickAndUploadImages();
+  };
+
+  const handleConfirmCancel = () => {
+    setConfirmModal(false);
+  };
+
+  const handleSubmitConfirm = () => {
+    console.log("new confirm route");
+    setConfirmModal(true);
   };
   return (
     <KeyboardAvoidingView
@@ -319,18 +362,31 @@ export function MainEventForm({
         )}
 
         <View style={{ marginTop: 8, alignItems: "center" }}>{thumbNail}</View>
-
+        {selectedImage?.map((image, key) => {
+          return (
+            <View key={key.toString()}>
+              <ImageListComponent props={image} />
+            </View>
+          );
+        })}
         <View style={styles.buttonContainer}>
-          <Pressable onPress={pickImages} style={styles.addPhotosButton}>
+          <Pressable onPress={pickImage} style={styles.addPhotosButton}>
             <Text style={styles.addPhotosText}>Add Photos</Text>
           </Pressable>
           <Pressable
             style={styles.submitButton}
-            onPress={handleSubmit(onSubmit)}
+            onPress={handleSubmitConfirm}
+            // onPress={handleSubmit(onSubmit)}
           >
             <Text style={styles.submitButtonText}>Submit</Text>
           </Pressable>
         </View>
+        <BusinessSubmitConfirmation
+          onCancel={handleConfirmCancel}
+          visible={confirmModal}
+          onConfirm={handleSubmit(onSubmit)}
+          operation={operation}
+        />
       </ScrollView>
     </KeyboardAvoidingView>
   );

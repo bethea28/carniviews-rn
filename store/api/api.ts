@@ -398,7 +398,8 @@ export const api = createApi({
     addEvent: build.mutation<any, any>({
       query: (data) => {
         const userId = data?.userId;
-        console.log("ADD event NOW.hours", data);
+        console.log("back in the back evets", data);
+        // return;
         return {
           url: `event/${userId}/addEvent/`,
           method: "POST",

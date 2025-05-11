@@ -8,6 +8,7 @@ import {
   Modal,
   Linking,
   Pressable,
+  ImageBackground,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useGetAllEventsQuery } from "@/store/api/api";
@@ -68,7 +69,7 @@ export const EventScreen = () => {
   };
 
   const renderEventItem = ({ item }) =>
-    console.log("ITEM USER NOW", item.id) || (
+    console.log("ITEM USER NOW", item.photos[0]) || (
       <Card onPress={() => handleEventDetails(item)} style={styles.card}>
         {item.images?.[0]?.uri ? (
           <Card.Cover
@@ -76,64 +77,78 @@ export const EventScreen = () => {
             source={{ uri: item.images[0].uri }}
           />
         ) : null}
-        <Card.Content>
-          <Title style={styles.title}>{item.name}</Title>
-          <Title style={styles.title}>${item.price}</Title>
-          <Paragraph style={styles.paragraph} numberOfLines={2}>
-            {item.description}
-          </Paragraph>
-          <Text style={styles.text}>{format(item.date, "MM/dd/yyyy")}</Text>
-          <Text style={styles.text}>
-            🕒 {timeConvert(item.start_time)} - {timeConvert(item.end_time)}
-          </Text>
-          <Text style={styles.text}>
-            📍 {item.addressLine1 || "N/A"}
-            {item.city ? `, ${item.city}` : ""}
-            {item.region ? `, ${item.region}` : ""}
-            {item.postal ? ` ${item.postal}` : ""}
-          </Text>
-          {item.ticket && (
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginTop: 2,
-              }}
-            >
-              <Icon name="ticket" style={{ marginLeft: 4, marginRight: 12 }} />
-              <Text
-                onPress={() => Linking.openURL(item.ticket)}
-                style={[
-                  styles.text,
-                  { color: "blue", textDecorationLine: "underline" },
-                ]}
+        <ImageBackground
+          resizeMode="cover"
+          source={{
+            uri: typeof item?.photos[0] === "string" ? item?.photos[0] : "",
+          }}
+          style={styles.imageDetailsBackground}
+        >
+          <Card.Content>
+            <Title style={styles.title}>{item.name}</Title>
+            <Title style={styles.title}>${item.price}</Title>
+            <Paragraph style={styles.paragraph} numberOfLines={2}>
+              {item.description}
+            </Paragraph>
+            <Text style={styles.text}>{format(item.date, "MM/dd/yyyy")}</Text>
+            <Text style={styles.text}>
+              🕒 {timeConvert(item.start_time)} - {timeConvert(item.end_time)}
+            </Text>
+            <Text style={styles.text}>
+              📍 {item.addressLine1 || "N/A"}
+              {item.city ? `, ${item.city}` : ""}
+              {item.region ? `, ${item.region}` : ""}
+              {item.postal ? ` ${item.postal}` : ""}
+            </Text>
+            {item.ticket && (
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginTop: 2,
+                }}
               >
-                {item.ticket}
-              </Text>
-            </View>
-          )}
-          {Number(item?.user?.id) === Number(userInfo?.data?.user?.user_id) && (
-            <Pressable
-              onPress={() =>
-                navigation.navigate("CompanyForms", {
-                  operation: "edit",
-                  eventId: item.id,
-                  eventType: "event",
-                  item,
-                })
-              }
-              style={({ pressed }) => [
-                styles.button,
-                {
-                  backgroundColor: pressed ? secondaryColor : primaryColor,
-                },
-              ]}
-              android_ripple={{ color: primaryColor }}
-            >
-              <Text style={[styles.button, { textAlign: "center" }]}>Edit</Text>
-            </Pressable>
-          )}
-        </Card.Content>
+                <Icon
+                  name="ticket"
+                  style={{ marginLeft: 4, marginRight: 12 }}
+                />
+                <Text
+                  onPress={() => Linking.openURL(item.ticket)}
+                  style={[
+                    styles.text,
+                    { color: "blue", textDecorationLine: "underline" },
+                  ]}
+                >
+                  {item.ticket}
+                </Text>
+              </View>
+            )}
+            {Number(item?.user?.id) ===
+              Number(userInfo?.data?.user?.user_id) && (
+              <Pressable
+                onPress={() =>
+                  navigation.navigate("CompanyForms", {
+                    operation: "edit",
+                    eventId: item.id,
+                    eventType: "event",
+                    item,
+                  })
+                }
+                style={({ pressed }) => [
+                  styles.button,
+                  {
+                    backgroundColor: pressed ? secondaryColor : primaryColor,
+                  },
+                ]}
+                android_ripple={{ color: primaryColor }}
+              >
+                <Text style={[styles.button, { textAlign: "center" }]}>
+                  Edit
+                </Text>
+              </Pressable>
+            )}
+          </Card.Content>
+        </ImageBackground>
       </Card>
     );
 
@@ -166,6 +181,7 @@ export const EventScreen = () => {
     console.log("what is error", error);
     return <Text style={styles.errorText}>Error fetching events</Text>;
   }
+  console.log("ALL EVENTS DONE", allEvents);
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
