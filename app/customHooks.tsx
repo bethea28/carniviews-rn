@@ -94,6 +94,13 @@ export const useAsyncStorage = () => {
 // import { Notifier, NotifierComponents } from "react-native-notifier";
 
 export const uploadToFirebase = async (uri) => {
+  const imageFolders = {
+    band_images: "company_images",
+    business_images: "business_images",
+    band_story_images: "band_story_images",
+    event_images: "event_images",
+  };
+
   try {
     const reference = storage().ref(
       `company_images/${Date.now()}_${uri.split("/").pop()}`
