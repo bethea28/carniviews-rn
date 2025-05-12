@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 import { CountrySelect } from "@/app/Components/CountrySelect";
 import { TabComponent } from "@/app/Components/TabComponent";
 import { EmptyCardComponent } from "../EmptyCardComponent";
+import { StoryCarousel } from "../StoryCarousel";
 // Colors
 const primaryColor = "#a349a4";
 const primaryLightColor = "#d67bff";
@@ -115,7 +116,8 @@ export function BandsList() {
   return (
     <View style={styles.container}>
       {!country ? (
-        <EmptyCardComponent />
+        // <EmptyCardComponent />
+        <StoryCarousel />
       ) : (
         <SectionList
           sections={sections}

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { StoryCarousel } from "../StoryCarousel";
 import {
   View,
   TextInput,
@@ -38,30 +39,33 @@ export function BandStoryForm() {
   };
 
   return (
-    <FlatList
-      contentContainerStyle={styles.listContainer}
-      data={formattedStoryPlaceholders}
-      keyExtractor={(_, i) => i.toString()}
-      showsVerticalScrollIndicator={false}
-      renderItem={({ item, index }) => (
-        <View style={styles.page}>
-          <Text style={styles.label}>{item[0]}</Text>
-          <TextInput
-            style={styles.input}
-            multiline
-            value={pages[index]}
-            onChangeText={(text) => handleChangeText(text, index)}
-            placeholder={item[1]}
-            textAlignVertical="top"
-          />
-        </View>
-      )}
-      ListFooterComponent={
-        <TouchableOpacity style={styles.submitButton}>
-          <Text style={styles.submitText}>Submit</Text>
-        </TouchableOpacity>
-      }
-    />
+    <>
+      {/* <FlatList
+        contentContainerStyle={styles.listContainer}
+        data={formattedStoryPlaceholders}
+        keyExtractor={(_, i) => i.toString()}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item, index }) => (
+          <View style={styles.page}>
+            <Text style={styles.label}>{item[0]}</Text>
+            <TextInput
+              style={styles.input}
+              multiline
+              value={pages[index]}
+              onChangeText={(text) => handleChangeText(text, index)}
+              placeholder={item[1]}
+              textAlignVertical="top"
+            />
+          </View>
+        )}
+        ListFooterComponent={
+          <TouchableOpacity style={styles.submitButton}>
+            <Text style={styles.submitText}>Submit</Text>
+          </TouchableOpacity>
+        }
+      /> */}
+      <StoryCarousel />
+    </>
   );
 }
 
