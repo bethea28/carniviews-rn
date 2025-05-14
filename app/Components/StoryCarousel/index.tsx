@@ -1,5 +1,19 @@
-import React, { useRef } from "react";
-import { View, Text, Dimensions, StyleSheet } from "react-native";
+import React, { useRef, useState } from "react";
+import {
+  View,
+  Text,
+  Dimensions,
+  StyleSheet,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
+  Keyboard,
+  TouchableWithoutFeedback,
+  Pressable,
+  Modal,
+  Alert,
+  ScrollView,
+} from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import Animated, {
   useAnimatedStyle,
@@ -8,22 +22,12 @@ import Animated, {
 } from "react-native-reanimated";
 
 const { width } = Dimensions.get("window");
-const CARD_WIDTH = width * 0.75;
-const CARD_HEIGHT = 450;
 
-const colors = [
-  "#B0604D",
-  "#899F9C",
-  //   "#B3C680",
-  "#5C6265",
-  //   "#F5D399",
-  //   "#F1F1F1",
-  "#D1A6A6",
-  "#7EB6B8",
-];
+const colors = ["#B0604D", "#899F9C", "#5C6265", "#D1A6A6", "#7EB6B8"];
 
 export const StoryCarousel = () => {
   const ref = useRef(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const renderItem = ({ item, index, animationValue }) => {
     const animatedStyle = useAnimatedStyle(() => {
@@ -43,52 +47,125 @@ export const StoryCarousel = () => {
       <Animated.View
         style={[styles.card, { backgroundColor: item }, animatedStyle]}
       >
-        <Text style={styles.text}>Card {index + 1}</Text>
+        {/* <View onPress={() => setModalVisible(!modalVisible)}> */}
+        {/* <Text style={styles.text}>Card {index + 1}</Text> */}
+        <TextInput
+          style={{
+            flex: 1,
+            paddingHorizontal: 10,
+            width: 300,
+            height: 500,
+            backgroundColor: "green",
+          }}
+          defaultValue={`Card ${index + 1}`}
+          multiline
+        />
+        {/* </View> */}
       </Animated.View>
     );
   };
 
   return (
-    <View style={styles.container}>
-      <Carousel
-        ref={ref}
-        data={colors}
-        renderItem={renderItem}
-        width={400}
-        // height={500}
-        loop
-        mode="horizontal-stack"
-        pagingEnabled
-        snapEnabled
-        defaultIndex={1}
-        modeConfig={
-          {
-            //   snapDirection: "left",
-            //   stackInterval: 30,
-            //   scaleInterval: 0.05,
-            //   //   rotateZDeg: 0,
-            //   showLength: 5,
-          }
-        }
-        customConfig={() => ({
-          type: "positive",
-          viewCount: 5,
-        })}
-      />
-    </View>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1 }}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <Carousel
+            ref={ref}
+            data={colors}
+            renderItem={renderItem}
+            width={400}
+            loop
+            mode="horizontal-stack"
+            pagingEnabled
+            snapEnabled
+            defaultIndex={1}
+            modeConfig={{}}
+            customConfig={() => ({
+              type: "positive",
+              viewCount: 5,
+            })}
+          />
+        </View>
+      </TouchableWithoutFeedback>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>Hello World!</Text>
+            <Pressable
+              style={[styles.button, styles.buttonClose]}
+              onPress={() => setModalVisible(!modalVisible)}
+            >
+              <Text style={styles.textStyle}>Hide Modal</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+  },
   container: {
     flex: 1,
-    // backgroundColor: "#222",
     justifyContent: "center",
     alignItems: "center",
   },
   card: {
     width: 370,
-    // height: 200,
     borderRadius: 16,
     flex: 1,
     justifyContent: "center",
@@ -101,5 +178,6 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 22,
     color: "#fff",
+    height: 200,
   },
 });

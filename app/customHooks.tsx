@@ -93,17 +93,17 @@ export const useAsyncStorage = () => {
 // import * as ImagePicker from "expo-image-picker";
 // import { Notifier, NotifierComponents } from "react-native-notifier";
 
-export const uploadToFirebase = async (uri) => {
+export const uploadToFirebase = async (folder, uri) => {
   const imageFolders = {
-    band_images: "company_images",
-    business_images: "business_images",
-    band_story_images: "band_story_images",
-    event_images: "event_images",
+    band: "company_images",
+    business: "business_images",
+    bandStory: "band_story_images",
+    events: "event_images",
   };
 
   try {
     const reference = storage().ref(
-      `company_images/${Date.now()}_${uri.split("/").pop()}`
+      `${imageFolders[folder]}/${Date.now()}_${uri.split("/").pop()}`
     );
     const pathToFile = `file://${uri}`;
     await reference.putFile(pathToFile);

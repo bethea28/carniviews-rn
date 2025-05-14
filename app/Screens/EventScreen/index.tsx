@@ -166,7 +166,7 @@ export const EventScreen = () => {
         data: grouped[letter].sort((a, b) => a.name.localeCompare(b.name)),
       }));
   };
-  console.log("EVENTS IN YO HOOD", userInfo.data.user.user_id);
+  // console.log("EVENTS IN YO HOOD", userInfo.data.user.user_id);
   if (isLoading) {
     return <ActivityIndicator animating={true} color={primaryColor} />;
   }

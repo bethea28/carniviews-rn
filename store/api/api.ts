@@ -44,7 +44,14 @@ export const api = createApi({
   //   baseQuery: fetchBaseQuery({ baseUrl: "http://127.0.0.1:8000/" }),
   // baseQuery,
   reducerPath: "api",
-  tagTypes: ["company", "review", "event", "recommendation", "business"],
+  tagTypes: [
+    "company",
+    "review",
+    "event",
+    "recommendation",
+    "business",
+    "bandStory",
+  ],
   endpoints: (build) => ({
     getWeather: build.query<any, void>({
       // TODO: move this endpoint to the main mocked server and update it here
@@ -490,10 +497,23 @@ export const api = createApi({
       },
       invalidatesTags: ["business"],
     }),
+    getBandStories: build.query<any, any>({
+      query: (data) => {
+        console.log("sean combs", data);
+        // return;
+        return {
+          url: `bandStory/${data.compId}/getBandStories/`,
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json", // Use JSON
+          },
+        };
+      },
+      providesTags: ["bandStory"],
+    }),
     addBandStory: build.mutation<any, any>({
       query: (data) => {
-        const userId = data?.userId;
-        return;
+        console.log("damn they got byrd", data);
         return {
           url: `bandStory/addBandStory/`,
           method: "POST",
@@ -502,17 +522,18 @@ export const api = createApi({
           },
           body: JSON.stringify({
             // Use JSON.stringify
-            company_id: null,
-            user_id: null,
-            title: data.companyInfo,
-            intro: data.allImages,
-            vibe: data.allImages,
-            costume: data.hoursData,
-            reflection: data.hoursData,
+            company_id: data.companyId,
+            user_id: data.userId,
+            title: data.pages[0],
+            intro: data.pages[1],
+            vibe: data.pages[2],
+            costume: data.pages[3],
+            moments: data.pages[4],
+            reflection: data.pages[5],
           }),
         };
       },
-      invalidatesTags: ["business"],
+      invalidatesTags: ["bandStory"],
     }),
     addUnverifiedBusiness: build.mutation<any, any>({
       query: (data) => {
@@ -667,6 +688,7 @@ export const api = createApi({
   refetchOnMountOrArgChange: true,
 });
 export const {
+  useGetBandStoriesQuery,
   useAddBandStoryMutation,
   useEditVerifiedBusinessMutation,
   useDuplicateCheckMutation,

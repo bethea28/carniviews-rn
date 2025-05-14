@@ -99,7 +99,7 @@ export function MainEventForm({
 
   const onSubmit = async (data) => {
     const sendToFirebase = selectedImage.map((image) =>
-      uploadToFirebase(image.uri)
+      uploadToFirebase("events", image.uri)
     );
     const uploadedUrls = await Promise.all(sendToFirebase);
     console.log("Uploaded URLs: JANK", uploadedUrls, selectedImage);

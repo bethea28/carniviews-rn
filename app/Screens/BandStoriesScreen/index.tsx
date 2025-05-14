@@ -1,25 +1,202 @@
-import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
-import { BandStoryForm } from "@/app/Components/BandStoryForm";
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  FlatList,
+  StyleSheet,
+  Modal,
+  ScrollView,
+} from "react-native";
 import { useNavigation } from "expo-router";
+import { useGetBandStoriesQuery } from "@/store/api/api";
+import { useSelector } from "react-redux";
+
+// Color Scheme
+const primaryColor = "#a349a4";
+const primaryLightColor = "#d67bff";
+const primaryDarkColor = "#751976";
+const secondaryColor = "#f28e1c";
+const backgroundColor = "#f7b767";
+const textColorPrimary = "#ffffff";
+const textColorSecondary = "#333333";
+const errorColor = "#B00020";
+const surfaceColor = "#FFFFFF";
+const dividerColor = "#E0E0E0";
+
+const StoryCard = ({ story, storyCardPress }) =>
+  console.log("porn star", story) || (
+    <TouchableOpacity
+      style={styles.storyCard}
+      onPress={() => storyCardPress(story)}
+    >
+      <Text style={styles.title}>{story.title}</Text>
+      <Text style={styles.intro}>{story.intro}</Text>
+    </TouchableOpacity>
+  );
+
 export const BandStoriesScreen = () => {
-  const handlePageChange = (pageIndex) => {
-    console.log(`Current page: ${pageIndex}`);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedStory, setSelectedStory] = useState(null);
+
+  const company = useSelector((state) => state.counter.companyInfo);
+  const {
+    data: bandStories,
+    isLoading,
+    isError,
+  } = useGetBandStoriesQuery({ compId: company.companyId });
+
+  const navigation = useNavigation();
+
+  const openStoryModal = (story) => {
+    setSelectedStory(story);
+    setModalVisible(true);
   };
 
-  const handleAllPagesFilled = (pages) => {
-    Alert.alert("All Pages Filled!", JSON.stringify(pages, null, 2));
+  const closeStoryModal = () => {
+    setModalVisible(false);
+    setSelectedStory(null);
   };
-  const navigation = useNavigation();
+
+  if (isLoading)
+    return <Text style={styles.loadingText}>Loading Band Stories...</Text>;
+  if (isError)
+    return <Text style={styles.errorText}>Error loading Band Stories.</Text>;
+
   return (
-    <View>
+    <View style={styles.container}>
       <TouchableOpacity
         onPress={() => navigation.navigate("BandStoryForm")}
-        style={{ width: 200, height: 100, backgroundColor: "purple" }}
+        style={styles.addButton}
       >
-        <Text> Add Band Story</Text>
+        <Text style={styles.addButtonText}>Add Band Story</Text>
       </TouchableOpacity>
-      {/* <BandStoryForm /> */}
+
+      {bandStories && bandStories.length > 0 ? (
+        <FlatList
+          data={bandStories}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <StoryCard story={item} storyCardPress={openStoryModal} />
+          )}
+        />
+      ) : (
+        <Text style={styles.noStoriesText}>
+          No band stories available for this company.
+        </Text>
+      )}
+
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        onRequestClose={closeStoryModal}
+      >
+        <View style={styles.modalContainer}>
+          <ScrollView contentContainerStyle={styles.modalContent}>
+            <Text style={styles.modalTitle}>{selectedStory?.title}</Text>
+            <Text style={styles.modalText}>{selectedStory?.intro}</Text>
+            <Text style={styles.modalText}>{selectedStory?.moments}</Text>
+            <Text style={styles.modalText}>{selectedStory?.reflection}</Text>
+            <Text style={styles.modalText}>{selectedStory?.vibe}</Text>
+          </ScrollView>
+          <TouchableOpacity
+            onPress={closeStoryModal}
+            style={styles.closeButton}
+          >
+            <Text style={styles.closeButtonText}>Close</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: backgroundColor,
+  },
+  addButton: {
+    backgroundColor: primaryColor,
+    width: 160,
+    height: 45,
+    borderRadius: 5,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 16,
+    alignSelf: "flex-start",
+  },
+  addButtonText: {
+    color: textColorPrimary,
+    fontWeight: "bold",
+  },
+  storyCard: {
+    backgroundColor: surfaceColor,
+    padding: 16,
+    marginBottom: 10,
+    borderRadius: 6,
+    borderColor: dividerColor,
+    borderWidth: 1,
+    elevation: 2,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: primaryDarkColor,
+    marginBottom: 8,
+  },
+  intro: {
+    fontSize: 14,
+    color: textColorSecondary,
+  },
+  loadingText: {
+    color: textColorSecondary,
+    fontSize: 16,
+    textAlign: "center",
+    marginTop: 20,
+  },
+  errorText: {
+    color: errorColor,
+    fontSize: 16,
+    textAlign: "center",
+    marginTop: 20,
+  },
+  noStoriesText: {
+    color: textColorSecondary,
+    fontSize: 16,
+    textAlign: "center",
+    marginTop: 20,
+  },
+  modalContainer: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: surfaceColor,
+  },
+  modalContent: {
+    flexGrow: 1,
+  },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: primaryDarkColor,
+    marginBottom: 12,
+  },
+  modalText: {
+    fontSize: 16,
+    lineHeight: 22,
+    color: textColorSecondary,
+  },
+  closeButton: {
+    backgroundColor: secondaryColor,
+    padding: 14,
+    alignItems: "center",
+    borderRadius: 6,
+    marginTop: 24,
+  },
+  closeButtonText: {
+    color: textColorPrimary,
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+});

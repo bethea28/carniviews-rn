@@ -17,6 +17,7 @@ import { CountrySelect } from "@/app/Components/CountrySelect";
 import { TabComponent } from "@/app/Components/TabComponent";
 import { EmptyCardComponent } from "../EmptyCardComponent";
 import { StoryCarousel } from "../StoryCarousel";
+import { BandStoryForm } from "../BandStoryForm";
 // Colors
 const primaryColor = "#a349a4";
 const primaryLightColor = "#d67bff";
@@ -115,9 +116,8 @@ export function BandsList() {
   console.log("all companies now", allCompanies);
   return (
     <View style={styles.container}>
-      {!country ? (
-        // <EmptyCardComponent />
-        <StoryCarousel />
+      {/* {!country ? (
+        <EmptyCardComponent />
       ) : (
         <SectionList
           sections={sections}
@@ -137,7 +137,27 @@ export function BandsList() {
           contentContainerStyle={styles.listContentContainer}
           ItemSeparatorComponent={() => <View style={styles.divider} />}
         />
-      )}
+        )} */}
+      <SectionList
+        sections={sections}
+        keyExtractor={(item) =>
+          item.companyInfo?.id?.toString() || Math.random().toString()
+        }
+        renderItem={renderItem}
+        renderSectionHeader={renderSectionHeader}
+        stickySectionHeadersEnabled
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            tintColor={primaryColor}
+          />
+        }
+        contentContainerStyle={styles.listContentContainer}
+        ItemSeparatorComponent={() => <View style={styles.divider} />}
+      />
+      {/* <StoryCarousel /> */}
+      {/* <BandStoryForm /> */}
     </View>
   );
 }

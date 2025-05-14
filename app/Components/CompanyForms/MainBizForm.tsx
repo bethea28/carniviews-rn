@@ -130,7 +130,7 @@ export function MainBizForm({
 
     console.log("uploading images dad", selectedImage);
     const sendToFirebase = selectedImage.map((image) =>
-      uploadToFirebase(image.uri)
+      uploadToFirebase("business", image.uri)
     );
 
     const uploadedUrls = await Promise.all(sendToFirebase);
