@@ -497,6 +497,24 @@ export const api = createApi({
       },
       invalidatesTags: ["business"],
     }),
+    addClaps: build.mutation<any, any>({
+      query: (data) => {
+        console.log("ADDING CLAPS NOW", data);
+        return {
+          url: `utils/addClaps/`,
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json", // Use JSON
+          },
+          body: JSON.stringify({
+            // Use JSON.stringify
+            type: data.type,
+            entity_id: data.id,
+          }),
+        };
+      },
+      // providesTags: ["bandStory"],
+    }),
     getBandStories: build.query<any, any>({
       query: (data) => {
         console.log("sean combs", data);
@@ -559,7 +577,7 @@ export const api = createApi({
         console.log("duplicateCheck", data);
         // return;
         return {
-          url: `duplicates/duplicationCheck/`,
+          url: `utils/duplicationCheck/`,
           method: "POST",
           headers: {
             "Content-Type": "application/json", // Use JSON
@@ -688,6 +706,7 @@ export const api = createApi({
   refetchOnMountOrArgChange: true,
 });
 export const {
+  useAddClapsMutation,
   useGetBandStoriesQuery,
   useAddBandStoryMutation,
   useEditVerifiedBusinessMutation,

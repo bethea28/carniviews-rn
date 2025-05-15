@@ -9,7 +9,7 @@ import {
   ScrollView,
 } from "react-native";
 import { useNavigation } from "expo-router";
-import { useGetBandStoriesQuery } from "@/store/api/api";
+import { useGetBandStoriesQuery, useAddClapsMutation } from "@/store/api/api";
 import { useSelector } from "react-redux";
 
 // Color Scheme
@@ -45,6 +45,7 @@ export const BandStoriesScreen = () => {
     isLoading,
     isError,
   } = useGetBandStoriesQuery({ compId: company.companyId });
+  const [addClaps] = useAddClapsMutation();
 
   const navigation = useNavigation();
 
@@ -57,7 +58,13 @@ export const BandStoriesScreen = () => {
     setModalVisible(false);
     setSelectedStory(null);
   };
-
+  const addClap = async () => {
+    console.log("add clap", selectedStory.id);
+    const addingClaps = await addClaps({
+      id: selectedStory?.id,
+      type: "story",
+    });
+  };
   if (isLoading)
     return <Text style={styles.loadingText}>Loading Band Stories...</Text>;
   if (isError)
@@ -99,6 +106,9 @@ export const BandStoriesScreen = () => {
             <Text style={styles.modalText}>{selectedStory?.reflection}</Text>
             <Text style={styles.modalText}>{selectedStory?.vibe}</Text>
           </ScrollView>
+          <TouchableOpacity onPress={addClap} style={styles.closeButton}>
+            <Text style={styles.closeButtonText}>Clap</Text>
+          </TouchableOpacity>
           <TouchableOpacity
             onPress={closeStoryModal}
             style={styles.closeButton}
