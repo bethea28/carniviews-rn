@@ -9,9 +9,10 @@ import {
   Linking,
   Pressable,
   ImageBackground,
+  TouchableOpacity,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { useGetAllEventsQuery } from "@/store/api/api";
+import { useGetAllEventsQuery, useAddClapsMutation } from "@/store/api/api";
 import {
   Text,
   Button,
@@ -51,6 +52,19 @@ export const EventScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [addClap] = useAddClapsMutation();
+  const [finalClaps, setFinalClaps] = useState({});
+
+  useEffect(() => {
+    if (allEvents?.events) {
+      const initialClaps = allEvents.events.reduce((acc, event) => {
+        const final = { ...acc };
+        final[event.id] = event.claps || 0;
+        return final;
+      }, {});
+      setFinalClaps(initialClaps);
+    }
+  }, [allEvents]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -68,82 +82,111 @@ export const EventScreen = () => {
     setModalVisible(true);
   };
 
-  const renderEventItem = ({ item }) => (
-    <Card onPress={() => handleEventDetails(item)} style={styles.card}>
-      {item.images?.[0]?.uri ? (
-        <Card.Cover
-          style={styles.eventImage}
-          source={{ uri: item.images[0].uri }}
-        />
-      ) : null}
-      <ImageBackground
-        resizeMode="cover"
-        source={{
-          uri: typeof item?.photos[0] === "string" ? item?.photos[0] : "",
-        }}
-        style={styles.imageDetailsBackground}
-      >
-        <Card.Content>
-          <Title style={styles.title}>{item.name}</Title>
-          <Title style={styles.title}>${item.price}</Title>
-          <Paragraph style={styles.paragraph} numberOfLines={2}>
-            {item.description}
-          </Paragraph>
-          <Text style={styles.text}>{format(item.date, "MM/dd/yyyy")}</Text>
-          <Text style={styles.text}>
-            🕒 {timeConvert(item.start_time)} - {timeConvert(item.end_time)}
-          </Text>
-          <Text style={styles.text}>
-            📍 {item.addressLine1 || "N/A"}
-            {item.city ? `, ${item.city}` : ""}
-            {item.region ? `, ${item.region}` : ""}
-            {item.postal ? ` ${item.postal}` : ""}
-          </Text>
-          {item.ticket && (
+  const handleClap = (eventId) => {
+    setFinalClaps((prevClaps) => ({
+      ...prevClaps,
+      [eventId]: (prevClaps[eventId] || 0) + 1,
+    }));
+    addClap({ type: "events", id: eventId });
+  };
+
+  const renderEventItem = ({ item }) => {
+    return (
+      <Card onPress={() => handleEventDetails(item)} style={styles.card}>
+        {item.images?.[0]?.uri ? (
+          <Card.Cover
+            style={styles.eventImage}
+            source={{ uri: item.images[0].uri }}
+          />
+        ) : null}
+        <ImageBackground
+          resizeMode="cover"
+          source={{
+            uri: typeof item?.photos[0] === "string" ? item?.photos[0] : "",
+          }}
+          style={styles.imageDetailsBackground}
+        >
+          <Card.Content>
             <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginTop: 2,
-              }}
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
-              <Icon name="ticket" style={{ marginLeft: 4, marginRight: 12 }} />
-              <Text
-                onPress={() => Linking.openURL(item.ticket)}
-                style={[
-                  styles.text,
-                  { color: "blue", textDecorationLine: "underline" },
-                ]}
-              >
-                {item.ticket}
-              </Text>
+              <Title style={styles.title}>{item.name}</Title>
+
+              <View style={{ flexDirection: "row" }}>
+                <Text style={{ color: "blue", fontSize: 16 }}>
+                  {finalClaps[item.id] || item.claps || 0}{" "}
+                </Text>
+                <TouchableOpacity onPress={() => handleClap(item.id)}>
+                  <Icon color="red" size={30} name="hand-clap" />
+                </TouchableOpacity>
+              </View>
             </View>
-          )}
-          {Number(item?.user?.id) === Number(userInfo?.data?.user?.user_id) && (
-            <Pressable
-              onPress={() =>
-                navigation.navigate("CompanyForms", {
-                  operation: "edit",
-                  eventId: item.id,
-                  eventType: "event",
-                  item,
-                })
-              }
-              style={({ pressed }) => [
-                styles.button,
-                {
-                  backgroundColor: pressed ? secondaryColor : primaryColor,
-                },
-              ]}
-              android_ripple={{ color: primaryColor }}
-            >
-              <Text style={[styles.button, { textAlign: "center" }]}>Edit</Text>
-            </Pressable>
-          )}
-        </Card.Content>
-      </ImageBackground>
-    </Card>
-  );
+            <Title style={styles.title}>${item.price}</Title>
+            <Paragraph style={styles.paragraph} numberOfLines={2}>
+              {item.description}
+            </Paragraph>
+            <Text style={styles.text}>{format(item.date, "MM/dd/yyyy")}</Text>
+            <Text style={styles.text}>
+              🕒 {timeConvert(item.start_time)} - {timeConvert(item.end_time)}
+            </Text>
+            <Text style={styles.text}>
+              📍 {item.addressLine1 || "N/A"}
+              {item.city ? `, ${item.city}` : ""}
+              {item.region ? `, ${item.region}` : ""}
+              {item.postal ? ` ${item.postal}` : ""}
+            </Text>
+            {item.ticket && (
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginTop: 2,
+                }}
+              >
+                <Icon
+                  name="ticket"
+                  style={{ marginLeft: 4, marginRight: 12 }}
+                />
+                <Text
+                  onPress={() => Linking.openURL(item.ticket)}
+                  style={[
+                    styles.text,
+                    { color: "blue", textDecorationLine: "underline" },
+                  ]}
+                >
+                  {item.ticket}
+                </Text>
+              </View>
+            )}
+            {Number(item?.user?.id) ===
+              Number(userInfo?.data?.user?.user_id) && (
+              <Pressable
+                onPress={() =>
+                  navigation.navigate("CompanyForms", {
+                    operation: "edit",
+                    eventId: item.id,
+                    eventType: "event",
+                    item,
+                  })
+                }
+                style={({ pressed }) => [
+                  styles.button,
+                  {
+                    backgroundColor: pressed ? secondaryColor : primaryColor,
+                  },
+                ]}
+                android_ripple={{ color: primaryColor }}
+              >
+                <Text style={[styles.button, { textAlign: "center" }]}>
+                  Edit
+                </Text>
+              </Pressable>
+            )}
+          </Card.Content>
+        </ImageBackground>
+      </Card>
+    );
+  };
 
   const groupEventsAlphabetically = (events) => {
     if (!events) return [];
@@ -166,7 +209,7 @@ export const EventScreen = () => {
         data: grouped[letter].sort((a, b) => a.name.localeCompare(b.name)),
       }));
   };
-  // console.log("EVENTS IN YO HOOD", userInfo.data.user.user_id);
+
   if (isLoading) {
     return <ActivityIndicator animating={true} color={primaryColor} />;
   }
@@ -179,7 +222,6 @@ export const EventScreen = () => {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <Button
-          // disabled={!country}
           mode="contained"
           onPress={() =>
             navigation.navigate("Duplication", { eventType: "event" })

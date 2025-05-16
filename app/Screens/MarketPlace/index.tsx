@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
   SectionList,
@@ -9,9 +9,10 @@ import {
   Linking,
   Pressable,
   ImageBackground,
+  TouchableOpacity,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { useGetAllEventsQuery, useGetBusinessesQuery } from "@/store/api/api";
+import { useGetBusinessesQuery, useAddClapsMutation } from "@/store/api/api";
 import {
   Text,
   Button,
@@ -22,9 +23,7 @@ import {
 } from "react-native-paper";
 import { useSelector } from "react-redux";
 import { timeConvert } from "@/app/customHooks";
-// import { Icon } from "react-native-vector-icons/Icon";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { useAddBusinessMutation } from "@/store/api/api";
 // Color Scheme
 const primaryColor = "#a349a4";
 const secondaryColor = "#FF8C00";
@@ -39,18 +38,31 @@ const placeholderTextColor = "gray";
 
 export const MarketPlaceScreen = () => {
   const navigation = useNavigation();
-  // const { data: allEvents, } = useGetAllEventsQuery();
-  const [addBusiness] = useAddBusinessMutation();
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [selectedBusiness, setSelectedBusiness] = useState(null);
   const country = useSelector((state) => state.counter.country);
+  const [addClap] = useAddClapsMutation();
+  const [claps, setClaps] = useState({}); // State to hold claps for each business
   const {
     data: allBusineses,
     error,
     isLoading,
     refetch,
   } = useGetBusinessesQuery(country);
+
+  useEffect(() => {
+    if (allBusineses) {
+      const initialClaps = allBusineses.reduce((acc, business) => {
+        console.log("business clappings", business);
+        acc[business.id] = business.companyInfo.claps || 0;
+        return acc;
+      }, {});
+
+      console.log("initial claps now daren", initialClaps);
+      setClaps(initialClaps);
+    }
+  }, [allBusineses]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -63,191 +75,212 @@ export const MarketPlaceScreen = () => {
     }
   }, [refetch]);
 
-  const handleEventDetails = (event) => {
-    setSelectedEvent(event);
+  const handleBusinessDetails = (business) => {
+    setSelectedBusiness(business);
     setModalVisible(true);
   };
 
-  const renderEventItem = ({ item }) =>
-    console.log("PROBLEMSN", typeof item.companyInfo.photos[0]) || (
+  const handleClap = async (businessId) => {
+    setClaps((prevClaps) => ({
+      ...prevClaps,
+      [businessId]: (prevClaps[businessId] || 0) + 1,
+    }));
+    // Assuming you have a mutation to add claps for businesses
+    const addingClaps = await addClap({ type: "business", id: businessId });
+    console.log(`Clapped for business BRYAN`, businessId);
+    // You'll need to implement the actual API call for adding claps
+  };
+
+  const renderBusinessItem = ({ item, index }) =>
+    console.log("index works", index, claps) || (
       <Card style={styles.card}>
-        {/* <Card onPress={() => handleEventDetails(item)} style={styles.card}> */}
-        {item.images?.[0]?.uri ? (
-          <Card.Cover
-            style={styles.eventImage}
-            source={{ uri: item.images[0].uri }}
-          />
-        ) : null}
-        <ImageBackground
-          resizeMode="cover"
-          source={{
-            uri:
-              typeof item?.companyInfo?.photos?.[0] === "string"
-                ? item?.companyInfo?.photos[0]
-                : "",
-          }}
-          style={styles.imageDetailsBackground}
-        >
-          <Card.Content>
-            <Title style={styles.title}>{item.companyInfo.name}</Title>
-            <Title style={styles.title}>{item.companyInfo.company_type}</Title>
-
-            {item.companyInfo.website ? (
-              <Text
-                style={[
-                  styles.text,
-                  { color: "blue", textDecorationLine: "underline" },
-                ]}
-                onPress={() => Linking.openURL(item.companyInfo.website)}
-              >
-                🌐 {item.companyInfo.website}
-              </Text>
-            ) : null}
-
-            {item.companyInfo.contact && (
-              <Text style={styles.text}>📞 {item.companyInfo.contact}</Text>
-            )}
-            {item.companyInfo.phone && (
-              <Text style={styles.text}>📱 {item.companyInfo.phone}</Text>
-            )}
-            {item.companyInfo.email && (
-              <Text style={styles.text}>✉️ {item.companyInfo.email}</Text>
-            )}
-
-            <Paragraph style={styles.paragraph} numberOfLines={2}>
-              {item.companyInfo.description || "No description available"}
-            </Paragraph>
-
-            <Text style={styles.text}>
-              🕒 {timeConvert(item.start_time)} - {timeConvert(item.end_time)}
-            </Text>
-
-            <Text style={styles.text}>
-              📍 {item.companyInfo.address_line1 || "N/A"}
-              📍 {item.companyInfo.address_line2 || "N/A"}
-              {item.companyInfo.city ? `, ${item.companyInfo.city}` : ""}
-              {item.companyInfo.region ? `, ${item.companyInfo.region}` : ""}
-              {item.companyInfo.postal_code
-                ? ` ${item.companyInfo.postal_code}`
-                : ""}
-            </Text>
-
-            <Text style={styles.text}>🌎 {item.companyInfo.country}</Text>
-
-            {/* Social links */}
-            {item.companyInfo.facebook && (
-              <Text
-                style={[
-                  styles.text,
-                  { color: "blue", textDecorationLine: "underline" },
-                ]}
-                onPress={() => Linking.openURL(item.companyInfo.facebook)}
-              >
-                👍 Facebook
-              </Text>
-            )}
-            {item.companyInfo.instagram && (
-              <Text
-                style={[
-                  styles.text,
-                  { color: "blue", textDecorationLine: "underline" },
-                ]}
-                onPress={() => Linking.openURL(item.companyInfo.instagram)}
-              >
-                📸 Instagram
-              </Text>
-            )}
-            {item.companyInfo.twitter && (
-              <Text
-                style={[
-                  styles.text,
-                  { color: "blue", textDecorationLine: "underline" },
-                ]}
-                onPress={() => Linking.openURL(item.companyInfo.twitter)}
-              >
-                🐦 Twitter
-              </Text>
-            )}
-
-            {/* Ticket */}
-            {item.ticket && (
+        {/* <TouchableOpacity onPress={() => handleBusinessDetails(item)}> */}
+        <TouchableOpacity>
+          {item.images?.[0]?.uri ? (
+            <Card.Cover
+              style={styles.eventImage}
+              source={{ uri: item.images[0].uri }}
+            />
+          ) : null}
+          <ImageBackground
+            resizeMode="cover"
+            source={{
+              uri:
+                typeof item?.companyInfo?.photos?.[0] === "string"
+                  ? item?.companyInfo?.photos[0]
+                  : "",
+            }}
+            style={styles.imageDetailsBackground}
+          >
+            <Card.Content>
               <View
                 style={{
                   flexDirection: "row",
-                  alignItems: "center",
-                  marginTop: 2,
+                  justifyContent: "space-between",
                 }}
               >
-                <Icon
-                  name="ticket"
-                  style={{ marginLeft: 4, marginRight: 12 }}
-                />
+                <Title style={styles.title}>{item.companyInfo.name}</Title>
+                <Title style={styles.title}>
+                  {item.companyInfo.company_type}
+                </Title>
+                <View style={{ flexDirection: "row" }}>
+                  <Text>{claps[index + 1]}</Text>
+                  <TouchableOpacity onPress={() => handleClap(item.id)}>
+                    <Icon color="red" size={30} name="hand-clap" />
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              {item.companyInfo.website ? (
                 <Text
-                  onPress={() => Linking.openURL(item.ticket)}
                   style={[
                     styles.text,
                     { color: "blue", textDecorationLine: "underline" },
                   ]}
+                  onPress={() => Linking.openURL(item.companyInfo.website)}
                 >
-                  {item.ticket}
+                  🌐 {item.companyInfo.website}
                 </Text>
-              </View>
-            )}
+              ) : null}
 
-            <Pressable
-              onPress={() =>
-                navigation.navigate("SuggestEdit", {
-                  eventType: "business",
-                  item,
-                  operation: "edit",
-                  eventId: item.id,
-                })
-              }
-              style={({ pressed }) => [
-                styles.suggestEditButton,
-                {
-                  backgroundColor: pressed ? secondaryColor : primaryColor,
-                },
-              ]}
-              android_ripple={{ color: primaryColor }}
-            >
-              <Text style={styles.button}>Suggest Edit</Text>
-            </Pressable>
-            {/* <Pressable
-            onPress={() =>
-              navigation.navigate("CompanyForms", {
-                eventType: "business",
-                item,
-                operation: "edit",
-                eventId: item.id,
-              })
-            }
-            style={({ pressed }) => [
-              styles.button,
-              {
-                backgroundColor: pressed ? secondaryColor : primaryColor,
-              },
-            ]}
-            android_ripple={{ color: primaryColor }}
-          >
-            <Text style={styles.button}>Edit</Text>
-          </Pressable> */}
-          </Card.Content>
-        </ImageBackground>
+              {item.companyInfo.contact && (
+                <Text style={styles.text}>📞 {item.companyInfo.contact}</Text>
+              )}
+              {item.companyInfo.phone && (
+                <Text style={styles.text}>📱 {item.companyInfo.phone}</Text>
+              )}
+              {item.companyInfo.email && (
+                <Text style={styles.text}>✉️ {item.companyInfo.email}</Text>
+              )}
+
+              <Paragraph style={styles.paragraph} numberOfLines={2}>
+                {item.companyInfo.description || "No description available"}
+              </Paragraph>
+
+              {item.start_time && item.end_time && (
+                <Text style={styles.text}>
+                  🕒 {timeConvert(item.start_time)} -{" "}
+                  {timeConvert(item.end_time)}
+                </Text>
+              )}
+
+              {item.companyInfo.address_line1 && (
+                <Text style={styles.text}>
+                  📍 {item.companyInfo.address_line1 || "N/A"}
+                  {item.companyInfo.address_line2
+                    ? `, ${item.companyInfo.address_line2}`
+                    : ""}
+                  {item.companyInfo.city ? `, ${item.companyInfo.city}` : ""}
+                  {item.companyInfo.region
+                    ? `, ${item.companyInfo.region}`
+                    : ""}
+                  {item.companyInfo.postal_code
+                    ? ` ${item.companyInfo.postal_code}`
+                    : ""}
+                </Text>
+              )}
+
+              {item.companyInfo.country && (
+                <Text style={styles.text}>🌎 {item.companyInfo.country}</Text>
+              )}
+
+              {/* Social links */}
+              {item.companyInfo.facebook && (
+                <Text
+                  style={[
+                    styles.text,
+                    { color: "blue", textDecorationLine: "underline" },
+                  ]}
+                  onPress={() => Linking.openURL(item.companyInfo.facebook)}
+                >
+                  👍 Facebook
+                </Text>
+              )}
+              {item.companyInfo.instagram && (
+                <Text
+                  style={[
+                    styles.text,
+                    { color: "blue", textDecorationLine: "underline" },
+                  ]}
+                  onPress={() => Linking.openURL(item.companyInfo.instagram)}
+                >
+                  📸 Instagram
+                </Text>
+              )}
+              {item.companyInfo.twitter && (
+                <Text
+                  style={[
+                    styles.text,
+                    { color: "blue", textDecorationLine: "underline" },
+                  ]}
+                  onPress={() => Linking.openURL(item.companyInfo.twitter)}
+                >
+                  🐦 Twitter
+                </Text>
+              )}
+
+              {/* Ticket */}
+              {item.ticket && (
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginTop: 2,
+                  }}
+                >
+                  <Icon
+                    name="ticket"
+                    style={{ marginLeft: 4, marginRight: 12 }}
+                  />
+                  <Text
+                    onPress={() => Linking.openURL(item.ticket)}
+                    style={[
+                      styles.text,
+                      { color: "blue", textDecorationLine: "underline" },
+                    ]}
+                  >
+                    {item.ticket}
+                  </Text>
+                </View>
+              )}
+
+              <Pressable
+                onPress={() =>
+                  navigation.navigate("SuggestEdit", {
+                    eventType: "business",
+                    item,
+                    operation: "edit",
+                    eventId: item.id,
+                  })
+                }
+                style={({ pressed }) => [
+                  styles.suggestEditButton,
+                  {
+                    backgroundColor: pressed ? secondaryColor : primaryColor,
+                  },
+                ]}
+                android_ripple={{ color: primaryColor }}
+              >
+                <Text style={styles.button}>Suggest Edit</Text>
+              </Pressable>
+            </Card.Content>
+          </ImageBackground>
+        </TouchableOpacity>
       </Card>
     );
 
-  const groupEventsAlphabetically = (events) => {
-    if (!events) return [];
-    const filteredComp = events.filter(
+  const groupEventsAlphabetically = (businesses) => {
+    if (!businesses) return [];
+    const filteredComp = businesses.filter(
       (item) => item?.country === country?.country
     );
-    const parsedCompanies = filteredComp.length === 0 ? events : filteredComp;
-    const grouped = parsedCompanies.reduce((acc, event) => {
-      const name = event.companyInfo.name || "";
+    const parsedCompanies =
+      filteredComp.length === 0 ? businesses : filteredComp;
+    const grouped = parsedCompanies.reduce((acc, business) => {
+      const name = business.companyInfo.name || "";
       const firstLetter = name[0]?.toUpperCase() || "#";
       if (!acc[firstLetter]) acc[firstLetter] = [];
-      acc[firstLetter].push(event);
+      acc[firstLetter].push(business);
       return acc;
     }, {});
 
@@ -255,18 +288,27 @@ export const MarketPlaceScreen = () => {
       .sort()
       .map((letter) => ({
         title: letter,
-        data: grouped[letter].sort((a, b) => a?.name?.localeCompare(b?.name)),
+        data: grouped[letter].sort((a, b) =>
+          (a?.companyInfo?.name || "").localeCompare(b?.companyInfo?.name || "")
+        ),
       }));
   };
+
+  if (isLoading && !refreshing) {
+    return <ActivityIndicator animating={true} color={primaryColor} />;
+  }
+  if (error) {
+    console.log("what is error", error);
+    return <Text style={styles.errorText}>Error fetching businesses</Text>;
+  }
+  // console.log("clapping me now", claps);
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <Button
-          // disabled={!country}
           mode="contained"
-          onPress={
-            () => navigation.navigate("Duplication", { eventType: "business" })
-            // navigation.navigate("CompanyForms", { eventType: "business" })
+          onPress={() =>
+            navigation.navigate("Duplication", { eventType: "business" })
           }
           style={styles.button}
           labelStyle={styles.buttonLabel}
@@ -274,33 +316,27 @@ export const MarketPlaceScreen = () => {
           Add Business
         </Button>
 
-        {isLoading && !refreshing ? (
-          <ActivityIndicator animating={true} color={primaryColor} />
-        ) : error ? (
-          <Text style={styles.errorText}>Error fetching events</Text>
-        ) : (
-          <SectionList
-            sections={groupEventsAlphabetically(allBusineses || [])}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderEventItem}
-            renderSectionHeader={({ section: { title } }) => (
-              <Text style={styles.sectionHeader}>{title}</Text>
-            )}
-            refreshControl={
-              <RefreshControl
-                refreshing={refreshing}
-                onRefresh={onRefresh}
-                colors={[primaryColor]}
-                tintColor={primaryColor}
-              />
-            }
-            stickySectionHeadersEnabled={true}
-            contentContainerStyle={{ paddingBottom: 32 }}
-          />
-        )}
+        <SectionList
+          sections={groupEventsAlphabetically(allBusineses || [])}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderBusinessItem}
+          renderSectionHeader={({ section: { title } }) => (
+            <Text style={styles.sectionHeader}>{title}</Text>
+          )}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={[primaryColor]}
+              tintColor={primaryColor}
+            />
+          }
+          stickySectionHeadersEnabled={true}
+          contentContainerStyle={{ paddingBottom: 32 }}
+        />
       </View>
 
-      {/* Event Details Modal */}
+      {/* Business Details Modal */}
       <Modal
         visible={modalVisible}
         animationType="slide"
@@ -309,23 +345,105 @@ export const MarketPlaceScreen = () => {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            {selectedEvent && (
+            {selectedBusiness && (
               <>
-                <Title style={styles.modalTitle}>{selectedEvent.name}</Title>
+                <Title style={styles.modalTitle}>
+                  {selectedBusiness.companyInfo.name}
+                </Title>
                 <Text style={styles.modalText}>
-                  {selectedEvent.description}
+                  {selectedBusiness.companyInfo.description ||
+                    "No description available"}
                 </Text>
-                <Text style={styles.modalText}>
-                  🕒 {timeConvert(selectedEvent.start_time)} -{" "}
-                  {timeConvert(selectedEvent.end_time)}
-                </Text>
-                <Text style={styles.modalText}>
-                  📍 {selectedEvent.addressLine1 || "N/A"}
-                  {selectedEvent.city ? `, ${selectedEvent.city}` : ""}
-                  {selectedEvent.region ? `, ${selectedEvent.region}` : ""}
-                  {selectedEvent.postal ? ` ${selectedEvent.postal}` : ""}
-                </Text>
-                <Text style={styles.modalText}>💰 ${selectedEvent.price}</Text>
+                {selectedBusiness.start_time && selectedBusiness.end_time && (
+                  <Text style={styles.modalText}>
+                    🕒 {timeConvert(selectedBusiness.start_time)} -{" "}
+                    {timeConvert(selectedBusiness.end_time)}
+                  </Text>
+                )}
+                {selectedBusiness.companyInfo.address_line1 && (
+                  <Text style={styles.modalText}>
+                    📍 {selectedBusiness.companyInfo.address_line1 || "N/A"}
+                    {selectedBusiness.companyInfo.address_line2
+                      ? `, ${selectedBusiness.companyInfo.address_line2}`
+                      : ""}
+                    {selectedBusiness.companyInfo.city
+                      ? `, ${selectedBusiness.companyInfo.city}`
+                      : ""}
+                    {selectedBusiness.companyInfo.region
+                      ? `, ${selectedBusiness.companyInfo.region}`
+                      : ""}
+                    {selectedBusiness.companyInfo.postal_code
+                      ? ` ${selectedBusiness.companyInfo.postal_code}`
+                      : ""}
+                  </Text>
+                )}
+                {selectedBusiness.companyInfo.contact && (
+                  <Text style={styles.modalText}>
+                    📞 {selectedBusiness.companyInfo.contact}
+                  </Text>
+                )}
+                {selectedBusiness.companyInfo.phone && (
+                  <Text style={styles.modalText}>
+                    📱 {selectedBusiness.companyInfo.phone}
+                  </Text>
+                )}
+                {selectedBusiness.companyInfo.email && (
+                  <Text style={styles.modalText}>
+                    ✉️ {selectedBusiness.companyInfo.email}
+                  </Text>
+                )}
+                {selectedBusiness.companyInfo.website && (
+                  <Text
+                    style={[
+                      styles.modalText,
+                      { color: "blue", textDecorationLine: "underline" },
+                    ]}
+                    onPress={() =>
+                      Linking.openURL(selectedBusiness.companyInfo.website)
+                    }
+                  >
+                    🌐 {selectedBusiness.companyInfo.website}
+                  </Text>
+                )}
+                {selectedBusiness.companyInfo.facebook && (
+                  <Text
+                    style={[
+                      styles.modalText,
+                      { color: "blue", textDecorationLine: "underline" },
+                    ]}
+                    onPress={() =>
+                      Linking.openURL(selectedBusiness.companyInfo.facebook)
+                    }
+                  >
+                    👍 Facebook
+                  </Text>
+                )}
+                {selectedBusiness.companyInfo.instagram && (
+                  <Text
+                    style={[
+                      styles.modalText,
+                      { color: "blue", textDecorationLine: "underline" },
+                    ]}
+                    onPress={() =>
+                      Linking.openURL(selectedBusiness.companyInfo.instagram)
+                    }
+                  >
+                    📸 Instagram
+                  </Text>
+                )}
+                {selectedBusiness.companyInfo.twitter && (
+                  <Text
+                    style={[
+                      styles.modalText,
+                      { color: "blue", textDecorationLine: "underline" },
+                    ]}
+                    onPress={() =>
+                      Linking.openURL(selectedBusiness.companyInfo.twitter)
+                    }
+                  >
+                    🐦 Twitter
+                  </Text>
+                )}
               </>
             )}
             <Button
@@ -426,11 +544,15 @@ const styles = StyleSheet.create({
   modalText: {
     fontSize: 16,
     marginBottom: 8,
-    color: textColorSecondary,
+  },
+  imageDetailsBackground: {
+    padding: 10,
+    borderBottomLeftRadius: 8,
+    borderBottomRightRadius: 8,
+    overflow: "hidden",
   },
   closeButton: {
-    marginTop: 16,
-    backgroundColor: primaryColor,
-    borderRadius: 6,
+    marginTop: 20,
+    backgroundColor: buttonBackgroundColor,
   },
 });

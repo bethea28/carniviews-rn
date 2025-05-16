@@ -517,8 +517,6 @@ export const api = createApi({
     }),
     getBandStories: build.query<any, any>({
       query: (data) => {
-        console.log("sean combs", data);
-        // return;
         return {
           url: `bandStory/${data.compId}/getBandStories/`,
           method: "GET",

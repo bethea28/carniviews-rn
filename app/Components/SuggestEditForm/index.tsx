@@ -11,7 +11,6 @@ import {
 } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { useSelector } from "react-redux";
-import { useImagePicker } from "@/app/customHooks";
 import { Notifier, Easing } from "react-native-notifier";
 import { useNavigation } from "@react-navigation/native";
 import {
@@ -82,7 +81,6 @@ export function SuggestEditForm({
   const [addBusiness] = useAddUnverifiedBusinessMutation();
   const [addEditSuggestion] = useAddEditSuggestionMutation();
   const navigation = useNavigation();
-  const { pickImages, allImages } = useImagePicker();
 
   const onSubmit = async (data) => {
     const userId = userData?.data?.user?.user_id;
@@ -148,7 +146,7 @@ export function SuggestEditForm({
         ))}
 
         <View style={styles.buttonContainer}>
-          <Pressable onPress={pickImages} style={styles.addPhotosButton}>
+          <Pressable style={styles.addPhotosButton}>
             <Text style={styles.addPhotosText}>Add Photos</Text>
           </Pressable>
           <Pressable
