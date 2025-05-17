@@ -12,6 +12,11 @@ import { useNavigation } from "expo-router";
 import { useGetBandStoriesQuery, useAddClapsMutation } from "@/store/api/api";
 import { useSelector } from "react-redux";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { TextInput } from "react-native-paper";
+import { Dimensions } from "react-native";
+
+const screenHeight = Dimensions.get("window").height;
+
 // Color Scheme
 const primaryColor = "#a349a4";
 const primaryLightColor = "#d67bff";
@@ -32,7 +37,9 @@ const StoryCard = ({ story, storyCardPress, handleClap, claps }) => {
         onPress={() => storyCardPress(story)}
       >
         <Text style={styles.title}>{story.title}</Text>
-        <Text style={styles.intro}>{story.intro}</Text>
+        <Text numberOfLines={5} style={styles.intro} ellipsizeMode="tail">
+          {story.intro}
+        </Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.clapButton}
@@ -136,32 +143,54 @@ export const BandStoriesScreen = () => {
           No band stories available for this company.
         </Text>
       )}
-
       <Modal
         visible={modalVisible}
         animationType="slide"
         onRequestClose={closeStoryModal}
       >
         <View style={styles.modalContainer}>
-          <ScrollView contentContainerStyle={styles.modalContent}>
-            <Text style={styles.modalTitle}>{selectedStory?.title}</Text>
-            <Text style={styles.modalText}>{selectedStory?.intro}</Text>
-            <Text style={styles.modalText}>{selectedStory?.moments}</Text>
-            <Text style={styles.modalText}>{selectedStory?.reflection}</Text>
-            <Text style={styles.modalText}>{selectedStory?.vibe}</Text>
+          <ScrollView
+            style={{ maxHeight: screenHeight - 140 }} // adjust based on footer/header
+            contentContainerStyle={styles.modalContent}
+            showsVerticalScrollIndicator={true}
+            keyboardShouldPersistTaps="handled"
+          >
+            {selectedStory &&
+              [
+                { label: "Title", content: selectedStory.title },
+                { label: "Intro", content: selectedStory.intro },
+                { label: "Vibe", content: selectedStory.vibe },
+                { label: "Costume", content: selectedStory.costume },
+                { label: "Moments", content: selectedStory.moments },
+                { label: "Reflection", content: selectedStory.reflection },
+              ].map(
+                ({ label, content }) =>
+                  content && (
+                    <View key={label} style={styles.modalSection}>
+                      <Text style={styles.modalSectionHeader}>{label}:</Text>
+                      <Text style={styles.modalSectionText}>{content}</Text>
+                    </View>
+                  )
+              )}
           </ScrollView>
-          <TouchableOpacity
-            onPress={() => selectedStory?.id && handleClap(selectedStory.id)}
-            style={styles.closeButton}
-          >
-            <Text style={styles.closeButtonText}>Clap</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={closeStoryModal}
-            style={styles.closeButton}
-          >
-            <Text style={styles.closeButtonText}>Close</Text>
-          </TouchableOpacity>
+
+          <View style={styles.modalFooter}>
+            <TouchableOpacity
+              onPress={() => selectedStory?.id && handleClap(selectedStory.id)}
+              style={[styles.footerButton, { backgroundColor: primaryColor }]}
+            >
+              <Text style={styles.footerButtonText}>
+                👏 Clap ({claps[selectedStory?.id] || selectedStory?.claps || 0}
+                )
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={closeStoryModal}
+              style={[styles.footerButton, { backgroundColor: secondaryColor }]}
+            >
+              <Text style={styles.footerButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </Modal>
     </View>
@@ -169,6 +198,55 @@ export const BandStoriesScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: primaryDarkColor,
+    marginBottom: 12,
+    textAlign: "center",
+  },
+
+  modalSection: {
+    marginBottom: 20,
+  },
+  modalSectionHeader: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: primaryDarkColor,
+    marginBottom: 4,
+  },
+  modalSectionText: {
+    fontSize: 16,
+    lineHeight: 22,
+    color: textColorSecondary,
+  },
+
+  modalFooter: {
+    position: "absolute", // Make sure footer is at the bottom
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: surfaceColor,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    borderTopWidth: 1,
+    borderTopColor: dividerColor,
+  },
+  footerButton: {
+    flex: 1,
+    padding: 12,
+    borderRadius: 6,
+    alignItems: "center",
+    marginHorizontal: 5,
+  },
+  footerButtonText: {
+    color: textColorPrimary,
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+
   container: {
     flex: 1,
     padding: 16,
@@ -213,6 +291,7 @@ const styles = StyleSheet.create({
   intro: {
     fontSize: 14,
     color: textColorSecondary,
+    backgroundColor: "transparent",
   },
   clapButton: {
     alignItems: "center",
@@ -243,33 +322,26 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     flex: 1,
-    padding: 20,
     backgroundColor: surfaceColor,
   },
+
   modalContent: {
-    flexGrow: 1,
+    padding: 20,
+    paddingBottom: 80, // Space for footer.  Adjust as needed.
   },
-  modalTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: primaryDarkColor,
-    marginBottom: 12,
-  },
-  modalText: {
-    fontSize: 16,
-    lineHeight: 22,
-    color: textColorSecondary,
-  },
-  closeButton: {
-    backgroundColor: secondaryColor,
-    padding: 14,
-    alignItems: "center",
-    borderRadius: 6,
-    marginTop: 24,
-  },
-  closeButtonText: {
-    color: textColorPrimary,
-    fontWeight: "bold",
-    fontSize: 16,
-  },
+
+  // modalSection: {
+  //   marginBottom: 20,
+  // },
+  // modalSectionHeader: {
+  //   fontSize: 18,
+  //   fontWeight: "bold",
+  //   color: primaryDarkColor,
+  //   marginBottom: 4,
+  // },
+  // modalSectionText: {
+  //   fontSize: 16,
+  //   lineHeight: 22,
+  //   color: textColorSecondary,
+  // },
 });

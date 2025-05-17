@@ -8,8 +8,9 @@ import {
   Modal,
   Linking,
   Pressable,
-  ImageBackground,
   TouchableOpacity,
+  TouchableWithoutFeedback,
+  ScrollView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useGetAllEventsQuery, useAddClapsMutation } from "@/store/api/api";
@@ -20,24 +21,25 @@ import {
   Title,
   Paragraph,
   ActivityIndicator,
+  Divider,
 } from "react-native-paper";
 import { useSelector } from "react-redux";
 import { timeConvert } from "@/app/customHooks";
-// import { Icon } from "react-native-vector-icons/Icon";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { EmptyCardComponent } from "@/app/Components/EmptyCardComponent";
 import { format } from "date-fns";
-// Color Scheme
-const primaryColor = "#a349a4";
-const secondaryColor = "#FF8C00";
-const backgroundColor = "#FFB347";
-const textColorPrimary = "#ffffff";
-const textColorSecondary = "#333333";
-const inputBackgroundColor = textColorPrimary;
-const buttonBackgroundColor = primaryColor;
-const buttonTextColor = textColorPrimary;
-const errorTextColor = "red";
-const placeholderTextColor = "gray";
+import { Dimensions } from "react-native";
+const screenHeight = Dimensions.get("window").height;
+
+const COLORS = {
+  primary: "#a349a4",
+  secondary: "#FF8C00",
+  background: "#FFB347",
+  textPrimary: "#ffffff",
+  textSecondary: "#333333",
+  error: "red",
+  placeholder: "gray",
+};
 
 export const EventScreen = () => {
   const navigation = useNavigation();
@@ -49,6 +51,7 @@ export const EventScreen = () => {
     error,
     refetch,
   } = useGetAllEventsQuery(country);
+
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -58,9 +61,8 @@ export const EventScreen = () => {
   useEffect(() => {
     if (allEvents?.events) {
       const initialClaps = allEvents.events.reduce((acc, event) => {
-        const final = { ...acc };
-        final[event.id] = event.claps || 0;
-        return final;
+        acc[event.id] = event.claps || 0;
+        return acc;
       }, {});
       setFinalClaps(initialClaps);
     }
@@ -77,146 +79,173 @@ export const EventScreen = () => {
     }
   }, [refetch]);
 
-  const handleEventDetails = (event) => {
-    setSelectedEvent(event);
-    setModalVisible(true);
-  };
-
   const handleClap = (eventId) => {
-    setFinalClaps((prevClaps) => ({
-      ...prevClaps,
-      [eventId]: (prevClaps[eventId] || 0) + 1,
+    setFinalClaps((prev) => ({
+      ...prev,
+      [eventId]: (prev[eventId] || 0) + 1,
     }));
     addClap({ type: "events", id: eventId });
   };
 
-  const renderEventItem = ({ item }) => {
-    return (
-      <Card onPress={() => handleEventDetails(item)} style={styles.card}>
-        {item.images?.[0]?.uri ? (
-          <Card.Cover
-            style={styles.eventImage}
-            source={{ uri: item.images[0].uri }}
-          />
-        ) : null}
-        <ImageBackground
-          resizeMode="cover"
-          source={{
-            uri: typeof item?.photos[0] === "string" ? item?.photos[0] : "",
-          }}
-          style={styles.imageDetailsBackground}
-        >
-          <Card.Content>
-            <View
-              style={{ flexDirection: "row", justifyContent: "space-between" }}
-            >
-              <Title style={styles.title}>{item.name}</Title>
+  const renderModalContent = () => {
+    if (!selectedEvent) return null;
+    const isOwner =
+      Number(selectedEvent?.user?.id) === Number(userInfo?.data?.user?.user_id);
 
-              <View style={{ flexDirection: "row" }}>
-                <Text style={{ color: "blue", fontSize: 16 }}>
-                  {finalClaps[item.id] || item.claps || 0}{" "}
-                </Text>
-                <TouchableOpacity onPress={() => handleClap(item.id)}>
-                  <Icon color="red" size={30} name="hand-clap" />
-                </TouchableOpacity>
-              </View>
-            </View>
-            <Title style={styles.title}>${item.price}</Title>
-            <Paragraph style={styles.paragraph} numberOfLines={2}>
-              {item.description}
-            </Paragraph>
-            <Text style={styles.text}>{format(item.date, "MM/dd/yyyy")}</Text>
-            <Text style={styles.text}>
-              🕒 {timeConvert(item.start_time)} - {timeConvert(item.end_time)}
+    return (
+      <ScrollView
+        style={{ maxHeight: screenHeight - 10 }}
+        contentContainerStyle={styles.modalScrollContent}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View>
+          {selectedEvent.photos?.[0] && (
+            <Card.Cover
+              source={{ uri: selectedEvent.photos[0] }}
+              style={styles.coverImage}
+              resizeMode="cover"
+            />
+          )}
+          <Text style={styles.title}>{selectedEvent.name}</Text>
+          <Divider style={styles.divider} />
+
+          <Text style={styles.text}>${selectedEvent.price}</Text>
+          <Divider style={styles.divider} />
+
+          <Text style={styles.text}>
+            {format(selectedEvent.date, "MM/dd/yyyy")}
+          </Text>
+          <Text style={styles.text}>
+            🕒 {timeConvert(selectedEvent.start_time)} -{" "}
+            {timeConvert(selectedEvent.end_time)}
+          </Text>
+          <Divider style={styles.divider} />
+
+          <Text style={styles.text}>
+            📍 {selectedEvent.addressLine1}
+            {selectedEvent.city && `, ${selectedEvent.city}`}
+            {selectedEvent.region && `, ${selectedEvent.region}`}
+            {selectedEvent.postal && ` ${selectedEvent.postal}`}
+          </Text>
+          <Divider style={styles.divider} />
+
+          <Text style={styles.description}>{selectedEvent.description}</Text>
+          <Divider style={styles.divider} />
+
+          {selectedEvent.ticket && (
+            <Text
+              onPress={() => Linking.openURL(selectedEvent.ticket)}
+              style={styles.ticketText}
+            >
+              🎟️ {selectedEvent.ticket}
             </Text>
-            <Text style={styles.text}>
-              📍 {item.addressLine1 || "N/A"}
-              {item.city ? `, ${item.city}` : ""}
-              {item.region ? `, ${item.region}` : ""}
-              {item.postal ? ` ${item.postal}` : ""}
+          )}
+          <Divider style={styles.divider} />
+
+          <View style={styles.clapRow}>
+            <Text style={styles.clapText}>
+              {finalClaps[selectedEvent.id] || 0}
             </Text>
-            {item.ticket && (
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginTop: 2,
-                }}
-              >
-                <Icon
-                  name="ticket"
-                  style={{ marginLeft: 4, marginRight: 12 }}
-                />
-                <Text
-                  onPress={() => Linking.openURL(item.ticket)}
-                  style={[
-                    styles.text,
-                    { color: "blue", textDecorationLine: "underline" },
-                  ]}
-                >
-                  {item.ticket}
-                </Text>
-              </View>
-            )}
-            {Number(item?.user?.id) ===
-              Number(userInfo?.data?.user?.user_id) && (
-              <Pressable
-                onPress={() =>
-                  navigation.navigate("CompanyForms", {
-                    operation: "edit",
-                    eventId: item.id,
-                    eventType: "event",
-                    item,
-                  })
-                }
-                style={({ pressed }) => [
-                  styles.button,
-                  {
-                    backgroundColor: pressed ? secondaryColor : primaryColor,
-                  },
-                ]}
-                android_ripple={{ color: primaryColor }}
-              >
-                <Text style={[styles.button, { textAlign: "center" }]}>
-                  Edit
-                </Text>
-              </Pressable>
-            )}
-          </Card.Content>
-        </ImageBackground>
-      </Card>
+            <TouchableOpacity onPress={() => handleClap(selectedEvent.id)}>
+              <Icon color="red" size={30} name="hand-clap" />
+            </TouchableOpacity>
+          </View>
+
+          {isOwner && (
+            <Pressable
+              onPress={() => {
+                setModalVisible(false);
+                navigation.navigate("CompanyForms", {
+                  operation: "edit",
+                  eventId: selectedEvent.id,
+                  eventType: "event",
+                  item: selectedEvent,
+                });
+              }}
+              style={({ pressed }) => [
+                styles.button,
+                {
+                  backgroundColor: pressed ? COLORS.secondary : COLORS.primary,
+                },
+              ]}
+            >
+              <Text style={styles.buttonText}>Edit</Text>
+            </Pressable>
+          )}
+
+          <Button
+            onPress={() => setModalVisible(false)}
+            style={styles.closeButton}
+          >
+            Close
+          </Button>
+        </View>
+      </ScrollView>
     );
   };
+
+  const renderEventItem = ({ item }) => (
+    <Card style={styles.card}>
+      <TouchableOpacity
+        onPress={() => {
+          setSelectedEvent(item);
+          setModalVisible(true);
+        }}
+      >
+        {item.photos?.[0] && (
+          <Card.Cover
+            source={{ uri: item.photos[0] }}
+            style={styles.coverImage}
+            resizeMode="cover"
+          />
+        )}
+      </TouchableOpacity>
+      <Card.Content>
+        <View style={styles.headerRow}>
+          <Title style={styles.title}>{item.name}</Title>
+          <View style={styles.clapRow}>
+            <Text style={styles.clapText}>{finalClaps[item.id] || 0}</Text>
+            <TouchableOpacity onPress={() => handleClap(item.id)}>
+              <Icon color="red" size={30} name="hand-clap" />
+            </TouchableOpacity>
+          </View>
+        </View>
+        <Title style={styles.title}>${item.price}</Title>
+        <Text style={styles.text}>{format(item.date, "MM/dd/yyyy")}</Text>
+        <Text style={styles.text}>
+          🕒 {timeConvert(item.start_time)} - {timeConvert(item.end_time)}
+        </Text>
+        <Text style={styles.text}>
+          📍 {item.addressLine1 || "N/A"}
+          {item.city ? `, ${item.city}` : ""}
+          {item.region ? `, ${item.region}` : ""}
+          {item.postal ? ` ${item.postal}` : ""}
+        </Text>
+      </Card.Content>
+    </Card>
+  );
 
   const groupEventsAlphabetically = (events) => {
     if (!events) return [];
-    const filteredComp = events.filter(
-      (item) => item?.country === country?.country
-    );
-    const parsedCompanies = filteredComp.length === 0 ? events : filteredComp;
-    const grouped = parsedCompanies.reduce((acc, event) => {
-      const name = event.name || "";
-      const firstLetter = name[0]?.toUpperCase() || "#";
-      if (!acc[firstLetter]) acc[firstLetter] = [];
-      acc[firstLetter].push(event);
+    const relevantEvents =
+      events.filter((e) => e?.country === country?.country) || events;
+    const grouped = relevantEvents.reduce((acc, event) => {
+      const letter = event.name?.[0]?.toUpperCase() || "#";
+      acc[letter] = acc[letter] || [];
+      acc[letter].push(event);
       return acc;
     }, {});
 
-    return Object.keys(grouped)
-      .sort()
-      .map((letter) => ({
-        title: letter,
-        data: grouped[letter].sort((a, b) => a.name.localeCompare(b.name)),
+    return Object.entries(grouped)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([title, data]) => ({
+        title,
+        data: data.sort((a, b) => a.name.localeCompare(b.name)),
       }));
   };
 
-  if (isLoading) {
-    return <ActivityIndicator animating={true} color={primaryColor} />;
-  }
-  if (error) {
-    console.log("what is error", error);
-    return <Text style={styles.errorText}>Error fetching events</Text>;
-  }
+  if (isLoading) return <ActivityIndicator animating color={COLORS.primary} />;
+  if (error) return <Text style={styles.errorText}>Error fetching events</Text>;
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -231,11 +260,12 @@ export const EventScreen = () => {
         >
           Add Event
         </Button>
+
         {!country ? (
           <EmptyCardComponent />
         ) : (
           <SectionList
-            sections={groupEventsAlphabetically(allEvents?.events || [])}
+            sections={groupEventsAlphabetically(allEvents?.events)}
             keyExtractor={(item) => item.id.toString()}
             renderItem={renderEventItem}
             renderSectionHeader={({ section: { title } }) => (
@@ -245,105 +275,52 @@ export const EventScreen = () => {
               <RefreshControl
                 refreshing={refreshing}
                 onRefresh={onRefresh}
-                colors={[primaryColor]}
-                tintColor={primaryColor}
+                colors={[COLORS.primary]}
+                tintColor={COLORS.primary}
               />
             }
-            stickySectionHeadersEnabled={true}
+            stickySectionHeadersEnabled
             contentContainerStyle={{ paddingBottom: 32 }}
           />
         )}
-      </View>
 
-      {/* Event Details Modal */}
-      <Modal
-        visible={modalVisible}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            {selectedEvent && (
-              <>
-                <Title style={styles.modalTitle}>{selectedEvent.name}</Title>
-                <Text style={styles.modalText}>
-                  {selectedEvent.description}
-                </Text>
-                <Text style={styles.modalText}>
-                  🕒 {selectedEvent.date} - 🕒{" "}
-                  {timeConvert(selectedEvent.start_time)} -{" "}
-                  {timeConvert(selectedEvent.end_time)}
-                </Text>
-                <Text style={styles.modalText}>
-                  📍 {selectedEvent.addressLine1 || "N/A"}
-                  {selectedEvent.city ? `, ${selectedEvent.city}` : ""}
-                  {selectedEvent.region ? `, ${selectedEvent.region}` : ""}
-                  {selectedEvent.postal ? ` ${selectedEvent.postal}` : ""}
-                </Text>
-                <Text style={styles.modalText}>💰 ${selectedEvent.price}</Text>
-              </>
-            )}
-            <Button
-              mode="contained"
-              onPress={() => setModalVisible(false)}
-              style={styles.closeButton}
-              labelStyle={{ color: buttonTextColor }}
-            >
-              Close
-            </Button>
-          </View>
-        </View>
-      </Modal>
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={modalVisible}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <SafeAreaView style={[styles.modalContainer, { flex: 1 }]}>
+            {renderModalContent()}
+          </SafeAreaView>
+        </Modal>
+      </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: backgroundColor,
-  },
-  container: {
-    flex: 1,
-    padding: 16,
-  },
-  card: {
-    marginBottom: 16,
-    backgroundColor: inputBackgroundColor,
-  },
-  eventImage: {
-    width: "100%",
-    height: 200,
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
-    marginBottom: 10,
-  },
-  title: {
-    color: textColorSecondary,
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  paragraph: {
-    color: textColorSecondary,
-    marginBottom: 6,
-  },
-  text: {
-    color: textColorSecondary,
-  },
+  safeArea: { flex: 1, backgroundColor: COLORS.background },
+  container: { flex: 1, padding: 16 },
+  card: { marginBottom: 16, backgroundColor: COLORS.textPrimary },
+  coverImage: { width: "100%", height: 200, marginBottom: 10 },
+  headerRow: { flexDirection: "row", justifyContent: "space-between" },
+  title: { color: COLORS.textSecondary, fontSize: 18, fontWeight: "bold" },
+  description: { color: COLORS.textSecondary, marginVertical: 8 },
+  text: { color: COLORS.textSecondary, marginVertical: 2 },
+  clapRow: { flexDirection: "row", alignItems: "center" },
+  clapText: { color: "blue", fontSize: 16, marginRight: 4 },
   button: {
-    backgroundColor: buttonBackgroundColor,
-    marginBottom: 20,
+    backgroundColor: COLORS.primary,
     marginTop: 8,
     borderRadius: 6,
-    // width: 100,
+    paddingVertical: 10,
+    alignItems: "center",
   },
-  buttonLabel: {
-    color: buttonTextColor,
-    fontSize: 16,
-  },
+  buttonText: { color: COLORS.textPrimary, fontSize: 16 },
+  buttonLabel: { color: COLORS.textPrimary, fontSize: 16 },
   errorText: {
-    color: errorTextColor,
+    color: COLORS.error,
     fontSize: 16,
     textAlign: "center",
     marginTop: 20,
@@ -351,37 +328,30 @@ const styles = StyleSheet.create({
   sectionHeader: {
     fontSize: 22,
     fontWeight: "bold",
-    backgroundColor: backgroundColor,
-    color: textColorSecondary,
+    backgroundColor: COLORS.background,
+    color: COLORS.textSecondary,
     paddingVertical: 8,
   },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.6)",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  modalContent: {
-    backgroundColor: "#fff",
-    padding: 20,
-    borderRadius: 12,
-    width: "100%",
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
-    color: textColorSecondary,
-  },
-  modalText: {
+  ticketText: {
+    color: "blue",
+    textDecorationLine: "underline",
     fontSize: 16,
-    marginBottom: 8,
-    color: textColorSecondary,
+    marginVertical: 8,
+  },
+  modalContainer: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: COLORS.textPrimary,
+  },
+
+  modalScrollContent: {
+    paddingBottom: 40,
+  },
+  divider: {
+    marginVertical: 10,
+    height: 1,
   },
   closeButton: {
     marginTop: 16,
-    backgroundColor: primaryColor,
-    borderRadius: 6,
   },
 });
