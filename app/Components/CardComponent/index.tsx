@@ -1,173 +1,135 @@
 import * as React from "react";
 import { Avatar } from "react-native-paper";
-import { Pressable, View, StyleSheet, Text, Image } from "react-native";
+import { Pressable, View, StyleSheet, Text, Image, useWindowDimensions } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { setCompanyInfo } from "@/store/globalState/globalState";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import StarRatingDisplay from "react-native-star-rating-widget";
 import { useGetReviewsQuery } from "@/store/api/api";
-import { useSelector } from "react-redux";
-// Define a Material Design inspired color palette (using the provided colors)
-const primaryColor = "#a349a4"; // Purple 500 (approx.)
-const primaryLightColor = "#d67bff"; // Purple 200 (approx.)
-const primaryDarkColor = "#751976"; // Purple 700 (approx.)
-const secondaryColor = "#f28e1c"; // Orange A200 (approx.)
-const secondaryLightColor = "#ffc04f"; // Orange A100 (approx.)
-const secondaryDarkColor = "#b95f00"; // Orange A400 (approx.)
-const backgroundColor = "#f7b767"; // Light Orange 200 (approx.)
-const textColorPrimary = "#ffffff"; // White
-const textColorSecondary = "#333333"; // Dark Gray
-const surfaceColor = "#FFFFFF"; // White (for cards)
-const shadowColor = "#000";
-const disabledColor = "#E0E0E0"; // Grey 300
 
-const LeftContent = (props) => <Avatar.Icon {...props} icon="folder" />;
+const colors = {
+  primary: "#a349a4",
+  primaryLight: "#d67bff",
+  primaryDark: "#751976",
+  secondary: "#f28e1c",
+  secondaryLight: "#ffc04f",
+  background: "#f7b767",
+  textPrimary: "#ffffff",
+  textSecondary: "#333333",
+  surface: "#FFFFFF",
+  disabled: "#E0E0E0",
+};
 
 export const CompanyCard = ({ title, mainImage, wholeData }) => {
-  const {
-    data: allCompanyReviews,
-    isLoading,
-    isError,
-  } = useGetReviewsQuery({
-    companyId: wholeData.id,
-  });
+  const { data: allCompanyReviews } = useGetReviewsQuery({ companyId: wholeData.id });
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const { width } = useWindowDimensions();
+
   const handleNavigate = (navIndex) => {
     dispatch(setCompanyInfo(wholeData));
     navigation.navigate("Info", { wholeData, navIndex });
   };
 
-  const StarRate = ({  rating, styles }) => {
-    return (
-      <StarRatingDisplay
-        starSize={25}
-        style={{ marginRight: 20 }}
-        rating={rating}
-        starStyle={{ width: 10 }}
-        onChange={() => {}}
-      />
-    );
-  };
-  const allRatings = null;
-  const ratings = React.useMemo(() => {
-    if (!allCompanyReviews?.reviews) return [];
-    const length = allCompanyReviews.reviews.length;
-    const rating = allCompanyReviews?.reviews?.reduce((a, b) => {
-      return a + b.rating;
-    }, 0);
-    return rating / length;
-  }, [isLoading]);
-  const compData = useSelector((state) => state.counter);
-  console.log("what is compData", wholeData.companyInfo.overall_avg);
+  const overallAvg = wholeData.companyInfo.overall_avg || 0;
+  const bandStories = wholeData.companyInfo.bandStories || 0;
+  const reviewCount = allCompanyReviews?.reviews?.length || 0;
+
   return (
     <View style={styles.card}>
       <View style={styles.cardContent}>
         <Text style={styles.title}>{title}</Text>
-        {/* <StarRate styles={{ width: 100 }} rating={5} /> */}
       </View>
+
       <Image
         style={styles.cover}
         source={{
-          uri:
-            mainImage ||
-            "https://carnivaltribe.com/wp-content/uploads/2024/07/Tribe25-Group-Hero-02.jpg",
+          uri: mainImage || "https://carnivaltribe.com/wp-content/uploads/2024/07/Tribe25-Group-Hero-02.jpg",
         }}
-        onError={(err) => console.log("what is image error", err)}
+        onError={(err) => console.log("Image load error:", err)}
       />
-      <View style={styles.actions}>
-        <View style={styles.actionsContainer}>
-          
-          <View style={{ marginRight: 48 }}>
-              <Text style={{ marginLeft: 10 }}>
-                {wholeData.companyInfo.overall_avg} Overall Experience
-              </Text>
-              <StarRate  styles={{ width: 100 }} rating={wholeData.companyInfo.overall_avg} />
-               <View style={{ flexDirection: "row", alignItems: "center" }}>
-            </View>
-            {/* {ratings ? <StarRate rating={ratings} /> : <StarRate rating={0} />} */}
-            <Text style={{ marginLeft: 10 }}>
-              {allCompanyReviews?.reviews?.length} Reviews
-            </Text>
-            <Text style={{ marginLeft: 10 }}>
-              {wholeData.companyInfo.bandStories} Band Stories
-            </Text>
-         
-          </View>
-          <Pressable
-            onPress={() => handleNavigate(0)}
-            style={({ pressed }) => [
-              styles.button,
-              { backgroundColor: pressed ? secondaryLightColor : primaryColor , marginRight: undefined},
-            ]}
-            android_ripple={{ color: primaryDarkColor }}
-          >
-            <Text style={styles.buttonText}>Details</Text>
-          </Pressable>
-          <Pressable
-            onPress={() => handleNavigate(1)}
-            style={({ pressed }) => [
-              styles.button,
-              { backgroundColor: pressed ? secondaryLightColor : primaryColor },
-            ]}
-            android_ripple={{ color: primaryDarkColor }}
-          >
-            <Text style={styles.buttonText}>Reviews</Text>
-          </Pressable>
-        </View>
+
+      <View style={styles.ratingSection}>
+        <Text style={styles.ratingText}>{overallAvg.toFixed(1)} Overall Experience</Text>
+        <StarRatingDisplay rating={overallAvg} starSize={20} starStyle={{ marginHorizontal: 1 }} />
+        <Text style={styles.subInfo}>{reviewCount} Reviews • {bandStories} Band Stories</Text>
+      </View>
+
+      <View style={[styles.actionsContainer, width < 400 && { flexDirection: "column" }]}>
+        <CustomButton label="Details" onPress={() => handleNavigate(0)} />
+        <CustomButton label={`Reviews`} onPress={() => handleNavigate(1)} />
+        <CustomButton label={`Band Stories`} onPress={() => handleNavigate(2)} />
       </View>
     </View>
   );
 };
 
+const CustomButton = ({ label, onPress }) => (
+  <Pressable
+    onPress={onPress}
+    style={({ pressed }) => [
+      styles.button,
+      { backgroundColor: pressed ? colors.secondaryLight : colors.primary },
+    ]}
+    android_ripple={{ color: colors.primaryDark }}
+  >
+    <Text style={styles.buttonText}>{label}</Text>
+  </Pressable>
+);
+
 const styles = StyleSheet.create({
   card: {
-    // marginTop: 16,
-    backgroundColor: surfaceColor,
-    borderRadius: 4,
-    elevation: 2, // Subtle shadow
-    // marginHorizontal: 16,
-    overflow: "hidden", // Clip content for rounded corners
+    backgroundColor: colors.surface,
+    borderRadius: 8,
+    elevation: 3,
+    overflow: "hidden",
+    marginBottom: 16,
   },
   cardContent: {
-    padding: 16,
+    padding: 12,
   },
   title: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "bold",
-    color: textColorSecondary,
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: textColorSecondary,
+    color: colors.textSecondary,
   },
   cover: {
-    height: 200,
+    height: 180,
     width: "100%",
   },
-  actions: {
-    padding: 8,
-    // flexDirection: "row",
+  ratingSection: {
+    padding: 12,
+    alignItems: "center",
+    borderTopWidth: 1,
+    borderColor: "#eee",
+  },
+  ratingText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: colors.textSecondary,
+    marginBottom: 4,
+  },
+  subInfo: {
+    fontSize: 14,
+    color: "#666",
+    marginTop: 4,
   },
   actionsContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 8,
-    alignItems: "center",
+    justifyContent: "space-around",
+    padding: 12,
   },
   button: {
-    backgroundColor: primaryColor,
     paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 4,
-    marginLeft: 8,
-    elevation: 1, // Subtle button shadow
+    paddingHorizontal: 14,
+    borderRadius: 6,
+    minWidth: 100,
+    alignItems: "center",
+    marginVertical: 4,
   },
   buttonText: {
-    color: textColorPrimary,
+    color: colors.textPrimary,
     fontWeight: "bold",
-    fontSize: 16,
-    textAlign: "center",
+    fontSize: 14,
   },
 });
