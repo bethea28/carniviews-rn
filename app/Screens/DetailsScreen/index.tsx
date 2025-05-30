@@ -17,6 +17,7 @@ import {
   useAddCompanyImagesMutation,
   useAddRecMutation,
   useGetCompanyRecsQuery,
+  useGetReviewAvgQuery
 } from "@/store/api/api";
 import { Notifier, Easing, NotifierComponents } from "react-native-notifier";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -303,6 +304,23 @@ const Recommend = ({ companyInfo, user, handleRec, recScore }) => (
     </View>
   </View>
 );
+const ReviewAverages = ({ averages }) => {
+  if (!averages || Object.keys(averages).length === 0) return null;
+
+  return (
+    <View style={styles.reviewAveragesContainer}>
+      <Text style={styles.reviewAveragesHeader}>Category Ratings</Text>
+      {Object.entries(averages).map(([category, value]) => (
+        <View key={category} style={styles.reviewRow}>
+          <Text style={styles.reviewCategory}>{capitalize(category)}</Text>
+          <Text style={styles.reviewValue}>{value.toFixed(2)} / 5</Text>
+        </View>
+      ))}
+    </View>
+  );
+};
+
+const capitalize = (word) => word.charAt(0).toUpperCase() + word.slice(1);
 
 // const SocialDisplay = ({ socials }) => {
 //   console.log("social ");
@@ -323,6 +341,9 @@ export function DetailsScreen() {
   const navigation = useNavigation();
 
   const { data: allCompRecs } = useGetCompanyRecsQuery({
+    companyId: companyInfo.companyId,
+  });
+  const { data: reviewAvgs } = useGetReviewAvgQuery({
     companyId: companyInfo.companyId,
   });
   const [addRec] = useAddRecMutation();
@@ -354,6 +375,9 @@ export function DetailsScreen() {
     });
     return { yes, no };
   }, [allCompRecs?.allRecs]);
+
+
+  console.log('all review avgs', reviewAvgs);
   return (
     <ScrollView
       contentContainerStyle={{ paddingBottom: 50 }}
@@ -364,6 +388,7 @@ export function DetailsScreen() {
       <FullAddressDisplay compInfo={companyInfo.compInfo} />
       {/* <BasicDetails params={params} /> */}
       {/* <BusinessHours staleHours={params?.hoursData} stale={true} /> */}
+      <ReviewAverages averages={reviewAvgs} />
       <Recommend
         recScore={recScore}
         handleRec={handleRec}
@@ -385,6 +410,7 @@ export function DetailsScreen() {
           { backgroundColor: pressed ? secondaryColor : primaryColor },
         ]}
       >
+
         <Text style={[styles.recommendButtonText, { alignSelf: "center" }]}>
           Suggest Edits
         </Text>
@@ -526,4 +552,36 @@ const styles = StyleSheet.create({
     color: "#333",
     marginBottom: 2,
   },
+  reviewAveragesContainer: {
+  marginTop: 20,
+  padding: 15,
+  backgroundColor: textColorPrimary,
+  borderRadius: 10,
+  shadowColor: "#000",
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.1,
+  shadowRadius: 4,
+  elevation: 3,
+},
+reviewAveragesHeader: {
+  fontSize: 18,
+  fontWeight: "bold",
+  marginBottom: 10,
+  color: textColorSecondary,
+},
+reviewRow: {
+  flexDirection: "row",
+  justifyContent: "space-between",
+  marginVertical: 4,
+},
+reviewCategory: {
+  fontSize: 16,
+  color: textColorSecondary,
+},
+reviewValue: {
+  fontSize: 16,
+  fontWeight: "600",
+  color: primaryColor,
+},
+
 });

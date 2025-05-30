@@ -38,7 +38,7 @@ export const CompanyCard = ({ title, mainImage, wholeData }) => {
     navigation.navigate("Info", { wholeData, navIndex });
   };
 
-  const StarRate = ({ changeRating, rating, styles }) => {
+  const StarRate = ({  rating, styles }) => {
     return (
       <StarRatingDisplay
         starSize={25}
@@ -59,6 +59,7 @@ export const CompanyCard = ({ title, mainImage, wholeData }) => {
     return rating / length;
   }, [isLoading]);
   const compData = useSelector((state) => state.counter);
+  console.log("what is compData", wholeData.companyInfo.overall_avg);
   return (
     <View style={styles.card}>
       <View style={styles.cardContent}>
@@ -76,14 +77,22 @@ export const CompanyCard = ({ title, mainImage, wholeData }) => {
       />
       <View style={styles.actions}>
         <View style={styles.actionsContainer}>
+          
           <View style={{ marginRight: 48 }}>
-            {ratings ? <StarRate rating={ratings} /> : <StarRate rating={0} />}
+              <Text style={{ marginLeft: 10 }}>
+                {wholeData.companyInfo.overall_avg} Overall Experience
+              </Text>
+              <StarRate  styles={{ width: 100 }} rating={wholeData.companyInfo.overall_avg} />
+               <View style={{ flexDirection: "row", alignItems: "center" }}>
+            </View>
+            {/* {ratings ? <StarRate rating={ratings} /> : <StarRate rating={0} />} */}
             <Text style={{ marginLeft: 10 }}>
               {allCompanyReviews?.reviews?.length} Reviews
             </Text>
             <Text style={{ marginLeft: 10 }}>
               {wholeData.companyInfo.bandStories} Band Stories
             </Text>
+         
           </View>
           <Pressable
             onPress={() => handleNavigate(0)}

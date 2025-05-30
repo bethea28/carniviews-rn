@@ -638,6 +638,13 @@ export const api = createApi({
       }),
       providesTags: ["review"],
     }),
+    getReviewAvg: build.query({
+      query: (data) => ({
+        url: `reviews/${data.companyId}/getReviewAvgs/`,
+        params: {},
+      }),
+      // providesTags: ["review"],
+    }),
     getCompanies: build.query({
       query: (data) =>
         console.log("data country", data) || {
@@ -706,6 +713,7 @@ export const api = createApi({
   refetchOnMountOrArgChange: true,
 });
 export const {
+  useGetReviewAvgQuery,
   useAddClapsMutation,
   useGetBandStoriesQuery,
   useAddBandStoryMutation,
