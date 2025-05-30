@@ -81,12 +81,15 @@ export const CompanyCard = ({ title, mainImage, wholeData }) => {
             <Text style={{ marginLeft: 10 }}>
               {allCompanyReviews?.reviews?.length} Reviews
             </Text>
+            <Text style={{ marginLeft: 10 }}>
+              {wholeData.companyInfo.bandStories} Band Stories
+            </Text>
           </View>
           <Pressable
             onPress={() => handleNavigate(0)}
             style={({ pressed }) => [
               styles.button,
-              { backgroundColor: pressed ? secondaryLightColor : primaryColor },
+              { backgroundColor: pressed ? secondaryLightColor : primaryColor , marginRight: undefined},
             ]}
             android_ripple={{ color: primaryDarkColor }}
           >
@@ -140,7 +143,7 @@ const styles = StyleSheet.create({
   },
   actionsContainer: {
     flexDirection: "row",
-    justifyContent: "flex-end",
+    justifyContent: "space-between",
     paddingHorizontal: 8,
     alignItems: "center",
   },

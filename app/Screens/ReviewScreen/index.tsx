@@ -116,6 +116,12 @@ export function ReviewScreen() {
             <Text>Costume Quality:</Text>
             <StarRatingDisplay rating={item.costume} starSize={20} />
           </View>
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
+            <Text>Overall Experience:</Text>
+            <StarRatingDisplay rating={item.overall} starSize={20} />
+          </View>
         </View>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <View>
@@ -177,7 +183,7 @@ export function ReviewScreen() {
       </View>
     );
   }
-  console.log("all REVIEWS user data", allCompanyReviews);
+  console.log("all REVIEWS user data", allCompanyReviews.overallAvg);
   return (
     <View style={styles.container}>
       <FlatList

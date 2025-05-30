@@ -402,6 +402,7 @@ export const api = createApi({
           },
         };
       },
+      providesTags: ["company"],
     }),
     addEvent: build.mutation<any, any>({
       query: (data) => {
@@ -550,7 +551,7 @@ export const api = createApi({
           }),
         };
       },
-      invalidatesTags: ["bandStory"],
+      invalidatesTags: ["bandStory","company"],
     }),
     addUnverifiedBusiness: build.mutation<any, any>({
       query: (data) => {
