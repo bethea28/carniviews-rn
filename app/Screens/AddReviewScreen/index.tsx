@@ -62,6 +62,7 @@ export function AddReviewScreen({ route }) {
   const navigation = useNavigation();
   const userData = useSelector((state) => state.counter.userState);
   const categories = [
+    "Overall Experience",
     "Customer Service",
     "Value for Money",
     "Costume Quality",

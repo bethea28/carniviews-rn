@@ -93,7 +93,11 @@ function MyBottomTabs() {
 
 function RootStack() {
   return (
-    <StackNav.Navigator>
+    <StackNav.Navigator
+    screenOptions={{
+    detachInactiveScreens: true, // default true in recent versions
+  }}
+    >
       <StackNav.Screen
         name="Home"
         component={MyBottomTabs}

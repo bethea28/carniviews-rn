@@ -129,7 +129,8 @@ export const MarketPlaceScreen = () => {
             // resizeMode: "stretch", // Fit inside without cropping
             backgroundColor: "transparent", // Optional: remove gray background
           }}
-          source={{ uri: item.companyInfo.photos[0] }}
+          source={{ uri:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDidkUP1Kcd8pXAgbOQ51JdAmA1-b5dOkYKg&s" }}
+          // source={{ uri: item.companyInfo?.photos[0] }}
         />
       )}
       <Card.Content>

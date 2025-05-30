@@ -38,9 +38,9 @@ export const api = createApi({
   // exp://192.168.1.161:8081//android real device must point here
 
   // http://127.0.0.1:8000/reviews/
-  // baseQuery: fetchBaseQuery({ baseUrl: "http://10.0.2.2:8000/" }), // works for iphone
+  baseQuery: fetchBaseQuery({ baseUrl: "http://10.0.2.2:8000/" }), // works for android
   // baseQuery: fetchBaseQuery({ baseUrl: "http://172.20.10.3:8000/" }), // works for iphone
-  baseQuery: fetchBaseQuery({ baseUrl: "http://192.168.1.161:8000/" }), //local
+  // baseQuery: fetchBaseQuery({ baseUrl: "http://192.168.1.161:8000/" }), //local
   //   baseQuery: fetchBaseQuery({ baseUrl: "http://127.0.0.1:8000/" }),
   // baseQuery,
   reducerPath: "api",
@@ -278,6 +278,7 @@ export const api = createApi({
             costume: data.rating[6],
             value: data.rating[7],
             service: data.rating[8],
+            overall: data.rating[9],
           }),
         };
       },

@@ -80,7 +80,7 @@ export function BandsList() {
     return finalGroup;
   }, [allCompanies, country?.country]);
 
-  const renderItem = ({ item }) => (
+  const renderItem = ({ item }) => console.log('THE BIZ',item)|| (
     <View style={styles.cardWrapper}>
       <CompanyCard
         wholeData={item}
